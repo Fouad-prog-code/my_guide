@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:my_guide/core/utils/app_routes.dart';
+import 'package:my_guide/features/ui/auth/login/login_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -9,6 +12,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(debugShowCheckedModeBanner: false);
+    return ScreenUtilInit(
+      designSize: const Size(402, 872),
+      builder: (context, child) => MaterialApp(
+        debugShowCheckedModeBanner: false,
+        initialRoute: AppRoutes.loginRoute,
+        routes: {AppRoutes.loginRoute: (context) => LoginScreen()},
+      ),
+    );
   }
 }
