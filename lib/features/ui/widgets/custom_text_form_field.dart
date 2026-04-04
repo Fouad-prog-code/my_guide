@@ -50,7 +50,7 @@ class CustomTextFormField extends StatelessWidget {
           },
           keyboardType: textType,
           obscureText: obscureText,
-          obscuringCharacter: '*',
+          // obscuringCharacter: '*',
           controller: controller,
           style: AppStyles.bold24Black,
           decoration: InputDecoration(
