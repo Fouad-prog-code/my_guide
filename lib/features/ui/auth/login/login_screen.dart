@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:my_guide/core/utils/app_assets.dart';
 import 'package:my_guide/core/utils/app_colors.dart';
+import 'package:my_guide/core/utils/app_routes.dart';
 import 'package:my_guide/core/utils/app_styles.dart';
 import 'package:my_guide/core/utils/validators.dart';
 import 'package:my_guide/features/ui/widgets/custom_elevated_button.dart';
@@ -59,7 +60,12 @@ class LoginScreen extends StatelessWidget {
                 CustomElevatedButton(
                   text: 'Log in',
                   onPressed: () {
-                    if (formKey.currentState!.validate()) {}
+                    if (formKey.currentState!.validate()) {
+                      Navigator.pushReplacementNamed(
+                        context,
+                        AppRoutes.studentRoute,
+                      );
+                    }
                   },
                 ),
               ],
