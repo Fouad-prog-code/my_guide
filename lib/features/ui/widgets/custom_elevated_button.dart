@@ -3,10 +3,15 @@ import 'package:my_guide/core/utils/app_colors.dart';
 import 'package:my_guide/core/utils/app_styles.dart';
 
 class CustomElevatedButton extends StatelessWidget {
-  const CustomElevatedButton({super.key, required this.text, this.onPressed});
+  const CustomElevatedButton({
+    super.key,
+    required this.text,
+    this.onPressed,
+    this.isLoading = false,
+  });
   final String text;
   final Function()? onPressed;
-
+  final bool isLoading;
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
@@ -17,7 +22,9 @@ class CustomElevatedButton extends StatelessWidget {
         minimumSize: Size(double.infinity, 64),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       ),
-      child: Text(text, style: AppStyles.blod36White),
+      child: isLoading
+          ? CircularProgressIndicator(color: AppColors.whiteColor)
+          : Text(text, style: AppStyles.blod36White),
     );
   }
 }

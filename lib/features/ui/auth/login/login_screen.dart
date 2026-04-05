@@ -9,6 +9,7 @@ import 'package:my_guide/features/ui/widgets/custom_elevated_button.dart';
 import 'package:my_guide/features/ui/widgets/custom_password_text_field.dart';
 import 'package:my_guide/features/ui/widgets/custom_text_form_field.dart';
 
+// ignore: must_be_immutable
 class LoginScreen extends StatelessWidget {
   LoginScreen({super.key});
 
@@ -17,6 +18,8 @@ class LoginScreen extends StatelessWidget {
   final TextEditingController passwordController = TextEditingController();
 
   GlobalKey<FormState> formKey = GlobalKey();
+
+  bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -59,6 +62,7 @@ class LoginScreen extends StatelessWidget {
                 SizedBox(height: 72.h),
                 CustomElevatedButton(
                   text: 'Log in',
+                  isLoading: isLoading,
                   onPressed: () {
                     if (formKey.currentState!.validate()) {
                       Navigator.pushReplacementNamed(
