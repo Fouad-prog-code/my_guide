@@ -77,11 +77,10 @@ class CustomTextFormField extends StatelessWidget {
             suffixIcon: suffixIcon,
             prefixIcon: Container(
               margin: EdgeInsets.only(left: 8.w, right: 5.w),
-              width: 46.w,
-              height: 43.h,
+              padding: EdgeInsets.symmetric(horizontal: 8.w),
               decoration: BoxDecoration(
                 color: AppColors.primaryColor,
-                borderRadius: BorderRadius.circular(8.r),
+                borderRadius: BorderRadius.circular(12.r),
               ),
               child: Icon(icon, size: 28, color: AppColors.whiteColor),
             ),

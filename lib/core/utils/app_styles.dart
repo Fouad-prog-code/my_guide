@@ -15,9 +15,39 @@ class AppStyles {
     fontWeight: FontWeight.w400, // regural
   );
 
+  static TextStyle bold20primary = GoogleFonts.cairo(
+    color: AppColors.primaryColor,
+    fontSize: 20,
+    fontWeight: FontWeight.bold, // regural
+  );
+
+  static TextStyle regural22White = GoogleFonts.cairo(
+    color: AppColors.whiteColor,
+    fontSize: 22,
+    fontWeight: FontWeight.w400, // regural
+  );
+
   static TextStyle regural14White = GoogleFonts.cairo(
     color: AppColors.whiteColor,
-    fontSize: 24,
+    fontSize: 14,
+    fontWeight: FontWeight.w400, // regural
+  );
+
+  static TextStyle regural16White = GoogleFonts.cairo(
+    color: AppColors.whiteColor,
+    fontSize: 16,
+    fontWeight: FontWeight.w400, // regural
+  );
+
+  static TextStyle regural16Black = GoogleFonts.cairo(
+    color: AppColors.blackColor,
+    fontSize: 16,
+    fontWeight: FontWeight.w400, // regural
+  );
+
+  static TextStyle regural12White = GoogleFonts.cairo(
+    color: AppColors.whiteColor,
+    fontSize: 12,
     fontWeight: FontWeight.w400, // regural
   );
 
@@ -42,6 +72,12 @@ class AppStyles {
   static TextStyle blod36White = GoogleFonts.lisuBosa(
     color: AppColors.whiteColor,
     fontSize: 36,
+    fontWeight: FontWeight.bold, // regural
+  );
+
+  static TextStyle blod24White = GoogleFonts.lisuBosa(
+    color: AppColors.whiteColor,
+    fontSize: 24,
     fontWeight: FontWeight.bold, // regural
   );
 

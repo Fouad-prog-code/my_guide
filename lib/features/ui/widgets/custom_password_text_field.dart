@@ -47,7 +47,7 @@ class _CustomPasswordTextFieldState extends State<CustomPasswordTextField> {
         icon: Icon(
           isVisible ? Icons.visibility : Icons.visibility_off,
           color: AppColors.blackColor,
-          size: 40,
+          size: 28,
         ),
       ),
       icon: Icons.lock,

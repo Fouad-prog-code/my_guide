@@ -4,8 +4,9 @@ import 'package:my_guide/core/utils/app_colors.dart';
 import 'package:my_guide/core/utils/app_styles.dart';
 import 'package:my_guide/features/ui/widgets/lecture_info_widget.dart';
 
+// ignore: must_be_immutable
 class ScheduleDayWidget extends StatelessWidget {
-  const ScheduleDayWidget({
+  ScheduleDayWidget({
     super.key,
     required this.day,
     required this.numOfLectures,
@@ -14,64 +15,78 @@ class ScheduleDayWidget extends StatelessWidget {
   final String day;
   final int numOfLectures;
 
+  List<dynamic> lecturesDetailsList = [
+    {'name': 'قواعد بيانات', 'loc': 'مدرج 1', 'time': '11:30 - 01:00'},
+    {'name': 'هياكل البيانات', 'loc': 'مدرج 2', 'time': '01:30 - 03:00'},
+    {'name': 'شبكات', 'loc': 'مدرج 2', 'time': '01:30 - 03:00'},
+  ];
+
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: EdgeInsets.only(bottom: 32.h),
-      elevation: 3,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
+    return Container(
+      margin: EdgeInsets.only(bottom: 24.h),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20.r),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
       child: Column(
         children: [
           Container(
-            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
+            padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 15.h),
             decoration: BoxDecoration(
-              color: AppColors.primaryColor.withOpacity(0.1),
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(16.r),
-                topRight: Radius.circular(16.r),
-              ),
+              color: AppColors.primaryColor.withOpacity(0.08),
+              borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
             ),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(day, style: AppStyles.bold24Black),
                 Container(
-                  padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 6.h),
+                  width: 5.w,
+                  height: 25.h,
                   decoration: BoxDecoration(
                     color: AppColors.primaryColor,
-                    borderRadius: BorderRadius.circular(12.r),
+                    borderRadius: BorderRadius.circular(10.r),
                   ),
-                  child: Text(
-                    '$numOfLectures محاضرة',
-                    style: AppStyles.regural14White,
+                ),
+                SizedBox(width: 10.w),
+                Text(
+                  day,
+                  style: AppStyles.bold24Black.copyWith(fontSize: 20.sp),
+                ),
+                const Spacer(),
+                Text(
+                  '$numOfLectures محاضرات',
+                  style: AppStyles.regural16White.copyWith(
+                    color: AppColors.primaryColor,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ],
             ),
           ),
 
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
-            child: ListView.builder(
-              shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
-              itemCount: numOfLectures,
-              itemBuilder: (context, index) {
-                return Column(
-                  children: [
-                    if (index != 0)
-                      Divider(
-                        height: 20,
-                        thickness: 1,
-                        color: AppColors.darkGrayColor,
-                        indent: 22,
-                        endIndent: 22,
-                      ),
-                    LectureInfoWidget(),
-                  ],
-                );
-              },
+          ListView.separated(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: numOfLectures,
+            separatorBuilder: (context, index) => Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20.w),
+              child: Divider(height: 1, color: Colors.grey.shade200),
             ),
+            itemBuilder: (context, index) {
+              return LectureInfoWidget(
+                time: lecturesDetailsList[index]['time'],
+                location: lecturesDetailsList[index]['loc'],
+                lectureName: lecturesDetailsList[index]['name'],
+                day: day,
+              );
+            },
           ),
         ],
       ),
