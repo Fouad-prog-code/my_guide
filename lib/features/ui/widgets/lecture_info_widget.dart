@@ -1,22 +1,96 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:my_guide/features/ui/widgets/icon_text_row_widget.dart';
+import 'package:my_guide/core/utils/app_colors.dart';
+import 'package:my_guide/core/utils/app_routes.dart';
+import 'package:my_guide/core/utils/app_styles.dart';
 
 class LectureInfoWidget extends StatelessWidget {
-  const LectureInfoWidget({super.key});
+  const LectureInfoWidget({
+    super.key,
+    required this.time,
+    required this.location,
+    required this.lectureName,
+    required this.day,
+  });
+  final String time;
+  final String location;
+  final String lectureName;
+  final String day;
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 16.h),
-      child: Column(
-        children: [
-          IconTextRowWidget(icon: Icons.access_time, text: '11:30 - 01:00'),
-          SizedBox(height: 12.h),
-          IconTextRowWidget(icon: Icons.place, text: 'مدرج 1'),
-          SizedBox(height: 12.h),
-          IconTextRowWidget(icon: Icons.school, text: 'هياكل البيانات'),
-        ],
+    return InkWell(
+      onTap: () {
+        Navigator.pushNamed(
+          context,
+          AppRoutes.lectureDetailsRoute,
+          arguments: [time, location, lectureName, day],
+        );
+      },
+      borderRadius: BorderRadius.circular(15.r),
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+        child: Row(
+          children: [
+            Column(
+              children: [
+                Icon(
+                  Icons.access_time_rounded,
+                  color: AppColors.primaryColor,
+                  size: 22,
+                ),
+                SizedBox(height: 5.h),
+                Text(
+                  time.split(' - ')[0],
+                  style: AppStyles.regural16Black.copyWith(fontSize: 12.sp),
+                ),
+              ],
+            ),
+
+            Container(
+              height: 40.h,
+              width: 1,
+              color: Colors.grey.shade300,
+              margin: EdgeInsets.symmetric(horizontal: 15.w),
+            ),
+
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    lectureName,
+                    style: AppStyles.blod20Black.copyWith(fontSize: 17.sp),
+                  ),
+                  SizedBox(height: 6.h),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.place_outlined,
+                        size: 16.sp,
+                        color: Colors.grey,
+                      ),
+                      SizedBox(width: 4.w),
+                      Text(
+                        location,
+                        style: AppStyles.regural16Black.copyWith(
+                          color: Colors.grey,
+                          fontSize: 14.sp,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+
+            Icon(
+              Icons.arrow_forward_ios_rounded,
+              size: 16.sp,
+              color: Colors.grey.shade400,
+            ),
+          ],
+        ),
       ),
     );
   }
