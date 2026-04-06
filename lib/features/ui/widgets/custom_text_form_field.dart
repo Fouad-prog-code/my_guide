@@ -50,7 +50,8 @@ class CustomTextFormField extends StatelessWidget {
           },
           keyboardType: textType,
           obscureText: obscureText,
-          obscuringCharacter: '*',
+          autovalidateMode: AutovalidateMode.onUserInteraction,
+          //obscuringCharacter: '*',
           controller: controller,
           style: AppStyles.bold24Black,
           decoration: InputDecoration(

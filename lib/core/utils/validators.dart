@@ -12,9 +12,9 @@ class AppValidators {
 
     if (!isValid) {
       return 'Enter a valid email address';
+    } else {
+      return null;
     }
-
-    return null;
   }
 
   static String? validatePassword({required String? password}) {
