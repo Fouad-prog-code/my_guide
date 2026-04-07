@@ -21,7 +21,7 @@ class LectureDetailsScreen extends StatelessWidget {
           centerTitle: true,
           backgroundColor: AppColors.primaryColor,
           elevation: 0,
-
+          toolbarHeight: 80.h,
           iconTheme: IconThemeData(color: AppColors.whiteColor),
           title: Text('تفاصيل المحاضرة', style: AppStyles.blod24White),
         ),
