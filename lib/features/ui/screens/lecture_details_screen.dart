@@ -15,32 +15,19 @@ class LectureDetailsScreen extends StatelessWidget {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        // تحسين الـ AppBar
         appBar: AppBar(
           centerTitle: true,
           backgroundColor: AppColors.primaryColor,
           elevation: 0,
+          toolbarHeight: 80.h,
           iconTheme: IconThemeData(color: AppColors.whiteColor),
           title: Text('تفاصيل المحاضرة', style: AppStyles.blod24White),
-          flexibleSpace: Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topRight,
-                end: Alignment.bottomLeft,
-                colors: [
-                  AppColors.primaryColor,
-                  AppColors.primaryColor.withOpacity(0.8),
-                ],
-              ),
-            ),
-          ),
         ),
         body: Padding(
           padding: EdgeInsets.all(20.dg),
           child: Column(
             children: [
               SizedBox(height: 10.h),
-
               Card(
                 elevation: 5,
                 shadowColor: Colors.black12,
