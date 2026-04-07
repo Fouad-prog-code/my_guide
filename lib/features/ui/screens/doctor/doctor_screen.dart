@@ -4,8 +4,8 @@ import 'package:my_guide/core/utils/app_colors.dart';
 import 'package:my_guide/core/utils/app_styles.dart';
 import 'package:my_guide/features/ui/widgets/schedule_day_widget.dart';
 
-class StudentScreen extends StatelessWidget {
-  const StudentScreen({super.key});
+class DoctorScreen extends StatelessWidget {
+  const DoctorScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -23,15 +23,27 @@ class StudentScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'جدول المحاضرات',
-                  style: AppStyles.regural24White.copyWith(
-                    fontWeight: FontWeight.bold,
+                Text.rich(
+                  TextSpan(
+                    children: [
+                      TextSpan(
+                        text: 'مرحباً د. ',
+                        style: AppStyles.regural24White.copyWith(
+                          fontWeight: FontWeight.normal,
+                        ),
+                      ),
+                      TextSpan(
+                        text: 'احمد محمد',
+                        style: AppStyles.regural24White.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 SizedBox(height: 12.h),
                 Text(
-                  'الفرقة الأولى',
+                  'جدول المحاضرات',
                   style: AppStyles.regural16White.copyWith(
                     color: Colors.white70,
                   ),
@@ -49,17 +61,17 @@ class StudentScreen extends StatelessWidget {
                 ScheduleDayWidget(
                   day: 'السبت',
                   numOfLectures: 3,
-                  isStudent: true,
+                  isStudent: false,
                 ),
                 ScheduleDayWidget(
                   day: 'الاتنين',
                   numOfLectures: 1,
-                  isStudent: true,
+                  isStudent: false,
                 ),
                 ScheduleDayWidget(
                   day: 'الاربعاء',
                   numOfLectures: 2,
-                  isStudent: true,
+                  isStudent: false,
                 ),
               ],
             ),

@@ -3,37 +3,27 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:my_guide/core/utils/app_colors.dart';
 import 'package:my_guide/core/utils/app_styles.dart';
+import 'package:my_guide/features/ui/widgets/build_detail_row.dart';
+import 'package:my_guide/features/ui/widgets/build_divider.dart';
 
 class LectureDetailsScreen extends StatelessWidget {
   const LectureDetailsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    List<String> detailsList =
-        ModalRoute.of(context)!.settings.arguments as List<String>;
+    List<dynamic> detailsList =
+        ModalRoute.of(context)!.settings.arguments as List<dynamic>;
 
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        // تحسين الـ AppBar
         appBar: AppBar(
           centerTitle: true,
           backgroundColor: AppColors.primaryColor,
           elevation: 0,
+
           iconTheme: IconThemeData(color: AppColors.whiteColor),
           title: Text('تفاصيل المحاضرة', style: AppStyles.blod24White),
-          flexibleSpace: Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topRight,
-                end: Alignment.bottomLeft,
-                colors: [
-                  AppColors.primaryColor,
-                  AppColors.primaryColor.withOpacity(0.8),
-                ],
-              ),
-            ),
-          ),
         ),
         body: Padding(
           padding: EdgeInsets.all(20.dg),
@@ -54,31 +44,36 @@ class LectureDetailsScreen extends StatelessWidget {
                   ),
                   child: Column(
                     children: [
-                      _buildDetailRow(
+                      BuildDetailRow(
                         icon: Icons.school,
                         label: 'اسم المادة',
                         value: detailsList[2],
                       ),
 
-                      _buildDivider(),
+                      BuildDivider(),
+                      detailsList[4]
+                          ? BuildDetailRow(
+                              icon: Icons.person_outline,
+                              label: 'المحاضر',
+                              value: 'د. احمد محمد',
+                            )
+                          : BuildDetailRow(
+                              icon: Icons.bar_chart_rounded,
+                              label: 'الفرقه',
+                              value: 'الثانيه',
+                            ),
 
-                      _buildDetailRow(
-                        icon: Icons.person_outline,
-                        label: 'المحاضر',
-                        value: 'د. احمد محمد',
-                      ),
+                      BuildDivider(),
 
-                      _buildDivider(),
-
-                      _buildDetailRow(
+                      BuildDetailRow(
                         icon: Icons.location_on_outlined,
                         label: 'المكان',
                         value: detailsList[1],
                       ),
 
-                      _buildDivider(),
+                      BuildDivider(),
 
-                      _buildDetailRow(
+                      BuildDetailRow(
                         icon: Icons.access_time_outlined,
                         label: 'الموعد',
 
@@ -91,62 +86,6 @@ class LectureDetailsScreen extends StatelessWidget {
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildDetailRow({
-    required IconData icon,
-    required String label,
-    required String value,
-  }) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          padding: EdgeInsets.all(10.dg),
-          decoration: BoxDecoration(
-            color: AppColors.primaryColor.withOpacity(0.1),
-            shape: BoxShape.circle,
-          ),
-          child: Icon(icon, color: AppColors.primaryColor, size: 24.dg),
-        ),
-        SizedBox(width: 16.w),
-
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                label,
-                style: AppStyles.bold20primary.copyWith(
-                  fontSize: 14.sp,
-                  color: Colors.grey[600],
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              SizedBox(height: 4.h),
-              Text(
-                value,
-                style: AppStyles.bold20primary.copyWith(
-                  fontSize: 17.sp,
-                  height: 1.3,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildDivider() {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 16.h),
-      child: Divider(
-        color: Colors.grey[200],
-        thickness: 1,
-        indent: 50.w, // يبدأ الفاصل بعد مسافة الأيقونة
       ),
     );
   }
