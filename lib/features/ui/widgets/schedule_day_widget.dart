@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:my_guide/core/utils/app_colors.dart';
+import 'package:my_guide/core/utils/app_routes.dart';
 import 'package:my_guide/core/utils/app_styles.dart';
 import 'package:my_guide/features/ui/widgets/lecture_info_widget.dart';
 
@@ -10,10 +11,12 @@ class ScheduleDayWidget extends StatelessWidget {
     super.key,
     required this.day,
     required this.numOfLectures,
+    required this.isStudent,
   });
 
   final String day;
   final int numOfLectures;
+  bool isStudent;
 
   List<dynamic> lecturesDetailsList = [
     {'name': 'قواعد بيانات', 'loc': 'مدرج 1', 'time': '11:30 - 01:00'},
@@ -80,11 +83,25 @@ class ScheduleDayWidget extends StatelessWidget {
               child: Divider(height: 1, color: Colors.grey.shade200),
             ),
             itemBuilder: (context, index) {
-              return LectureInfoWidget(
-                time: lecturesDetailsList[index]['time'],
-                location: lecturesDetailsList[index]['loc'],
-                lectureName: lecturesDetailsList[index]['name'],
-                day: day,
+              return InkWell(
+                onTap: () {
+                  Navigator.pushNamed(
+                    context,
+                    AppRoutes.lectureDetailsRoute,
+                    arguments: [
+                      lecturesDetailsList[index]['time'],
+                      lecturesDetailsList[index]['loc'],
+                      lecturesDetailsList[index]['name'],
+                      day,
+                      isStudent,
+                    ],
+                  );
+                },
+                child: LectureInfoWidget(
+                  time: lecturesDetailsList[index]['time'],
+                  location: lecturesDetailsList[index]['loc'],
+                  lectureName: lecturesDetailsList[index]['name'],
+                ),
               );
             },
           ),

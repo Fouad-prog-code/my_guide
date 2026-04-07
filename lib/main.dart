@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:my_guide/core/utils/app_routes.dart';
 import 'package:my_guide/features/ui/auth/login/login_screen.dart';
+import 'package:my_guide/features/ui/screens/doctor/doctor_screen.dart';
 import 'package:my_guide/features/ui/screens/lecture_details_screen.dart';
 import 'package:my_guide/features/ui/screens/student/student_screen.dart';
 
@@ -24,6 +25,7 @@ class MyApp extends StatelessWidget {
           AppRoutes.loginRoute: (context) => LoginScreen(),
           AppRoutes.studentRoute: (context) => StudentScreen(),
           AppRoutes.lectureDetailsRoute: (context) => LectureDetailsScreen(),
+          AppRoutes.doctorRoute: (context) => DoctorScreen(),
         },
       ),
     );
