@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:my_guide/core/utils/app_colors.dart';
 import 'package:my_guide/core/utils/app_styles.dart';
@@ -32,7 +33,7 @@ class CustomTextFormField extends StatelessWidget {
   final TextEditingController? controller;
   final TextInputType? textType;
   final double radius;
-  TextStyle? hintStyle = AppStyles.bold22DarkGray;
+  TextStyle? hintStyle = AppStyles.bold18DarkGray;
   Color borderSideColor;
   bool filledColor;
   @override
@@ -48,6 +49,7 @@ class CustomTextFormField extends StatelessWidget {
           validator: (value) {
             return validator!(value);
           },
+          inputFormatters: [FilteringTextInputFormatter.deny(RegExp(r'^\s'))],
           keyboardType: textType,
           obscureText: obscureText,
           autovalidateMode: AutovalidateMode.onUserInteraction,

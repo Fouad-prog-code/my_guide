@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:my_guide/core/utils/app_colors.dart';
+import 'package:my_guide/core/utils/app_styles.dart';
 import 'package:my_guide/features/ui/widgets/custom_text_form_field.dart';
 
 // ignore: must_be_immutable
@@ -29,21 +30,23 @@ class _CustomPasswordTextFieldState extends State<CustomPasswordTextField> {
   Widget build(BuildContext context) {
     return CustomTextFormField(
       // borderSideColor: widget.borderSideColor,
-      labelText: 'Password',
+      labelText: 'كلمة المرور',
       hintText: widget.hintText,
-
+      hintStyle: AppStyles.bold22DarkGray,
       controller: widget.controller,
       textType: TextInputType.visiblePassword,
       validator: (value) {
         return widget.validator!(value);
       },
       obscureText: obscureText,
+
       suffixIcon: IconButton(
         onPressed: () {
           isVisible = !isVisible;
           obscureText = !obscureText;
           setState(() {});
         },
+
         icon: Icon(
           isVisible ? Icons.visibility : Icons.visibility_off,
           color: AppColors.blackColor,

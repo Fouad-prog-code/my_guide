@@ -14,11 +14,8 @@ class LoginScreen extends StatelessWidget {
   LoginScreen({super.key});
 
   final TextEditingController emailController = TextEditingController();
-
   final TextEditingController passwordController = TextEditingController();
-
   final GlobalKey<FormState> formKey = GlobalKey();
-
   bool isLoading = false;
 
   @override
@@ -43,12 +40,10 @@ class LoginScreen extends StatelessWidget {
                   SizedBox(height: 40.h),
                   Image.asset(AppAssets.userImage, height: 120.h),
                   SizedBox(height: 8.h),
-                  Text('Sign in', style: AppStyles.regural32White),
+                  Text('تسجيل الدخول', style: AppStyles.regural32White),
                 ],
               ),
             ),
-
-            // Form Section
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 40.h),
               child: Form(
@@ -57,25 +52,25 @@ class LoginScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     CustomTextFormField(
-                      hintText: 'email address',
-                      labelText: 'Email',
-                      icon: Icons.email_outlined,
+                      hintText: 'أدخل (ID)',
+                      labelText: 'اسم المستخدم',
+                      icon: Icons.person,
+                      hintStyle: AppStyles.bold22DarkGray,
                       controller: emailController,
-                      validator: (value) =>
-                          AppValidators.validateEmail(email: value),
+                      textType: TextInputType.number,
+                      validator: (value) => AppValidators.validateID(id: value),
                     ),
                     SizedBox(height: 20.h),
                     CustomPasswordTextField(
-                      hintText: 'password',
+                      hintText: 'كلمة المرور',
                       controller: passwordController,
+
                       validator: (value) =>
                           AppValidators.validatePassword(password: value),
                     ),
-
                     SizedBox(height: 60.h),
-
                     CustomElevatedButton(
-                      text: 'Log in',
+                      text: 'دخول',
                       isLoading: isLoading,
                       onPressed: () {
                         if (formKey.currentState!.validate()) {

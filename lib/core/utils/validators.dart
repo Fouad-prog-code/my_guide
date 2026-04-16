@@ -18,19 +18,17 @@ class AppValidators {
   }
 
   static String? validatePassword({required String? password}) {
-    RegExp passwordRegex = RegExp(
-      r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$',
-    );
-
-    if (password == null || password.isEmpty) {
-      return 'this field is required';
-    } else if (password.length < 8) {
-      return 'Password must be at least 8 characters long';
-    } else if (!passwordRegex.hasMatch(password.trim())) {
-      return 'Enter a stronger password';
-    } else {
-      return null;
+    if (password == null || password.trim().isEmpty) {
+      return 'هذا الحقل مطلوب';
     }
+    return null;
+  }
+
+  static String? validateID({required String? id}) {
+    if (id == null || id.trim().isEmpty) {
+      return 'هذا الحقل مطلوب';
+    }
+    return null;
   }
 
   static String? validateConfirmPassword({

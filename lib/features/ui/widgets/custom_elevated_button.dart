@@ -33,7 +33,7 @@ class CustomElevatedButton extends StatelessWidget {
       ),
       child: isLoading
           ? CircularProgressIndicator(color: AppColors.whiteColor)
-          : Text(text, style: style ?? AppStyles.blod36White),
+          : Text(text, style: style ?? AppStyles.blod30White),
     );
   }
 }

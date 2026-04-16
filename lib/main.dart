@@ -6,7 +6,8 @@ import 'package:my_guide/features/ui/screens/doctor/doctor_screen.dart';
 import 'package:my_guide/features/ui/screens/lecture_details_screen.dart';
 import 'package:my_guide/features/ui/screens/student/student_screen.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
 }
 
@@ -17,17 +18,29 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return ScreenUtilInit(
       designSize: const Size(402, 872),
-      builder: (context, child) => MaterialApp(
-        debugShowCheckedModeBanner: false,
-        initialRoute: AppRoutes.loginRoute,
-        locale: Locale('ar'),
-        routes: {
-          AppRoutes.loginRoute: (context) => LoginScreen(),
-          AppRoutes.studentRoute: (context) => StudentScreen(),
-          AppRoutes.lectureDetailsRoute: (context) => LectureDetailsScreen(),
-          AppRoutes.doctorRoute: (context) => DoctorScreen(),
-        },
-      ),
+      minTextAdapt: true,
+      splitScreenMode: true,
+      builder: (context, child) {
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+
+          builder: (context, widget) {
+            return Directionality(
+              textDirection: TextDirection.rtl,
+              child: widget!,
+            );
+          },
+
+          initialRoute: AppRoutes.loginRoute,
+          routes: {
+            AppRoutes.loginRoute: (context) => LoginScreen(),
+            AppRoutes.studentRoute: (context) => const StudentScreen(),
+            AppRoutes.lectureDetailsRoute: (context) =>
+                const LectureDetailsScreen(),
+            AppRoutes.doctorRoute: (context) => const DoctorScreen(),
+          },
+        );
+      },
     );
   }
 }
