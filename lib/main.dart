@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:my_guide/config/my_bloc_observer.dart';
 import 'package:my_guide/core/utils/app_routes.dart';
 import 'package:my_guide/features/ui/auth/login/login_screen.dart';
 import 'package:my_guide/features/ui/screens/doctor/doctor_screen.dart';
@@ -8,6 +10,7 @@ import 'package:my_guide/features/ui/screens/student/student_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  Bloc.observer = MyBlocObserver();
   runApp(const MyApp());
 }
 
