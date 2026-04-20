@@ -19,14 +19,14 @@ class AppValidators {
 
   static String? validatePassword({required String? password}) {
     if (password == null || password.trim().isEmpty) {
-      return 'هذا الحقل مطلوب';
+      return 'enter password';
     }
     return null;
   }
 
-  static String? validateID({required String? id}) {
-    if (id == null || id.trim().isEmpty) {
-      return 'هذا الحقل مطلوب';
+  static String? validateUserName({required String? userName}) {
+    if (userName == null || userName.trim().isEmpty) {
+      return 'enter user name';
     }
     return null;
   }
@@ -43,17 +43,17 @@ class AppValidators {
     return null;
   }
 
-  static String? validateUserName({required String? userName}) {
-    final RegExp usernameRegExp = RegExp(r'^[a-zA-Z0-9_]{3,16}$');
+  // static String? validateUserName({required String? userName}) {
+  //   final RegExp usernameRegExp = RegExp(r'^[a-zA-Z0-9_]{3,16}$');
 
-    if (userName == null || userName.isEmpty) {
-      return 'this field is required';
-    } else if (!usernameRegExp.hasMatch(userName)) {
-      return 'Invalid username (3-16 chars, alphanumeric, underscore)';
-    } else {
-      return null;
-    }
-  }
+  //   if (userName == null || userName.isEmpty) {
+  //     return 'this field is required';
+  //   } else if (!usernameRegExp.hasMatch(userName)) {
+  //     return 'Invalid username (3-16 chars, alphanumeric, underscore)';
+  //   } else {
+  //     return null;
+  //   }
+  // }
 
   static String? validateFullName({required String? fullName}) {
     if (fullName == null || fullName.isEmpty) {

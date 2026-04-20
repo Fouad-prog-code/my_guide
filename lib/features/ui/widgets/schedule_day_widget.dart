@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:my_guide/core/utils/app_colors.dart';
 import 'package:my_guide/core/utils/app_routes.dart';
 import 'package:my_guide/core/utils/app_styles.dart';
+import 'package:my_guide/domain/entities/response/doctor/doctor_lectures.dart';
 import 'package:my_guide/features/ui/widgets/lecture_info_widget.dart';
 
 // ignore: must_be_immutable
@@ -12,17 +13,14 @@ class ScheduleDayWidget extends StatelessWidget {
     required this.day,
     required this.numOfLectures,
     required this.isStudent,
+    required this.lectures,
   });
 
   final String day;
   final int numOfLectures;
   bool isStudent;
 
-  List<dynamic> lecturesDetailsList = [
-    {'name': 'قواعد بيانات', 'loc': 'مدرج 1', 'time': '11:30 - 01:00'},
-    {'name': 'هياكل البيانات', 'loc': 'مدرج 2', 'time': '01:30 - 03:00'},
-    {'name': 'شبكات', 'loc': 'مدرج 2', 'time': '01:30 - 03:00'},
-  ];
+  List<DoctorLectures> lectures;
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +62,9 @@ class ScheduleDayWidget extends StatelessWidget {
                 ),
                 const Spacer(),
                 Text(
-                  '$numOfLectures محاضرات',
+                  numOfLectures > 1
+                      ? '$numOfLectures Lectures'
+                      : '$numOfLectures Lecture',
                   style: AppStyles.regural16White.copyWith(
                     color: AppColors.primaryColor,
                     fontWeight: FontWeight.bold,
@@ -73,7 +73,6 @@ class ScheduleDayWidget extends StatelessWidget {
               ],
             ),
           ),
-
           ListView.separated(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
@@ -88,19 +87,17 @@ class ScheduleDayWidget extends StatelessWidget {
                   Navigator.pushNamed(
                     context,
                     AppRoutes.lectureDetailsRoute,
-                    arguments: [
-                      lecturesDetailsList[index]['time'],
-                      lecturesDetailsList[index]['loc'],
-                      lecturesDetailsList[index]['name'],
-                      day,
-                      isStudent,
-                    ],
+                    arguments: {
+                      'lecture': lectures[index],
+                      'day': day,
+                      'isStudent': isStudent,
+                    },
                   );
                 },
                 child: LectureInfoWidget(
-                  time: lecturesDetailsList[index]['time'],
-                  location: lecturesDetailsList[index]['loc'],
-                  lectureName: lecturesDetailsList[index]['name'],
+                  time: lectures[index].startTime ?? '',
+                  location: lectures[index].roomName ?? '',
+                  lectureName: lectures[index].courseName ?? '',
                 ),
               );
             },

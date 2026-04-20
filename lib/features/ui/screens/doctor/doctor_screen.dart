@@ -1,14 +1,50 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:my_guide/config/di.dart';
 import 'package:my_guide/core/utils/app_colors.dart';
 import 'package:my_guide/core/utils/app_styles.dart';
+import 'package:my_guide/domain/entities/response/login/data_response.dart';
+import 'package:my_guide/features/ui/screens/doctor/cubit/doctor_states.dart';
+import 'package:my_guide/features/ui/screens/doctor/cubit/doctor_view_model.dart';
 import 'package:my_guide/features/ui/widgets/schedule_day_widget.dart';
 
-class DoctorScreen extends StatelessWidget {
+class DoctorScreen extends StatefulWidget {
   const DoctorScreen({super.key});
 
   @override
+  State<DoctorScreen> createState() => _DoctorScreenState();
+}
+
+class _DoctorScreenState extends State<DoctorScreen> {
+  DoctorViewModel viewModel = getIt<DoctorViewModel>();
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() {
+      final args =
+          ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>? ??
+          {};
+
+      final String doctorId = args["userId"] ?? '';
+      final Data data = args["data"] ?? '';
+
+      viewModel.getDoctorScedule(
+        doctorId: int.parse(doctorId),
+        token: data.token ?? '',
+      );
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
+    Map<String, dynamic> args =
+        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>? ??
+        {};
+
+    Data data = args['data'] ?? {};
+
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 125.h,
@@ -25,13 +61,13 @@ class DoctorScreen extends StatelessWidget {
                 TextSpan(
                   children: [
                     TextSpan(
-                      text: 'مرحباً د. ',
+                      text: 'Welcome ',
                       style: AppStyles.regural24White.copyWith(
                         fontWeight: FontWeight.normal,
                       ),
                     ),
                     TextSpan(
-                      text: 'احمد محمد',
+                      text: data.fullName,
                       style: AppStyles.regural24White.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
@@ -41,37 +77,45 @@ class DoctorScreen extends StatelessWidget {
               ),
               SizedBox(height: 12.h),
               Text(
-                'جدول المحاضرات',
+                'Lectures Schedule',
                 style: AppStyles.regural16White.copyWith(color: Colors.white70),
               ),
             ],
           ),
         ),
       ),
-      body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 21.w, vertical: 24.h),
-        child: SingleChildScrollView(
-          child: Column(
-            // crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              ScheduleDayWidget(
-                day: 'السبت',
-                numOfLectures: 3,
-                isStudent: false,
+      body: BlocBuilder<DoctorViewModel, DoctorStates>(
+        bloc: viewModel,
+        builder: (context, state) {
+          if (state is DoctorErrorState) {
+            return Center(
+              child: Text(state.message, style: AppStyles.bold20primary),
+            );
+          } else if (state is DoctorSuccessState) {
+            final doctorData = state.response.data ?? [];
+            if (doctorData.isEmpty) {
+              return Center(
+                child: Text('No Data Found', style: AppStyles.bold20primary),
+              );
+            }
+            return Padding(
+              padding: EdgeInsets.symmetric(horizontal: 21.w, vertical: 24.h),
+              child: ListView.builder(
+                itemCount: doctorData.length,
+                itemBuilder: (context, index) {
+                  return ScheduleDayWidget(
+                    day: doctorData[index].dayName ?? '',
+                    numOfLectures: doctorData[index].lectures?.length ?? 0,
+                    isStudent: false,
+                    lectures: doctorData[index].lectures ?? [],
+                  );
+                },
               ),
-              ScheduleDayWidget(
-                day: 'الاتنين',
-                numOfLectures: 1,
-                isStudent: false,
-              ),
-              ScheduleDayWidget(
-                day: 'الاربعاء',
-                numOfLectures: 2,
-                isStudent: false,
-              ),
-            ],
-          ),
-        ),
+            );
+          } else {
+            return const Center(child: CircularProgressIndicator());
+          }
+        },
       ),
     );
   }

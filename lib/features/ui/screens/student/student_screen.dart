@@ -42,21 +42,21 @@ class StudentScreen extends StatelessWidget {
           child: Column(
             // crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              ScheduleDayWidget(
-                day: 'السبت',
-                numOfLectures: 3,
-                isStudent: true,
-              ),
-              ScheduleDayWidget(
-                day: 'الاتنين',
-                numOfLectures: 1,
-                isStudent: true,
-              ),
-              ScheduleDayWidget(
-                day: 'الاربعاء',
-                numOfLectures: 2,
-                isStudent: true,
-              ),
+              // ScheduleDayWidget(
+              //   day: 'السبت',
+              //   numOfLectures: 3,
+              //   isStudent: true,
+              // ),
+              // ScheduleDayWidget(
+              //   day: 'الاتنين',
+              //   numOfLectures: 1,
+              //   isStudent: true,
+              // ),
+              // ScheduleDayWidget(
+              //   day: 'الاربعاء',
+              //   numOfLectures: 2,
+              //   isStudent: true,
+              // ),
             ],
           ),
         ),

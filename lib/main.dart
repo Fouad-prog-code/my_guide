@@ -30,13 +30,6 @@ class MyApp extends StatelessWidget {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
 
-          builder: (context, widget) {
-            return Directionality(
-              textDirection: TextDirection.rtl,
-              child: widget!,
-            );
-          },
-
           initialRoute: AppRoutes.loginRoute,
           routes: {
             AppRoutes.loginRoute: (context) => LoginScreen(),
