@@ -4,4 +4,5 @@ class AppRoutes {
   static String doctorRoute = 'doctor_route';
   static String managerRoute = 'manager_route';
   static String lectureDetailsRoute = 'lecture_details_route';
+  static String adminlayoutRoute = 'admin_layout_route';
 }

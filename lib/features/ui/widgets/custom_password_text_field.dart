@@ -30,7 +30,7 @@ class _CustomPasswordTextFieldState extends State<CustomPasswordTextField> {
   Widget build(BuildContext context) {
     return CustomTextFormField(
       // borderSideColor: widget.borderSideColor,
-      labelText: 'كلمة المرور',
+      labelText: 'Password',
       hintText: widget.hintText,
       hintStyle: AppStyles.bold22DarkGray,
       controller: widget.controller,

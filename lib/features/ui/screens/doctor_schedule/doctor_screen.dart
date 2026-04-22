@@ -5,8 +5,8 @@ import 'package:my_guide/config/di.dart';
 import 'package:my_guide/core/utils/app_colors.dart';
 import 'package:my_guide/core/utils/app_styles.dart';
 import 'package:my_guide/domain/entities/response/login/data_response.dart';
-import 'package:my_guide/features/ui/screens/doctor/cubit/doctor_states.dart';
-import 'package:my_guide/features/ui/screens/doctor/cubit/doctor_view_model.dart';
+import 'package:my_guide/features/ui/screens/doctor_schedule/cubit/doctor_schedule_states.dart';
+import 'package:my_guide/features/ui/screens/doctor_schedule/cubit/doctor_schedule_view_model.dart';
 import 'package:my_guide/features/ui/widgets/schedule_day_widget.dart';
 
 class DoctorScreen extends StatefulWidget {
@@ -17,7 +17,7 @@ class DoctorScreen extends StatefulWidget {
 }
 
 class _DoctorScreenState extends State<DoctorScreen> {
-  DoctorViewModel viewModel = getIt<DoctorViewModel>();
+  DoctorScheduleViewModel viewModel = getIt<DoctorScheduleViewModel>();
 
   @override
   void initState() {
@@ -84,7 +84,7 @@ class _DoctorScreenState extends State<DoctorScreen> {
           ),
         ),
       ),
-      body: BlocBuilder<DoctorViewModel, DoctorStates>(
+      body: BlocBuilder<DoctorScheduleViewModel, DoctorScheduleStates>(
         bloc: viewModel,
         builder: (context, state) {
           if (state is DoctorErrorState) {

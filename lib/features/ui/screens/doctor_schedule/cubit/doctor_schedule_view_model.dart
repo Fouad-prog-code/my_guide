@@ -3,13 +3,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 import 'package:my_guide/core/errors/app_error.dart';
 import 'package:my_guide/domain/use_case/doctor_use_case.dart';
-import 'package:my_guide/features/ui/screens/doctor/cubit/doctor_states.dart';
+import 'package:my_guide/features/ui/screens/doctor_schedule/cubit/doctor_schedule_states.dart';
 
 @injectable
-class DoctorViewModel extends Cubit<DoctorStates> {
+class DoctorScheduleViewModel extends Cubit<DoctorScheduleStates> {
   DoctorUseCase doctorUseCase;
 
-  DoctorViewModel({required this.doctorUseCase}) : super(DoctorinitState());
+  DoctorScheduleViewModel({required this.doctorUseCase})
+    : super(DoctorinitState());
 
   getDoctorScedule({required int doctorId, required String token}) async {
     try {

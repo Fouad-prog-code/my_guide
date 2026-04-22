@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:my_guide/core/utils/app_colors.dart';
-import 'package:my_guide/core/utils/app_routes.dart';
+
 import 'package:my_guide/core/utils/app_styles.dart';
 import 'package:my_guide/domain/entities/response/doctor/doctor_lectures.dart';
 import 'package:my_guide/features/ui/widgets/build_detail_row.dart';

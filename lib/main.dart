@@ -4,8 +4,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:my_guide/config/di.dart';
 import 'package:my_guide/config/my_bloc_observer.dart';
 import 'package:my_guide/core/utils/app_routes.dart';
+import 'package:my_guide/features/ui/admin/screens/home_page.dart';
 import 'package:my_guide/features/ui/auth/login/login_screen.dart';
-import 'package:my_guide/features/ui/screens/doctor/doctor_screen.dart';
+import 'package:my_guide/features/ui/screens/doctor_schedule/doctor_screen.dart';
 import 'package:my_guide/features/ui/screens/lecture_details_screen.dart';
 import 'package:my_guide/features/ui/screens/student/student_screen.dart';
 
@@ -37,6 +38,7 @@ class MyApp extends StatelessWidget {
             AppRoutes.lectureDetailsRoute: (context) =>
                 const LectureDetailsScreen(),
             AppRoutes.doctorRoute: (context) => const DoctorScreen(),
+            AppRoutes.adminlayoutRoute: (context) => const AdminLayout(),
           },
         );
       },

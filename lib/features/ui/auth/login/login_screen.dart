@@ -95,7 +95,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                           String? userId = getUserIdFromToken(token ?? '');
 
-                          print(userId);
+                          print(role);
 
                           SharedPreferencesUtils.setData(
                             key: 'token',
@@ -118,6 +118,12 @@ class _LoginScreenState extends State<LoginScreen> {
                               AppRoutes.studentRoute,
                               arguments: state.response.data,
                             );
+                          } else if (role == 'Admin') {
+                            Navigator.pushReplacementNamed(
+                              context,
+                              AppRoutes.adminlayoutRoute,
+                              arguments: state.response.data,
+                            );
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
@@ -133,7 +139,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         return CustomElevatedButton(
                           text: 'Login',
                           isLoading: isLoading,
-                          onPressed: viewModel.login,
+                          onPressed: isLoading ? null : viewModel.login,
                         );
                       },
                     ),

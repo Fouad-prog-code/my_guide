@@ -24,11 +24,30 @@ class AppValidators {
     return null;
   }
 
-  static String? validateUserName({required String? userName}) {
-    if (userName == null || userName.trim().isEmpty) {
-      return 'enter user name';
+  static String? validateNationalId({required String? id}) {
+    if (id == null || id.trim().isEmpty) {
+      return 'enter id';
+    }
+    if (id.length != 14) {
+      return 'id must be 14 digit';
     }
     return null;
+  }
+
+  static String? validateRegisterPassword({required String? password}) {
+    RegExp passwordRegex = RegExp(
+      r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{6,}$',
+    );
+
+    if (password == null || password.isEmpty) {
+      return 'enter password';
+    } else if (password.length < 6) {
+      return 'must be at least 6 characters';
+    } else if (!passwordRegex.hasMatch(password.trim())) {
+      return 'must have at least one non alphanumeric character, and at least one digit';
+    } else {
+      return null;
+    }
   }
 
   static String? validateConfirmPassword({
@@ -39,6 +58,13 @@ class AppValidators {
       return 'this field is required';
     } else if (confirmPassword != password) {
       return 'Passwords do not match';
+    }
+    return null;
+  }
+
+  static String? validateUserName({required String? userName}) {
+    if (userName == null || userName.isEmpty) {
+      return 'enter userName';
     }
     return null;
   }
@@ -57,7 +83,7 @@ class AppValidators {
 
   static String? validateFullName({required String? fullName}) {
     if (fullName == null || fullName.isEmpty) {
-      return 'this field is required';
+      return 'enter fullName';
     }
 
     // Custom logic: check for only valid characters and a minimum number of words (optional)
