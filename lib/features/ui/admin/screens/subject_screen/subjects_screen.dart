@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:my_guide/config/di.dart';
 import 'package:my_guide/core/cache/shared_preferences.dart';
+import 'package:my_guide/core/utils/app_colors.dart';
+import 'package:my_guide/core/utils/app_styles.dart';
 import 'package:my_guide/core/utils/dialog_utils.dart';
 import 'package:my_guide/core/utils/snack_bar_utils.dart';
 import 'package:my_guide/domain/entities/request/add_subject/add_subject_request.dart';
 import 'package:my_guide/features/ui/admin/screens/subject_screen/cubit/subject_states.dart';
 import 'package:my_guide/features/ui/admin/screens/subject_screen/cubit/subject_view_model.dart';
 import 'package:my_guide/features/ui/admin/widgets/data_manager.dart';
+import 'package:my_guide/features/ui/admin/widgets/error_widget.dart';
 
 class SubjectsScreen extends StatefulWidget {
   const SubjectsScreen({super.key});
@@ -19,144 +23,125 @@ class SubjectsScreen extends StatefulWidget {
 class _SubjectsScreenState extends State<SubjectsScreen> {
   SubjectViewModel viewModel = getIt<SubjectViewModel>();
 
-  String formatDepartments(dynamic depts) {
-    if (depts == null || (depts is List && depts.isEmpty)) return 'General';
-    if (depts is List) return depts.join(' - ').toUpperCase();
-    return depts.toString();
+  @override
+  void initState() {
+    super.initState();
+    viewModel.getSubject();
   }
 
   @override
   Widget build(BuildContext context) {
-    final dataManager = DataManager();
-    bool isMobile = MediaQuery.of(context).size.width < 700;
+    final List<Map<String, dynamic>> doctors = DataManager().doctors;
 
-    final subjects = dataManager.subjects;
-    final doctors = dataManager.doctors;
-
-    return Scaffold(
-      backgroundColor: Colors.grey[50],
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  "Subjects Management",
-                  style: TextStyle(
-                    fontSize: isMobile ? 18 : 22,
-                    fontWeight: FontWeight.bold,
+    return BlocProvider(
+      create: (context) => viewModel,
+      child: Scaffold(
+        backgroundColor: Colors.grey[50],
+        body: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            children: [
+              /// HEADER
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    "Subjects Management",
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
-                ),
-                ElevatedButton.icon(
-                  onPressed: () =>
-                      _openSubjectDialog(context, doctors: doctors),
-                  icon: const Icon(Icons.add),
-                  label: Text(isMobile ? "Add" : "Add Subject"),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blueGrey[900],
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 12,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+                  ElevatedButton.icon(
+                    onPressed: () =>
+                        _openSubjectDialog(context, doctors: doctors),
+                    icon: const Icon(Icons.add),
+                    label: const Text("Add"),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blueGrey[900],
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
                     ),
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-            Expanded(
-              child: subjects.isEmpty
-                  ? const Center(child: Text("No subjects added yet"))
-                  : isMobile
-                  ? _buildMobileList(context, subjects, doctors)
-                  : _buildWebTable(context, subjects, doctors),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+                ],
+              ),
 
-  Widget _buildWebTable(
-    BuildContext context,
-    List<Map<String, dynamic>> subjects,
-    List<Map<String, dynamic>> doctors,
-  ) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 4)],
-      ),
-      child: SingleChildScrollView(
-        child: DataTable(
-          columns: const [
-            DataColumn(label: Text("Subject Name")),
-            DataColumn(label: Text("Doctor")),
-            DataColumn(label: Text("Year")),
-            DataColumn(label: Text("Departments")),
-            DataColumn(label: Text("Actions")),
-          ],
-          rows: subjects.map((item) {
-            final doctor = doctors.firstWhere(
-              (d) => d['id'] == item['doctorId'],
-              orElse: () => {'name': 'N/A'},
-            );
-            return DataRow(
-              cells: [
-                DataCell(Text(item['name'])),
-                DataCell(Text(doctor['name'])),
-                DataCell(Text(item['year'].toString())),
-                DataCell(Text(formatDepartments(item['department']))),
-                DataCell(_buildActions(context, item, doctors)),
-              ],
-            );
-          }).toList(),
-        ),
-      ),
-    );
-  }
+              const SizedBox(height: 20),
 
-  Widget _buildMobileList(
-    BuildContext context,
-    List<Map<String, dynamic>> subjects,
-    List<Map<String, dynamic>> doctors,
-  ) {
-    return ListView.builder(
-      itemCount: subjects.length,
-      itemBuilder: (context, index) {
-        final item = subjects[index];
-        final doctor = doctors.firstWhere(
-          (d) => d['id'] == item['doctorId'],
-          orElse: () => {'name': 'N/A'},
-        );
-        return Card(
-          margin: const EdgeInsets.only(bottom: 12),
-          child: ListTile(
-            title: Text(
-              item['name'],
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
-            subtitle: Text(
-              "Dr: ${doctor['name']}\nDepts: ${formatDepartments(item['department'])}",
-            ),
-            trailing: _buildActions(context, item, doctors),
+              /// LIST
+              BlocBuilder<SubjectViewModel, SubjectStates>(
+                builder: (context, state) {
+                  if (state is GetSubjectErrorState) {
+                    return Padding(
+                      padding: EdgeInsets.only(top: 250.h),
+                      child: ErrorsWidget(
+                        message: state.getSubjectmessage,
+                        onPressed: () {
+                          viewModel.getSubject();
+                        },
+                      ),
+                    );
+                  } else if (state is GetSubjectLoadingState) {
+                    return Center(
+                      child: Padding(
+                        padding: EdgeInsets.only(top: 300.h),
+                        child: CircularProgressIndicator(
+                          color: AppColors.darkGrayColor,
+                        ),
+                      ),
+                    );
+                  } else {
+                    var subjects = viewModel.getSubjectResponse?.data ?? [];
+
+                    return subjects.isEmpty
+                        ? Center(
+                            child: Padding(
+                              padding: EdgeInsets.only(top: 250.h),
+                              child: Text(
+                                textAlign: TextAlign.center,
+                                "No subjects added yet",
+                                style: AppStyles.bold22DarkGray,
+                              ),
+                            ),
+                          )
+                        : Expanded(
+                            child: ListView.builder(
+                              itemCount: subjects.length,
+                              itemBuilder: (_, index) {
+                                return Card(
+                                  margin: const EdgeInsets.only(bottom: 12),
+                                  child: ListTile(
+                                    title: Text(
+                                      subjects[index].subjectName ?? '',
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    subtitle: Text(
+                                      "Dr: ${subjects[index].doctorName}\n"
+                                      "Depts: ${(subjects[index].departments as List).join(", ")}",
+                                    ),
+                                    trailing: _buildActions(),
+                                  ),
+                                );
+                              },
+                            ),
+                          );
+                  }
+                },
+              ),
+            ],
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 
-  Widget _buildActions(
-    BuildContext context,
-    Map<String, dynamic> item,
-    List<Map<String, dynamic>> doctors,
-  ) {
+  /// ================= ACTIONS =================
+  Widget _buildActions() {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -172,6 +157,7 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
     );
   }
 
+  /// ================= DIALOG =================
   void _openSubjectDialog(
     BuildContext context, {
     Map<String, dynamic>? subject,
@@ -183,7 +169,6 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
     List<String> selectedDepts = subject?['department'] != null
         ? List<String>.from(subject!['department'])
         : [];
-
     showDialog(
       context: context,
       builder: (dialogContext) => BlocProvider.value(
@@ -289,15 +274,19 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
             ),
             actions: [
               TextButton(
-                onPressed: () => Navigator.pop(context),
+                onPressed: () => Navigator.pop(dialogContext),
                 child: const Text("Cancel"),
               ),
               BlocConsumer<SubjectViewModel, SubjectStates>(
                 listener: (context, state) {
-                  if (state is SubjectErrorState) {
-                    DialogUtils.showErrorDialog(context, state.message);
+                  if (state is AddSubjectErrorState) {
+                    DialogUtils.showErrorDialog(
+                      context,
+                      state.addSubjectmessage,
+                    );
                   }
-                  if (state is SubjectSuccessState) {
+                  if (state is AddSubjectSuccessState) {
+                    viewModel.getSubject();
                     Navigator.pop(dialogContext);
                     SnackBarUtils.showSuccessSnackBar(
                       context,
@@ -306,7 +295,7 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
                   }
                 },
                 builder: (context, state) {
-                  final isLoading = state is SubjectLoadingState;
+                  final isLoading = state is AddSubjectLoadingState;
                   return ElevatedButton(
                     onPressed: isLoading
                         ? null
@@ -317,17 +306,14 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
                                 context,
                                 'Please fill all fields',
                               );
-
                               return;
                             }
-
                             if (viewModel.selectedYear == "Fourth Year" &&
                                 selectedDepts.isEmpty) {
                               DialogUtils.showErrorDialog(
                                 context,
                                 'Please select at least one department',
                               );
-
                               return;
                             }
                             final doctor = doctors.firstWhere(

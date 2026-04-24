@@ -23,13 +23,13 @@ class DataManager {
     },
     {
       "id": 3,
-      "name": "Dr Sara",
+      "name": "Steven Alisha",
       "email": "sara@school.com",
       "specialization": "Programming",
     },
     {
       "id": 4,
-      "name": "Dr Omar",
+      "name": "Fouad Fawzy",
       "email": "omar@school.com",
       "specialization": "English",
     },

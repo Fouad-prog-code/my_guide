@@ -28,9 +28,19 @@ class AppValidators {
     if (id == null || id.trim().isEmpty) {
       return 'enter id';
     }
-    if (id.length != 14) {
-      return 'id must be 14 digit';
+
+    final trimmed = id.trim();
+
+    // لازم أرقام فقط
+    final isNumeric = RegExp(r'^[0-9]+$').hasMatch(trimmed);
+    if (!isNumeric) {
+      return 'id must contain numbers only';
     }
+
+    if (trimmed.length != 14) {
+      return 'id must be 14 digits';
+    }
+
     return null;
   }
 

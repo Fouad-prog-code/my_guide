@@ -1,19 +1,44 @@
 import 'package:my_guide/domain/entities/common/add_user/add_user_response.dart';
+import 'package:my_guide/domain/entities/common/update_or_delete_doctor/update_or_delete_user_response.dart';
 
 abstract class StudentStates {}
 
 class StudentInitState extends StudentStates {}
 
-class StudentLoadingState extends StudentStates {}
+class AddStudentLoadingState extends StudentStates {}
 
-class StudentErrorState extends StudentStates {
+class AddStudentErrorState extends StudentStates {
   String message;
 
-  StudentErrorState({required this.message});
+  AddStudentErrorState({required this.message});
 }
 
-class StudentSuccessState extends StudentStates {
+class AddStudentSuccessState extends StudentStates {
   AddUserResponse addUserResponse;
 
-  StudentSuccessState({required this.addUserResponse});
+  AddStudentSuccessState({required this.addUserResponse});
+}
+
+class GetStudentLoadingState extends StudentStates {}
+
+class GetStudentErrorState extends StudentStates {
+  String message;
+
+  GetStudentErrorState({required this.message});
+}
+
+class GetStudentSuccessState extends StudentStates {}
+
+class DeleteStudentLoadingState extends StudentStates {}
+
+class DeleteStudentErrorState extends StudentStates {
+  String message;
+
+  DeleteStudentErrorState({required this.message});
+}
+
+class DeleteStudentSuccessState extends StudentStates {
+  UpdateOrDeleteUserResponse studentResponse;
+
+  DeleteStudentSuccessState({required this.studentResponse});
 }

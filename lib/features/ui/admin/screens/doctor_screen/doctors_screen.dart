@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:my_guide/config/di.dart';
 import 'package:my_guide/core/cache/shared_preferences.dart';
+import 'package:my_guide/core/utils/app_colors.dart';
 import 'package:my_guide/core/utils/dialog_utils.dart';
 import 'package:my_guide/core/utils/snack_bar_utils.dart';
 import 'package:my_guide/core/utils/validators.dart';
+import 'package:my_guide/domain/entities/response/get_doctor/get_doctor_data.dart';
 import 'package:my_guide/features/ui/admin/screens/doctor_screen/cubit/doctor_states.dart';
 import 'package:my_guide/features/ui/admin/screens/doctor_screen/cubit/doctor_view_model.dart';
-import 'package:my_guide/features/ui/admin/widgets/data_manager.dart';
+import 'package:my_guide/features/ui/admin/widgets/error_widget.dart';
 
 class DoctorsScreen extends StatefulWidget {
   const DoctorsScreen({super.key});
@@ -17,107 +20,218 @@ class DoctorsScreen extends StatefulWidget {
 }
 
 class _DoctorsScreenState extends State<DoctorsScreen> {
-  final dataManager = DataManager();
-
   DoctorViewModel viewModel = getIt<DoctorViewModel>();
 
-  bool isLoading = false;
+  @override
+  void initState() {
+    super.initState();
+    viewModel.getDoctor(); // 👈 لازم تجيب الداتا أول ما الشاشة تفتح
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF5F7F9), // خلفية هادية ومريحة
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          children: [
-            /// Header - استبدلنا الـ Row بـ ListTile عشان الـ Responsive
-            ListTile(
-              contentPadding: EdgeInsets.zero,
-              title: const Text(
-                "Doctors Management",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              //subtitle: const Text("Manage university faculty records"),
-              trailing: ElevatedButton.icon(
-                onPressed: () => showAddTeacherDialog(context),
-                icon: const Icon(Icons.add),
-                label: const Text("Add"),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blueGrey[900],
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 12,
+    return BlocProvider(
+      create: (context) => viewModel,
+      child: BlocListener<DoctorViewModel, DoctorStates>(
+        listener: (context, state) {
+          if (state is AddDoctorSuccessState ||
+              state is UpdateDoctorSuccessState) {
+            // 1. نقفل الـ Dialog المفتوح
+            if (Navigator.canPop(context)) {
+              Navigator.pop(context);
+            }
+            // 2. نحدث القائمة
+            viewModel.getDoctor();
+            // 3. نظهر رسالة النجاح
+            String msg = "Operation Successful";
+            // if (state is DeleteRoomSuccessState) {
+            //   msg = state.deleteRoomResponse.data ?? "Deleted";
+            // }
+            if (state is UpdateDoctorSuccessState) {
+              msg = state.updateDoctorResponse.data ?? "Updated";
+            }
+            if (state is AddDoctorSuccessState) {
+              msg = state.addDoctorResponse.message ?? '';
+            }
+            SnackBarUtils.showSuccessSnackBar(context, msg);
+          }
+
+          if (state is AddDoctorErrorState || state is UpdateDoctorErrorState) {
+            String errorMsg = "";
+            if (state is AddDoctorErrorState) errorMsg = state.message;
+            if (state is UpdateDoctorErrorState) errorMsg = state.message;
+            // if (state is DeleteRoomErrorState) errorMsg = state.message;
+
+            DialogUtils.showErrorDialog(context, errorMsg);
+          }
+        },
+        child: Scaffold(
+          backgroundColor: const Color(0xFFF5F7F9),
+          body: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              children: [
+                /// HEADER
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: const Text(
+                    "Doctors Management",
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
+                  trailing: ElevatedButton.icon(
+                    onPressed: () => showAddTeacherDialog(context),
+                    icon: const Icon(Icons.add),
+                    label: const Text("Add"),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blueGrey[900],
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
                   ),
                 ),
-              ),
-            ),
 
-            const SizedBox(height: 20),
+                const SizedBox(height: 20),
 
-            /// Doctors List - الحل الجذري للـ Overflow
-            Expanded(
-              child: dataManager.doctors.isEmpty
-                  ? const Center(child: Text("No doctors added yet"))
-                  : ListView.builder(
-                      itemCount: dataManager.doctors.length,
-                      itemBuilder: (context, index) {
-                        final doctor = dataManager.doctors[index];
-                        return _buildDoctorItem(doctor);
-                      },
-                    ),
+                /// LIST
+                Expanded(
+                  child: BlocBuilder<DoctorViewModel, DoctorStates>(
+                    builder: (context, state) {
+                      if (state is GetDoctorLoadingState) {
+                        return const Center(
+                          child: CircularProgressIndicator(
+                            color: AppColors.darkGrayColor,
+                          ),
+                        );
+                      }
+
+                      if (state is GetDoctorErrorState) {
+                        return Padding(
+                          padding: EdgeInsets.only(top: 200.h),
+                          child: ErrorsWidget(
+                            message: state.message,
+                            onPressed: () {
+                              viewModel.getDoctor();
+                            },
+                          ),
+                        );
+                      } else {
+                        var doctors = viewModel.getDoctorResponse?.data ?? [];
+
+                        return ListView.builder(
+                          itemCount: doctors.length,
+                          itemBuilder: (context, index) {
+                            final doctor = doctors[index];
+
+                            return Card(
+                              margin: const EdgeInsets.only(bottom: 12),
+                              child: ExpansionTile(
+                                leading: const CircleAvatar(
+                                  child: Icon(Icons.person),
+                                ),
+
+                                title: Text(
+                                  doctor.doctorName ?? '',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+
+                                subtitle: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text("ID: ${doctor.doctorId}"),
+                                    Row(
+                                      children: [
+                                        const Icon(Icons.menu_book, size: 16),
+                                        const SizedBox(width: 4),
+                                        Text(
+                                          "${doctor.lectures?.length ?? 0} lectures",
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+
+                                /// ✔️ هنا الأكشنز لسه موجودة
+                                trailing: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    IconButton(
+                                      icon: const Icon(
+                                        Icons.edit,
+                                        color: Colors.blue,
+                                      ),
+                                      onPressed: () {
+                                        _showEditDialog(doctor);
+                                      },
+                                    ),
+                                    IconButton(
+                                      icon: const Icon(
+                                        Icons.delete_outline,
+                                        color: Colors.red,
+                                      ),
+                                      onPressed: () {
+                                        // delete doctor
+                                      },
+                                    ),
+                                  ],
+                                ),
+
+                                children: [
+                                  if (doctor.lectures == null ||
+                                      doctor.lectures!.isEmpty)
+                                    const Padding(
+                                      padding: EdgeInsets.all(12),
+                                      child: Text(
+                                        "No lectures assigned",
+                                        style: TextStyle(color: Colors.grey),
+                                      ),
+                                    )
+                                  else
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                        left: 16,
+                                        right: 16,
+                                        bottom: 12,
+                                      ),
+                                      child: Wrap(
+                                        spacing: 8,
+                                        runSpacing: 8,
+                                        children: doctor.lectures!
+                                            .map(
+                                              (lec) => Chip(
+                                                label: Text(lec),
+                                                backgroundColor:
+                                                    Colors.blueGrey.shade50,
+                                              ),
+                                            )
+                                            .toList(),
+                                      ),
+                                    ),
+                                ],
+                              ),
+                            );
+                          },
+                        );
+                      }
+                    },
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildDoctorItem(Map<String, dynamic> doctor) {
-    return Card(
-      elevation: 0,
-      margin: const EdgeInsets.only(bottom: 12),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-        side: BorderSide(color: Colors.grey.withOpacity(0.2)),
-      ),
-      child: ListTile(
-        leading: CircleAvatar(
-          backgroundColor: Colors.blueGrey[50],
-          child: const Icon(Icons.person, color: Colors.blueGrey),
-        ),
-        title: Text(
-          doctor['name'].toString(),
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-        // عرض الـ ID والتخصص بشكل مرتب
-        subtitle: Text("ID: ${doctor['id']} | ${doctor['specialization']}"),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min, // مهم جداً عشان الـ Overflow
-          children: [
-            IconButton(
-              icon: const Icon(Icons.edit, color: Colors.blue, size: 22),
-              onPressed: () {},
-            ),
-            IconButton(
-              icon: const Icon(
-                Icons.delete_outline,
-                color: Colors.red,
-                size: 22,
-              ),
-              onPressed: () {},
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  // --- Logic Add ---
+  // ================= ADD DOCTOR =================
   void showAddTeacherDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -131,40 +245,31 @@ class _DoctorsScreenState extends State<DoctorsScreen> {
               children: [
                 TextFormField(
                   controller: viewModel.userNameController,
-                  decoration: const InputDecoration(labelText: "User Name"),
                   keyboardType: TextInputType.number,
                   autovalidateMode: AutovalidateMode.onUserInteraction,
-                  validator: (value) {
-                    return AppValidators.validateUserName(userName: value);
-                  },
-                ),
-                TextFormField(
-                  controller: viewModel.passwordController,
-                  decoration: const InputDecoration(labelText: "Password"),
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                  validator: (value) {
-                    return AppValidators.validateRegisterPassword(
-                      password: value,
-                    );
-                  },
+                  decoration: const InputDecoration(labelText: "User Name"),
+                  validator: (v) => AppValidators.validateUserName(userName: v),
                 ),
                 TextFormField(
                   controller: viewModel.fullNameController,
-                  decoration: const InputDecoration(labelText: "Full Name"),
                   autovalidateMode: AutovalidateMode.onUserInteraction,
-                  validator: (value) {
-                    return AppValidators.validateFullName(fullName: value);
-                  },
+                  decoration: const InputDecoration(labelText: "Full Name"),
+                  validator: (v) => AppValidators.validateFullName(fullName: v),
                 ),
                 TextFormField(
                   controller: viewModel.idController,
-                  decoration: const InputDecoration(labelText: "ID"),
+                  maxLength: 14,
                   keyboardType: TextInputType.number,
                   autovalidateMode: AutovalidateMode.onUserInteraction,
-                  maxLength: 14,
-                  validator: (value) {
-                    return AppValidators.validateNationalId(id: value);
-                  },
+                  decoration: const InputDecoration(labelText: "National ID"),
+                  validator: (v) => AppValidators.validateNationalId(id: v),
+                ),
+                TextFormField(
+                  controller: viewModel.passwordController,
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  decoration: const InputDecoration(labelText: "Password"),
+                  validator: (value) =>
+                      AppValidators.validateRegisterPassword(password: value),
                 ),
               ],
             ),
@@ -175,33 +280,18 @@ class _DoctorsScreenState extends State<DoctorsScreen> {
             onPressed: () => Navigator.pop(context),
             child: const Text("Cancel"),
           ),
-          BlocConsumer<DoctorViewModel, DoctorStates>(
+
+          BlocBuilder<DoctorViewModel, DoctorStates>(
             bloc: viewModel,
-            listener: (context, state) {
-              if (state is DoctorErrorState) {
-                DialogUtils.showErrorDialog(context, state.message);
-              } else if (state is DoctorSuccessState) {
-                Navigator.pop(context);
 
-                SnackBarUtils.showSuccessSnackBar(
-                  context,
-                  state.addDoctorResponse.message ?? '',
-                );
-
-                viewModel.idController.clear();
-                viewModel.userNameController.clear();
-                viewModel.fullNameController.clear();
-                viewModel.passwordController.clear();
-              }
-            },
             builder: (context, state) {
-              isLoading = state is DoctorLoadingState;
+              final isLoading = state is AddDoctorLoadingState;
 
               return ElevatedButton(
                 onPressed: isLoading
                     ? null
                     : () async {
-                        String? token = await SharedPreferencesUtils.getData(
+                        final token = await SharedPreferencesUtils.getData(
                           key: 'token',
                         );
 
@@ -209,8 +299,8 @@ class _DoctorsScreenState extends State<DoctorsScreen> {
                       },
                 child: isLoading
                     ? const SizedBox(
-                        width: 20,
-                        height: 20,
+                        width: 18,
+                        height: 18,
                         child: CircularProgressIndicator(strokeWidth: 2),
                       )
                     : const Text("Add"),
@@ -222,54 +312,117 @@ class _DoctorsScreenState extends State<DoctorsScreen> {
     );
   }
 
-  // --- Logic Edit ---
-  void showEditDoctorDialog(BuildContext context, Map<String, dynamic> doctor) {
-    final nameController = TextEditingController(
-      text: doctor['name'].toString(),
+  void _showEditDialog(GetDoctorData doctor) {
+    final fullNameController = TextEditingController(text: doctor.doctorName);
+    // final userNameController = TextEditingController(text: doctor.);
+    // final nationalIdController = TextEditingController(text:doctor. );
+    final idController = TextEditingController(
+      text: doctor.doctorId.toString(),
     );
-    final idController = TextEditingController(text: doctor['id'].toString());
-    final specController = TextEditingController(
-      text: doctor['specialization'].toString(),
-    );
+    // final passwordController = TextEditingController(
+    //   text:doctor. ,
+    // );
+    final GlobalKey<FormState> editFormKey = GlobalKey();
 
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text("Edit Doctor"),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: nameController,
-              decoration: const InputDecoration(labelText: "Full Name"),
-            ),
-            TextField(
-              controller: idController,
-              decoration: const InputDecoration(
-                labelText: "ID",
-                enabled: false,
+        title: const Text("Edit Room Info"),
+        content: Form(
+          key: editFormKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextFormField(
+                controller: fullNameController,
+                decoration: const InputDecoration(labelText: "Full Name"),
+                validator: (v) => v!.trim().isEmpty ? 'Required' : null,
+                autovalidateMode: AutovalidateMode.onUserInteraction,
               ),
-            ),
-            TextField(
-              controller: specController,
-              decoration: const InputDecoration(labelText: "Specialization"),
-            ),
-          ],
+              const SizedBox(height: 10),
+              // TextFormField(
+              //   controller: userNameController,
+              //   decoration: const InputDecoration(labelText: "User Name"),
+              //   validator: (v) => v!.trim().isEmpty ? 'Required' : null,
+              //   autovalidateMode: AutovalidateMode.onUserInteraction,
+              // ),
+              // const SizedBox(height: 10),
+              // TextFormField(
+              //   controller: nationalIdController,
+              //   decoration: const InputDecoration(labelText: "NationalId"),
+              //   keyboardType: TextInputType.number,
+              //   autovalidateMode: AutovalidateMode.onUserInteraction,
+              //   validator: (v) =>
+              //       (v == null || !RegExp(r'^[0-9]+$').hasMatch(v.trim()))
+              //       ? 'Enter numbers only'
+              //       : null,
+              // ),
+              // const SizedBox(height: 10),
+              // TextFormField(
+              //   controller: passwordController,
+              //   decoration: const InputDecoration(labelText: "Password"),
+              //   validator: (v) => v!.trim().isEmpty ? 'Required' : null,
+              //   autovalidateMode: AutovalidateMode.onUserInteraction,
+              // ),
+            ],
+          ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
             child: const Text("Cancel"),
           ),
-          ElevatedButton(
-            onPressed: () {
-              setState(() {
-                doctor['name'] = nameController.text;
-                doctor['specialization'] = specController.text;
-              });
-              Navigator.pop(context);
+          BlocBuilder<DoctorViewModel, DoctorStates>(
+            bloc: viewModel,
+            builder: (context, state) {
+              final isLoading = state is UpdateDoctorLoadingState;
+              return ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blueGrey[900],
+                ),
+                onPressed: isLoading
+                    ? null
+                    : () {
+                        bool isChanged =
+                            fullNameController.text != doctor.doctorName;
+                        //||
+                        // locationController.text != room.location ||
+                        // capacityController.text != room.capacity.toString();
+
+                        if (!isChanged) {
+                          DialogUtils.showErrorDialog(
+                            context,
+                            'Please change anything first',
+                          );
+                          return;
+                        }
+
+                        if (editFormKey.currentState!.validate()) {
+                          // viewModel.updateDoctor(
+                          //   updateRoomRequest: UpdateRoomRequest(
+                          //     roomId: room.roomId ?? 0,
+                          //     roomName: nameController.text,
+                          //     capacity: int.parse(capacityController.text),
+                          //     location: locationController.text,
+                          //   ),
+                          // );
+                        }
+                      },
+                child: isLoading
+                    ? const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(
+                          color: Colors.white,
+                          strokeWidth: 2,
+                        ),
+                      )
+                    : const Text(
+                        "Save Changes",
+                        style: TextStyle(color: Colors.white),
+                      ),
+              );
             },
-            child: const Text("Save"),
           ),
         ],
       ),

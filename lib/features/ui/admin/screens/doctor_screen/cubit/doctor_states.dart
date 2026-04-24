@@ -1,19 +1,44 @@
 import 'package:my_guide/domain/entities/common/add_user/add_user_response.dart';
+import 'package:my_guide/domain/entities/common/update_or_delete_doctor/update_or_delete_user_response.dart';
 
 abstract class DoctorStates {}
 
 class DoctorInitState extends DoctorStates {}
 
-class DoctorLoadingState extends DoctorStates {}
+class AddDoctorLoadingState extends DoctorStates {}
 
-class DoctorErrorState extends DoctorStates {
+class GetDoctorLoadingState extends DoctorStates {}
+
+class AddDoctorErrorState extends DoctorStates {
   String message;
 
-  DoctorErrorState({required this.message});
+  AddDoctorErrorState({required this.message});
 }
 
-class DoctorSuccessState extends DoctorStates {
+class GetDoctorErrorState extends DoctorStates {
+  String message;
+
+  GetDoctorErrorState({required this.message});
+}
+
+class AddDoctorSuccessState extends DoctorStates {
   AddUserResponse addDoctorResponse;
 
-  DoctorSuccessState({required this.addDoctorResponse});
+  AddDoctorSuccessState({required this.addDoctorResponse});
+}
+
+class GetDoctorSuccessState extends DoctorStates {}
+
+class UpdateDoctorLoadingState extends DoctorStates {}
+
+class UpdateDoctorErrorState extends DoctorStates {
+  String message;
+
+  UpdateDoctorErrorState({required this.message});
+}
+
+class UpdateDoctorSuccessState extends DoctorStates {
+  UpdateOrDeleteUserResponse updateDoctorResponse;
+
+  UpdateDoctorSuccessState({required this.updateDoctorResponse});
 }

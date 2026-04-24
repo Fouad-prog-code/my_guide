@@ -7,4 +7,16 @@ class ApiEndpoints {
   static const String addSubjectApi = 'api/Admin/AddLectureAsync';
   static const String addDoctorApi = 'api/Account/Register-Doctor';
   static const String addStudentApi = 'api/Account/Register-Student';
+  static const String getSubjectApi = 'api/Admin/SubjectManagment';
+  static const String getDoctorApi = 'api/Admin/DoctorsManagment';
+  static const String getRoomApi = 'api/Admin/RoomManagment';
+  static const String getStudentApi = 'api/Admin/StudentManagment';
+
+  static const String updateRoomApi = 'api/Room/UpdateRoom';
+
+  static const String deleteRoomApi = 'api/Room/DeleteRoom/{Id}';
+
+  static const String updateDoctorApi = 'api/Doctor/updateDoctor';
+
+  static const String deleteStudentApi = 'api/Student/DeleteStudent/{Id}';
 }

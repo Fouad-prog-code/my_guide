@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:my_guide/config/di.dart';
 import 'package:my_guide/core/cache/shared_preferences.dart';
+import 'package:my_guide/core/utils/app_colors.dart';
 import 'package:my_guide/core/utils/dialog_utils.dart';
 import 'package:my_guide/core/utils/snack_bar_utils.dart';
 import 'package:my_guide/core/utils/validators.dart';
+import 'package:my_guide/domain/entities/response/get_student/get_student_data.dart';
 import 'package:my_guide/features/ui/admin/screens/student_screen/cubit/student_states.dart';
 import 'package:my_guide/features/ui/admin/screens/student_screen/cubit/student_view_model.dart';
 import 'package:my_guide/features/ui/admin/screens/year_details_screen.dart';
+import 'package:my_guide/features/ui/admin/widgets/error_widget.dart';
 
 class StudentScreen extends StatefulWidget {
   const StudentScreen({super.key});
@@ -17,21 +21,7 @@ class StudentScreen extends StatefulWidget {
 }
 
 class _StudentScreenState extends State<StudentScreen> {
-  // القائمة الأساسية للبيانات
-  List<Map<String, dynamic>> studentsList = [
-    {
-      'name': 'Fouad Fawzy',
-      'userName': '12345678',
-      'department': 'CS',
-      'year': 'Fourth Year',
-    },
-    {
-      'name': 'Ahmed Mohamed',
-      'userName': '87654321',
-      'department': '',
-      'year': 'Second Year',
-    },
-  ];
+  StudentViewModel viewModel = getIt<StudentViewModel>();
 
   final List<String> basicYears = ['First Year', 'Second Year', 'Third Year'];
   final List<String> departments = [
@@ -41,70 +31,149 @@ class _StudentScreenState extends State<StudentScreen> {
     'Information Systems',
   ];
 
-  StudentViewModel viewModel = getIt<StudentViewModel>();
+  @override
+  void initState() {
+    super.initState();
+    viewModel.getStudent();
+  }
 
   bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF5F7F9),
-      appBar: AppBar(
-        title: const Text("Students Management"),
-        centerTitle: true,
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
-        elevation: 0.5,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(15),
-        child: GridView.builder(
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            crossAxisSpacing: 15,
-            mainAxisSpacing: 15,
-            childAspectRatio: 1.1,
-          ),
-          itemCount: basicYears.length + departments.length,
-          itemBuilder: (context, index) {
-            String displayName;
-            String filterYear;
-            String filterDept = '';
-            bool isDept = index >= basicYears.length;
-
-            if (!isDept) {
-              displayName = basicYears[index];
-              filterYear = basicYears[index];
-            } else {
-              displayName =
-                  departments[index - basicYears.length]; // اسم القسم مباشرة
-              filterYear = 'Fourth Year';
-              filterDept = departments[index - basicYears.length];
+    return BlocProvider(
+      create: (context) => viewModel,
+      child: BlocListener<StudentViewModel, StudentStates>(
+        listener: (context, state) {
+          if (state is AddStudentSuccessState) {
+            if (Navigator.canPop(context)) {
+              Navigator.pop(context);
             }
-
-            final count = studentsList.where((s) {
-              if (!isDept) return s['year'] == filterYear;
-              return s['year'] == filterYear && s['department'] == filterDept;
-            }).length;
-
-            return _buildCategoryCard(
-              displayName,
-              count,
-              filterYear,
-              filterDept,
+            viewModel.getStudent();
+            SnackBarUtils.showSuccessSnackBar(
+              context,
+              state.addUserResponse.message ?? 'Added successfully',
             );
-          },
+          }
+
+          if (state is DeleteStudentSuccessState) {
+            Navigator.pop(context);
+            viewModel.getStudent();
+            SnackBarUtils.showSuccessSnackBar(
+              context,
+              state.studentResponse.data ?? "Deleted successfully",
+            );
+          }
+
+          if (state is AddStudentErrorState ||
+              state is DeleteStudentErrorState) {
+            String errorMsg = "";
+            if (state is AddStudentErrorState) errorMsg = state.message;
+            if (state is DeleteStudentErrorState) errorMsg = state.message;
+
+            DialogUtils.showErrorDialog(context, errorMsg);
+          }
+        },
+        child: Scaffold(
+          backgroundColor: const Color(0xFFF5F7F9),
+          appBar: AppBar(
+            title: const Text("Students Management"),
+            centerTitle: true,
+            backgroundColor: Colors.white,
+            foregroundColor: Colors.black,
+            elevation: 0.5,
+          ),
+          body: BlocBuilder<StudentViewModel, StudentStates>(
+            builder: (context, state) {
+              if (state is GetStudentLoadingState) {
+                return const Center(
+                  child: CircularProgressIndicator(
+                    color: AppColors.darkGrayColor,
+                  ),
+                );
+              } else if (state is GetStudentErrorState) {
+                return Padding(
+                  padding: EdgeInsets.only(top: 250.h),
+                  child: ErrorsWidget(
+                    message: state.message,
+                    onPressed: () {
+                      viewModel.getStudent();
+                    },
+                  ),
+                );
+              }
+
+              final studentsData = viewModel.getStudentResponse?.data ?? [];
+
+              return Padding(
+                padding: const EdgeInsets.all(15),
+                child: GridView.builder(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 15,
+                    mainAxisSpacing: 15,
+                    childAspectRatio: 1.1,
+                  ),
+                  itemCount: basicYears.length + departments.length,
+                  itemBuilder: (context, index) {
+                    String displayName;
+                    String filterYear;
+                    String filterDept = '';
+                    bool isDept = index >= basicYears.length;
+
+                    if (!isDept) {
+                      displayName = basicYears[index];
+                      filterYear = basicYears[index];
+                    } else {
+                      displayName = departments[index - basicYears.length];
+                      filterYear = 'Fourth Year';
+                      filterDept = departments[index - basicYears.length];
+                    }
+
+                    int count = 0;
+                    for (var year in studentsData) {
+                      if (year.yearName == filterYear) {
+                        if (!isDept) {
+                          count += year.viewStudentDtos?.length ?? 0;
+                        } else {
+                          count +=
+                              year.viewStudentDtos
+                                  ?.where((s) => s.departmentName == filterDept)
+                                  .length ??
+                              0;
+                        }
+                      }
+                    }
+
+                    return _buildCategoryCard(
+                      displayName,
+                      count,
+                      filterYear,
+                      filterDept,
+                      studentsData,
+                    );
+                  },
+                ),
+              );
+            },
+          ),
+          floatingActionButton: FloatingActionButton(
+            onPressed: () => showAddStudentDialog(context),
+            backgroundColor: Colors.blueGrey[900],
+            child: const Icon(Icons.add, color: Colors.white),
+          ),
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => showAddStudentDialog(context),
-        backgroundColor: Colors.blueGrey[900],
-        child: const Icon(Icons.add, color: Colors.white),
       ),
     );
   }
 
-  Widget _buildCategoryCard(String title, int count, String year, String dept) {
+  Widget _buildCategoryCard(
+    String title,
+    int count,
+    String year,
+    String dept,
+    List<GetStudentData> currentList,
+  ) {
     return InkWell(
       onTap: () async {
         await Navigator.push(
@@ -114,17 +183,18 @@ class _StudentScreenState extends State<StudentScreen> {
               title: title,
               yearName: year,
               deptName: dept,
-              allStudents: studentsList,
+              allStudents: currentList,
+              viewModel: viewModel,
             ),
           ),
         );
-        setState(() {});
+        viewModel.getStudent();
       },
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(15),
-          boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 8)],
+          boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 8)],
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -151,7 +221,6 @@ class _StudentScreenState extends State<StudentScreen> {
     );
   }
 
-  // --- Logic Add المرجع كما هو من كودك بالضبط ---
   void showAddStudentDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -261,26 +330,11 @@ class _StudentScreenState extends State<StudentScreen> {
               onPressed: () => Navigator.pop(context),
               child: const Text("Cancel"),
             ),
-            BlocConsumer<StudentViewModel, StudentStates>(
+            BlocBuilder<StudentViewModel, StudentStates>(
               bloc: viewModel,
-              listener: (context, state) {
-                if (state is StudentErrorState) {
-                  DialogUtils.showErrorDialog(context, state.message);
-                } else if (state is StudentSuccessState) {
-                  Navigator.pop(context);
-                  SnackBarUtils.showSuccessSnackBar(
-                    context,
-                    state.addUserResponse.message ?? "",
-                  );
 
-                  viewModel.fullNameController.clear();
-                  viewModel.passwordController.clear();
-                  viewModel.userNameController.clear();
-                  viewModel.idController.clear();
-                }
-              },
               builder: (context, state) {
-                isLoading = state is StudentLoadingState;
+                isLoading = state is AddStudentLoadingState;
                 return ElevatedButton(
                   onPressed: isLoading
                       ? null

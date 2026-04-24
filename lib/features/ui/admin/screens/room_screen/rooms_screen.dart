@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:my_guide/config/di.dart';
 import 'package:my_guide/core/cache/shared_preferences.dart';
+import 'package:my_guide/core/utils/app_colors.dart';
 import 'package:my_guide/core/utils/dialog_utils.dart';
 import 'package:my_guide/core/utils/snack_bar_utils.dart';
+import 'package:my_guide/domain/entities/request/updata_room/update_room_request.dart';
+import 'package:my_guide/domain/entities/response/get_room/get_room_data.dart';
 import 'package:my_guide/features/ui/admin/screens/room_screen/cubit/room_states.dart';
 import 'package:my_guide/features/ui/admin/screens/room_screen/cubit/room_view_model.dart';
+import 'package:my_guide/features/ui/admin/widgets/error_widget.dart';
 
 class RoomsScreen extends StatefulWidget {
   const RoomsScreen({super.key});
@@ -16,302 +21,342 @@ class RoomsScreen extends StatefulWidget {
 
 class _RoomsScreenState extends State<RoomsScreen> {
   RoomViewModel viewModel = getIt<RoomViewModel>();
-  bool isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    viewModel.getRoom();
+  }
 
   @override
   Widget build(BuildContext context) {
-    bool isMobile = MediaQuery.of(context).size.width < 700;
+    return BlocProvider(
+      create: (context) => viewModel,
+      child: BlocListener<RoomViewModel, RoomStates>(
+        listener: (context, state) {
+          if (state is AddRoomSuccessState ||
+              state is UpdateRoomSuccessState ||
+              state is DeleteRoomSuccessState) {
+            if (Navigator.canPop(context)) {
+              Navigator.pop(context);
+            }
 
-    return Padding(
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        children: [
-          /// --- Header Section ---
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                "Rooms Management",
-                style: TextStyle(
-                  fontSize: isMobile ? 18 : 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.blueGrey[900],
-                ),
-              ),
-              ElevatedButton.icon(
-                onPressed: () {
-                  showAddRoomDialog(context);
-                },
-                icon: const Icon(Icons.add),
-                label: Text(isMobile ? "Add" : "Add New Room"),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blueGrey[900],
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 12,
+            viewModel.getRoom();
+
+            String msg = "Operation Successful";
+            if (state is DeleteRoomSuccessState) {
+              msg = state.deleteRoomResponse.data ?? "Deleted";
+            }
+            if (state is UpdateRoomSuccessState) {
+              msg = state.updateRoomResponse.data ?? "Updated";
+            }
+            if (state is AddRoomSuccessState) {
+              msg = state.addRoomResponse.data ?? '';
+            }
+            SnackBarUtils.showSuccessSnackBar(context, msg);
+          }
+
+          if (state is AddRoomErrorState ||
+              state is UpdateRoomErrorState ||
+              state is DeleteRoomErrorState) {
+            String errorMsg = "";
+            if (state is AddRoomErrorState) errorMsg = state.message;
+            if (state is UpdateRoomErrorState) errorMsg = state.message;
+            if (state is DeleteRoomErrorState) errorMsg = state.message;
+
+            DialogUtils.showErrorDialog(context, errorMsg);
+          }
+        },
+        child: Scaffold(
+          backgroundColor: const Color(0xFFF5F7F9),
+          body: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              children: [
+                /// HEADER
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: const Text(
+                    "Rooms Management",
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
+                  trailing: ElevatedButton.icon(
+                    onPressed: () => showAddRoomDialog(context),
+                    icon: const Icon(Icons.add),
+                    label: const Text("Add"),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blueGrey[900],
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
                   ),
                 ),
-              ),
-            ],
-          ),
+                const SizedBox(height: 20),
 
-          const SizedBox(height: 25),
+                /// LIST
+                Expanded(
+                  child: BlocBuilder<RoomViewModel, RoomStates>(
+                    builder: (context, state) {
+                      if (state is GetRoomLoadingState) {
+                        return const Center(
+                          child: CircularProgressIndicator(
+                            color: AppColors.darkGrayColor,
+                          ),
+                        );
+                      }
+                      if (state is GetRoomErrorState) {
+                        return Padding(
+                          padding: EdgeInsets.only(top: 250.h),
+                          child: ErrorsWidget(
+                            message: state.message,
+                            onPressed: () => viewModel.getRoom(),
+                          ),
+                        );
+                      }
 
-          /// --- Content Section ---
-          // هنا هتحط الـ BlocBuilder بتاعك وتمرر الداتا للـ Widgets اللي تحت
-          Expanded(
-            child: isMobile
-                ? _buildMobileList([
-                    {
-                      'name': 'room1',
-                      'capacity': '200',
-                      'location': 'Building 2',
+                      var rooms = viewModel.getRoomResponse?.data ?? [];
+                      if (rooms.isEmpty) {
+                        return const Center(child: Text("No Rooms Found"));
+                      }
+                      return ListView.builder(
+                        itemCount: rooms.length,
+                        itemBuilder: (context, index) {
+                          final room = rooms[index];
+                          return Card(
+                            margin: const EdgeInsets.only(bottom: 12),
+                            child: ListTile(
+                              leading: const CircleAvatar(
+                                child: Icon(Icons.meeting_room),
+                              ),
+                              title: Text(
+                                room.roomName ?? '',
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              subtitle: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text("Capacity: ${room.capacity}"),
+                                  Text("Location: ${room.location}"),
+                                ],
+                              ),
+                              trailing: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  IconButton(
+                                    icon: const Icon(
+                                      Icons.edit,
+                                      color: Colors.blue,
+                                    ),
+                                    onPressed: () => _showEditDialog(room),
+                                  ),
+                                  IconButton(
+                                    icon: const Icon(
+                                      Icons.delete_outline,
+                                      color: Colors.red,
+                                    ),
+                                    onPressed: () {
+                                      DialogUtils.showMessage(
+                                        context: context,
+                                        title: 'Confirm Delete',
+                                        msg: 'Do you want to delete this room?',
+                                        nagtActionName: 'Delete',
+                                        postActionName: 'Cancel',
+                                        nagtAction: () => viewModel.deleteRoom(
+                                          id: room.roomId ?? 0,
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      );
                     },
-                  ]) // مرر القائمة هنا
-                : _buildWebTable([]), // مرر القائمة هنا
-          ),
-        ],
-      ),
-    );
-  }
-
-  /// 1. تصميم عرض الموبايل (Cards)
-  Widget _buildMobileList(List<dynamic> rooms) {
-    return ListView.builder(
-      itemCount: rooms.length,
-      itemBuilder: (context, index) {
-        final room = rooms[index];
-        return Card(
-          margin: const EdgeInsets.only(bottom: 12),
-          elevation: 2,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: ListTile(
-            leading: const CircleAvatar(
-              backgroundColor: Color(0xFFEDF2F7),
-              child: Icon(Icons.meeting_room, color: Colors.blueGrey),
-            ),
-            title: Text(
-              room['name'] ?? '',
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
-            subtitle: Text("Cap: ${room['capacity']} | ${room['location']}"),
-            trailing: _buildActionButtons(room),
-          ),
-        );
-      },
-    );
-  }
-
-  /// 2. تصميم عرض الويب (Table)
-  Widget _buildWebTable(List<dynamic> rooms) {
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10),
-        ],
-      ),
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: DataTable(
-          headingRowColor: MaterialStateProperty.all(Colors.grey[50]),
-          columns: const [
-            DataColumn(label: Text('ROOM NAME')),
-            DataColumn(label: Text('LOCATION')),
-            DataColumn(label: Text('CAPACITY')),
-            DataColumn(label: Text('ACTIONS')),
-          ],
-          rows: rooms.map((room) {
-            return DataRow(
-              cells: [
-                DataCell(Text(room['name'] ?? '')),
-                DataCell(Text(room['location'] ?? '')),
-                DataCell(Text(room['capacity'].toString())),
-                DataCell(_buildActionButtons(room)),
+                  ),
+                ),
               ],
-            );
-          }).toList(),
+            ),
+          ),
         ),
       ),
-    );
-  }
-
-  /// 3. أزرار التحكم (Shared Actions)
-  Widget _buildActionButtons(dynamic room) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        IconButton(
-          icon: const Icon(Icons.edit, color: Colors.blue, size: 20),
-          onPressed: () {
-            // TODO: Logic التعديل
-          },
-        ),
-        IconButton(
-          icon: const Icon(Icons.delete_outline, color: Colors.red, size: 20),
-          onPressed: () {
-            // TODO: Logic الحذف
-          },
-        ),
-      ],
     );
   }
 
   void showAddRoomDialog(BuildContext context) {
-    // إحنا بنستخدم الـ viewModel اللي متعرف فوق في الـ State
     showDialog(
       context: context,
-      builder: (dialogContext) {
-        // نستخدم dialogContext هنا
-        return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15),
-          ),
-          title: const Text(
-            "Add New Room",
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-          content: SizedBox(
-            width: 400,
-            child: SingleChildScrollView(
-              child: Form(
-                key: viewModel.formKey,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    _buildTextField(
-                      controller: viewModel.nameController,
-                      label: "Room Name",
-                      icon: Icons.meeting_room,
-                      hint: "e.g. Lab 101",
-                    ),
-                    const SizedBox(height: 15),
-                    _buildTextField(
-                      controller: viewModel.locationController,
-                      label: "Location",
-                      icon: Icons.location_on,
-                      hint: "e.g. Second Floor",
-                    ),
-                    const SizedBox(height: 15),
-                    _buildTextField(
-                      controller: viewModel.capacityController,
-                      label: "Capacity",
-                      icon: Icons.people,
-                      hint: "e.g. 30",
-                      isNumber: true,
-                    ),
-                  ],
-                ),
+      builder: (context) => AlertDialog(
+        title: const Text("Add New Room"),
+        content: Form(
+          key: viewModel.formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextFormField(
+                controller: viewModel.nameController,
+                decoration: const InputDecoration(labelText: "Room Name"),
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                validator: (v) => v!.trim().isEmpty ? 'Required' : null,
               ),
-            ),
+              TextFormField(
+                controller: viewModel.locationController,
+                decoration: const InputDecoration(labelText: "Location"),
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                validator: (v) => v!.trim().isEmpty ? 'Required' : null,
+              ),
+              TextFormField(
+                controller: viewModel.capacityController,
+                keyboardType: TextInputType.number,
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                decoration: const InputDecoration(labelText: "Capacity"),
+                validator: (v) =>
+                    (v == null || !RegExp(r'^[0-9]+$').hasMatch(v.trim()))
+                    ? 'Enter numbers only'
+                    : null,
+              ),
+            ],
           ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(dialogContext),
-              child: Text("Cancel", style: TextStyle(color: Colors.grey[600])),
-            ),
-            // نستخدم BlocConsumer مع الـ viewModel اللي جبناه بـ getIt
-            BlocConsumer<RoomViewModel, RoomStates>(
-              bloc: viewModel,
-              listenWhen: (previous, current) =>
-                  current is RoomSuccessState || current is RoomErrorState,
-              listener: (context, state) {
-                if (state is RoomErrorState) {
-                  DialogUtils.showErrorDialog(context, state.message);
-                } else if (state is RoomSuccessState) {
-                  // 1. نقفل الـ Dialog
-                  Navigator.pop(dialogContext);
-                  // 2. نظهر رسالة نجاح
-                  SnackBarUtils.showSuccessSnackBar(
-                    context,
-                    state.addRoomResponse.data ?? '',
-                  );
-                  // 3. نمسح الداتا من الـ controllers (اختياري حسب الـ Logic عندك)
-                  viewModel.nameController.clear();
-                  viewModel.locationController.clear();
-                  viewModel.capacityController.clear();
-                }
-              },
-              builder: (context, state) {
-                bool isLoading = state is RoomLoadingState;
-                return ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blueGrey[900],
-                    foregroundColor: Colors.white,
-                  ),
-                  onPressed: isLoading
-                      ? null
-                      : () async {
-                          // هنا تجيب الـ Token بتاعك (افترضت إنه متخزن في الـ SharedPrefs)
-                          String? token = await SharedPreferencesUtils.getData(
-                            key: 'token',
-                          );
-                          viewModel.addRoom(token: token ?? "");
-                        },
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 10,
-                    ),
-                    child: isLoading
-                        ? const SizedBox(
-                            height: 20,
-                            width: 20,
-                            child: CircularProgressIndicator(
-                              color: Colors.white,
-                              strokeWidth: 2,
-                            ),
-                          )
-                        : const Text("Add Room"),
-                  ),
-                );
-              },
-            ),
-          ],
-        );
-      },
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("Cancel"),
+          ),
+          BlocBuilder<RoomViewModel, RoomStates>(
+            bloc: viewModel,
+            builder: (context, state) {
+              final isLoading = state is AddRoomLoadingState;
+              return ElevatedButton(
+                onPressed: isLoading
+                    ? null
+                    : () async {
+                        String? token = await SharedPreferencesUtils.getData(
+                          key: 'token',
+                        );
+                        viewModel.addRoom(token: token ?? "");
+                      },
+                child: isLoading
+                    ? const SizedBox(
+                        width: 18,
+                        height: 18,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : const Text("Add"),
+              );
+            },
+          ),
+        ],
+      ),
     );
   }
 
-  /// Widget مساعد عشان شكل الـ TextFields يبقى موحد ونضيف
-  Widget _buildTextField({
-    required TextEditingController controller,
-    required String label,
-    required IconData icon,
-    required String hint,
-    bool isNumber = false,
-  }) {
-    return TextFormField(
-      controller: controller,
-      autovalidateMode: AutovalidateMode.onUserInteraction,
-      keyboardType: isNumber ? TextInputType.number : TextInputType.text,
-      validator: (value) {
-        if (value!.isEmpty) {
-          return 'this field is required';
-        }
-        return null;
-      },
-      decoration: InputDecoration(
-        labelText: label,
-        hintText: hint,
-        prefixIcon: Icon(icon, size: 20),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide(color: Colors.grey.shade300),
+  void _showEditDialog(GetRoomData room) {
+    final nameController = TextEditingController(text: room.roomName);
+    final locationController = TextEditingController(text: room.location);
+    final capacityController = TextEditingController(
+      text: room.capacity.toString(),
+    );
+    final GlobalKey<FormState> editFormKey = GlobalKey();
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Edit Room Info"),
+        content: Form(
+          key: editFormKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextFormField(
+                controller: nameController,
+                decoration: const InputDecoration(labelText: "Room Name"),
+                validator: (v) => v!.trim().isEmpty ? 'Required' : null,
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+              ),
+              const SizedBox(height: 10),
+              TextFormField(
+                controller: locationController,
+                decoration: const InputDecoration(labelText: "Location"),
+                validator: (v) => v!.trim().isEmpty ? 'Required' : null,
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+              ),
+              const SizedBox(height: 10),
+              TextFormField(
+                controller: capacityController,
+                decoration: const InputDecoration(labelText: "Capacity"),
+                keyboardType: TextInputType.number,
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                validator: (v) =>
+                    (v == null || !RegExp(r'^[0-9]+$').hasMatch(v.trim()))
+                    ? 'Enter numbers only'
+                    : null,
+              ),
+            ],
+          ),
         ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: Colors.blueGrey, width: 2),
-        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("Cancel"),
+          ),
+          BlocBuilder<RoomViewModel, RoomStates>(
+            bloc: viewModel,
+            builder: (context, state) {
+              final isLoading = state is UpdateRoomLoadingState;
+              return ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blueGrey[900],
+                ),
+                onPressed: isLoading
+                    ? null
+                    : () {
+                        bool isChanged =
+                            nameController.text != room.roomName ||
+                            locationController.text != room.location ||
+                            capacityController.text != room.capacity.toString();
+
+                        if (!isChanged) {
+                          DialogUtils.showErrorDialog(
+                            context,
+                            'Please change anything first',
+                          );
+                          return;
+                        }
+
+                        if (editFormKey.currentState!.validate()) {
+                          viewModel.updateRoom(
+                            updateRoomRequest: UpdateRoomRequest(
+                              roomId: room.roomId ?? 0,
+                              roomName: nameController.text,
+                              capacity: int.parse(capacityController.text),
+                              location: locationController.text,
+                            ),
+                          );
+                        }
+                      },
+                child: isLoading
+                    ? const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(
+                          color: Colors.white,
+                          strokeWidth: 2,
+                        ),
+                      )
+                    : const Text(
+                        "Save Changes",
+                        style: TextStyle(color: Colors.white),
+                      ),
+              );
+            },
+          ),
+        ],
       ),
     );
   }

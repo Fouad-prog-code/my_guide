@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:my_guide/core/utils/app_colors.dart';
 import 'package:my_guide/core/utils/app_styles.dart';
-import 'package:my_guide/features/ui/widgets/schedule_day_widget.dart';
 
 class StudentScreen extends StatelessWidget {
   const StudentScreen({super.key});
