@@ -4,6 +4,7 @@ import 'package:my_guide/core/utils/app_styles.dart';
 import 'package:my_guide/features/ui/admin/screens/dashboard_screen.dart';
 import 'package:my_guide/features/ui/admin/screens/doctor_screen/doctors_screen.dart';
 import 'package:my_guide/features/ui/admin/screens/generate_time_tables.dart';
+import 'package:my_guide/features/ui/admin/screens/manager_screen/manager_screen.dart';
 import 'package:my_guide/features/ui/admin/screens/room_screen/rooms_screen.dart';
 import 'package:my_guide/features/ui/admin/screens/subject_screen/subjects_screen.dart';
 import 'package:my_guide/features/ui/admin/screens/student_screen/Student_screen.dart';
@@ -23,6 +24,7 @@ class _AdminLayoutState extends State<AdminLayout> {
     StudentScreen(),
     SubjectsScreen(),
     DoctorsScreen(),
+    ManagerScreen(),
     RoomsScreen(),
     GenerateTimeTabelsScreen(),
   ];
@@ -32,6 +34,7 @@ class _AdminLayoutState extends State<AdminLayout> {
     {'title': 'Students', 'icon': Icons.people},
     {'title': 'Subjects', 'icon': Icons.book},
     {'title': 'Doctors', 'icon': Icons.local_hospital},
+    {'title': 'Manager', 'icon': Icons.manage_accounts},
     {'title': 'Rooms', 'icon': Icons.room},
     {'title': 'Generate', 'icon': Icons.schedule},
   ];

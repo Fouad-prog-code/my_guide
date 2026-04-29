@@ -1,4 +1,4 @@
-class AddDoctorRequest {
+class AddDoctOrManagerRequest {
   final String? userName;
 
   final String? password;
@@ -7,7 +7,7 @@ class AddDoctorRequest {
 
   final String? nationalId;
 
-  AddDoctorRequest({
+  AddDoctOrManagerRequest({
     this.userName,
     this.password,
     this.fullName,

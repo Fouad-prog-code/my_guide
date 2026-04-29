@@ -21,6 +21,7 @@ class CustomTextFormField extends StatelessWidget {
     this.hintStyle,
     this.borderSideColor = AppColors.primaryColor,
     this.filledColor = true,
+    this.maxLength,
   });
 
   final String? labelText;
@@ -36,6 +37,7 @@ class CustomTextFormField extends StatelessWidget {
   TextStyle? hintStyle = AppStyles.bold18DarkGray;
   Color borderSideColor;
   bool filledColor;
+  int? maxLength;
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -56,6 +58,7 @@ class CustomTextFormField extends StatelessWidget {
           //obscuringCharacter: '*',
           controller: controller,
           style: AppStyles.bold24Black,
+          maxLength: maxLength,
           decoration: InputDecoration(
             hintText: hintText,
             // fillColor: AppColors.primaryColor,

@@ -4,6 +4,7 @@ import 'package:my_guide/core/utils/app_colors.dart';
 import 'package:my_guide/core/utils/app_routes.dart';
 import 'package:my_guide/core/utils/app_styles.dart';
 import 'package:my_guide/domain/entities/response/doctor/doctor_lectures.dart';
+import 'package:my_guide/domain/entities/response/student_lecture.dart';
 import 'package:my_guide/features/ui/widgets/lecture_info_widget.dart';
 
 // ignore: must_be_immutable
@@ -13,14 +14,16 @@ class ScheduleDayWidget extends StatelessWidget {
     required this.day,
     required this.numOfLectures,
     required this.isStudent,
-    required this.lectures,
+    this.doctoLectures,
+    this.studentLectures,
   });
 
   final String day;
   final int numOfLectures;
   bool isStudent;
 
-  List<DoctorLectures> lectures;
+  List<DoctorLectures>? doctoLectures;
+  List<StudentLecture>? studentLectures;
 
   @override
   Widget build(BuildContext context) {
@@ -88,17 +91,25 @@ class ScheduleDayWidget extends StatelessWidget {
                     context,
                     AppRoutes.lectureDetailsRoute,
                     arguments: {
-                      'lecture': lectures[index],
+                      'lecture': doctoLectures != null
+                          ? doctoLectures![index]
+                          : studentLectures![index],
                       'day': day,
                       'isStudent': isStudent,
                     },
                   );
                 },
-                child: LectureInfoWidget(
-                  time: lectures[index].startTime ?? '',
-                  location: lectures[index].roomName ?? '',
-                  lectureName: lectures[index].courseName ?? '',
-                ),
+                child: doctoLectures != null
+                    ? LectureInfoWidget(
+                        time: doctoLectures![index].startTime ?? '',
+                        location: doctoLectures![index].roomName ?? '',
+                        lectureName: doctoLectures![index].courseName ?? '',
+                      )
+                    : LectureInfoWidget(
+                        time: '${studentLectures![index].startTime ?? ''} ',
+                        location: studentLectures![index].roomName ?? '',
+                        lectureName: studentLectures![index].subjectName ?? '',
+                      ),
               );
             },
           ),

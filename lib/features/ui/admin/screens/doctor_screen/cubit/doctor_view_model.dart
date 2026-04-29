@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 import 'package:my_guide/core/cache/shared_preferences.dart';
 import 'package:my_guide/core/errors/app_error.dart';
-import 'package:my_guide/domain/entities/request/add_doctor/add_doctor_request.dart';
+import 'package:my_guide/domain/entities/request/add_doctor_or_manager/add_doctor_or_manager_request.dart';
 import 'package:my_guide/domain/entities/request/update_doctor/update_doctor_request.dart';
 import 'package:my_guide/domain/entities/response/get_doctor/get_doctor_response.dart';
 import 'package:my_guide/domain/use_case/add_doctor_use_case.dart';
@@ -38,7 +38,7 @@ class DoctorViewModel extends Cubit<DoctorStates> {
       try {
         emit(AddDoctorLoadingState());
 
-        AddDoctorRequest addDoctorRequest = AddDoctorRequest(
+        AddDoctOrManagerRequest addDoctorRequest = AddDoctOrManagerRequest(
           userName: userNameController.text,
           password: passwordController.text,
           fullName: fullNameController.text,

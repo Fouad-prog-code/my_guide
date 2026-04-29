@@ -19,4 +19,12 @@ class ApiEndpoints {
   static const String updateDoctorApi = 'api/Doctor/updateDoctor';
 
   static const String deleteStudentApi = 'api/Student/DeleteStudent/{Id}';
+
+  static const String forgetPasswordApi = 'api/Account/ForgetPassword';
+
+  static const String addManagerApi = 'api/Account/RegisterManager';
+
+  static const String roomEndPoint = 'api/Room/ScheduleWithData';
+  static const String studentScheduleEndPoint =
+      'api/Student/GetMyScheduleAsync';
 }

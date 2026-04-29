@@ -45,19 +45,59 @@ class AppValidators {
   }
 
   static String? validateRegisterPassword({required String? password}) {
-    RegExp passwordRegex = RegExp(
-      r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{6,}$',
-    );
-
     if (password == null || password.isEmpty) {
-      return 'enter password';
-    } else if (password.length < 6) {
-      return 'must be at least 6 characters';
-    } else if (!passwordRegex.hasMatch(password.trim())) {
-      return 'must have at least one non alphanumeric character, and at least one digit';
-    } else {
-      return null;
+      return 'Please enter a password';
     }
+
+    if (password.length < 6) {
+      return 'Password must be at least 6 characters long';
+    }
+
+    if (!password.contains(RegExp(r'[A-Z]'))) {
+      return 'Password must contain at least one uppercase letter (A-Z)';
+    }
+
+    if (!password.contains(RegExp(r'[a-z]'))) {
+      return 'Password must contain at least one lowercase letter (a-z)';
+    }
+
+    if (!password.contains(RegExp(r'[0-9]'))) {
+      return 'Password must contain at least one digit (0-9)';
+    }
+
+    if (!password.contains(RegExp(r'[!@#\$&*~]'))) {
+      return 'Password must contain at least one special character (e.g. !@#\$&*)';
+    }
+
+    return null;
+  }
+
+  static String? validateNewPassword({required String? password}) {
+    if (password == null || password.isEmpty) {
+      return 'enter a newPassword';
+    }
+
+    if (password.length < 6) {
+      return 'Password must be at least 6 characters long';
+    }
+
+    if (!password.contains(RegExp(r'[A-Z]'))) {
+      return 'Password must contain at least one uppercase letter';
+    }
+
+    if (!password.contains(RegExp(r'[a-z]'))) {
+      return 'Password must contain at least one lowercase letter';
+    }
+
+    if (!password.contains(RegExp(r'[0-9]'))) {
+      return 'Password must contain at least one digit';
+    }
+
+    if (!password.contains(RegExp(r'[!@#\$&*~]'))) {
+      return 'Password must contain at least one special character';
+    }
+
+    return null;
   }
 
   static String? validateConfirmPassword({

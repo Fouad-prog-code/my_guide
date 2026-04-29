@@ -1,9 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:my_guide/api/api_endpoints.dart';
-import 'package:my_guide/api/models/request/add_doctor/add_doctor_request_dto.dart';
+import 'package:my_guide/api/models/request/add_doctor_or_manager/add_doctor_or_manager_request_dto.dart';
 import 'package:my_guide/api/models/request/add_room/add_room_request_dto.dart';
 import 'package:my_guide/api/models/request/add_student/add_student_request_dto.dart';
 import 'package:my_guide/api/models/request/add_subject/add_subject_request_dto.dart';
+import 'package:my_guide/api/models/request/forget_password/forget_password_request_dto.dart';
 import 'package:my_guide/api/models/request/login/login_request_dto.dart';
 import 'package:my_guide/api/models/common/add_user/add_user_response_dto.dart';
 import 'package:my_guide/api/models/request/updata_room/update_room_request_dto.dart';
@@ -12,11 +13,14 @@ import 'package:my_guide/api/models/response/add_room/add_room_response_dto.dart
 import 'package:my_guide/api/models/response/add_subject/add_subject_response_dto.dart';
 import 'package:my_guide/api/models/response/delete_room/delete_room_response_dto.dart';
 import 'package:my_guide/api/models/response/doctor/doctor_response_dto.dart';
+import 'package:my_guide/api/models/response/forget_password/forget_password_response_dto.dart';
 import 'package:my_guide/api/models/response/get_doctor/get_doctor_response_dto.dart';
 import 'package:my_guide/api/models/response/get_room/get_room_response_dto.dart';
 import 'package:my_guide/api/models/response/get_student/get_student_response_dto.dart';
 import 'package:my_guide/api/models/response/get_subject/get_subject_response_dto.dart';
 import 'package:my_guide/api/models/response/login/login_response_dto.dart';
+import 'package:my_guide/api/models/response/room_response_dto.dart';
+import 'package:my_guide/api/models/response/student_schedule_response_dto.dart';
 import 'package:my_guide/api/models/response/updata_room/update_room_response_dto.dart';
 import 'package:my_guide/api/models/common/update_or_delete_user/update_or_delete_user_response_dto.dart';
 
@@ -30,6 +34,11 @@ abstract class ApiServices {
 
   @POST(ApiEndpoints.loginApi)
   Future<LoginResponseDto> login(@Body() LoginRequestDto loginRequestDto);
+
+  @POST(ApiEndpoints.forgetPasswordApi)
+  Future<ForgetPasswordResponseDto> resetPassword(
+    @Body() ForgetPasswordRequestDto forgetPasswordRequestDto,
+  );
 
   @GET(ApiEndpoints.doctorApi)
   Future<DoctorResponseDto> getDoctorSchedule(
@@ -51,7 +60,13 @@ abstract class ApiServices {
 
   @POST(ApiEndpoints.addDoctorApi)
   Future<AddUserResponseDto> addDoctor(
-    @Body() AddDoctorRequestDto addDoctorRequestDto,
+    @Body() AddDoctorOrManagerRequestDto addDoctorRequestDto,
+    @Header("Authorization") String token,
+  );
+
+  @POST(ApiEndpoints.addManagerApi)
+  Future<AddUserResponseDto> addManager(
+    @Body() AddDoctorOrManagerRequestDto addManagerRequestDto,
     @Header("Authorization") String token,
   );
 
@@ -98,6 +113,14 @@ abstract class ApiServices {
   @DELETE(ApiEndpoints.deleteStudentApi)
   Future<UpdateOrDeleteUserResponseDto> deleteStudent(
     @Path("Id") int id,
+    @Header("Authorization") String token,
+  );
+
+  @GET(ApiEndpoints.roomEndPoint)
+  Future<RoomResponseDto> getRooms(@Header("Authorization") String token);
+
+  @GET(ApiEndpoints.studentScheduleEndPoint)
+  Future<StudentScheduleResponseDto> getStudentSchedule(
     @Header("Authorization") String token,
   );
 }

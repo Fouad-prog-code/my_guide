@@ -194,59 +194,59 @@ class _GenerateTimeTabelsScreenState extends State<GenerateTimeTabelsScreen>
                             ),
                     ),
                   ),
-                  const SizedBox(height: 16),
-                  Text(
-                    _getGenerateButtonStatus(),
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey[600],
-                      fontStyle: FontStyle.italic,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
+                  // const SizedBox(height: 16),
+                  // Text(
+                  //   _getGenerateButtonStatus(),
+                  //   style: TextStyle(
+                  //     fontSize: 12,
+                  //     color: Colors.grey[600],
+                  //     fontStyle: FontStyle.italic,
+                  //   ),
+                  //   textAlign: TextAlign.center,
+                  // ),
                 ],
               ),
             ),
 
-            const SizedBox(height: 40),
+            // const SizedBox(height: 40),
 
-            // Information box
-            Container(
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: Colors.blue[50],
-                border: Border.all(color: Colors.blue[200]!),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
-                  Text(
-                    "Important Notes:",
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.blue,
-                    ),
-                  ),
-                  SizedBox(height: 8),
-                  Text(
-                    "• You cannot edit timetables after generation",
-                    style: TextStyle(fontSize: 12),
-                  ),
-                  SizedBox(height: 4),
-                  Text(
-                    "• You can regenerate new timetables anytime",
-                    style: TextStyle(fontSize: 12),
-                  ),
-                  SizedBox(height: 4),
-                  Text(
-                    "• All data must be complete before generation",
-                    style: TextStyle(fontSize: 12),
-                  ),
-                ],
-              ),
-            ),
+            // // Information box
+            // Container(
+            //   padding: const EdgeInsets.all(20),
+            //   decoration: BoxDecoration(
+            //     color: Colors.blue[50],
+            //     border: Border.all(color: Colors.blue[200]!),
+            //     borderRadius: BorderRadius.circular(12),
+            //   ),
+            //   child: Column(
+            //     crossAxisAlignment: CrossAxisAlignment.start,
+            //     children: const [
+            //       Text(
+            //         "Important Notes:",
+            //         style: TextStyle(
+            //           fontSize: 14,
+            //           fontWeight: FontWeight.bold,
+            //           color: Colors.blue,
+            //         ),
+            //       ),
+            //       SizedBox(height: 8),
+            //       Text(
+            //         "• You cannot edit timetables after generation",
+            //         style: TextStyle(fontSize: 12),
+            //       ),
+            //       SizedBox(height: 4),
+            //       Text(
+            //         "• You can regenerate new timetables anytime",
+            //         style: TextStyle(fontSize: 12),
+            //       ),
+            //       SizedBox(height: 4),
+            //       Text(
+            //         "• All data must be complete before generation",
+            //         style: TextStyle(fontSize: 12),
+            //       ),
+            //     ],
+            //   ),
+            // ),
           ],
         ),
       ),

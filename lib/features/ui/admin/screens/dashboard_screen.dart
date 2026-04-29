@@ -67,17 +67,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ],
             ),
 
-            const SizedBox(height: 30),
+            // const SizedBox(height: 30),
 
-            // قسم الحالة (Status Section) بتصميم موبيل
-            const Text(
-              "System Status",
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 12),
-            _buildStatusItem("Database connection", true),
-            _buildStatusItem("AI Engine", true),
-            _buildStatusItem("Last Update: 2 mins ago", null),
+            // // قسم الحالة (Status Section) بتصميم موبيل
+            // const Text(
+            //   "System Status",
+            //   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            // ),
+            // const SizedBox(height: 12),
+            // _buildStatusItem("Database connection", true),
+            // _buildStatusItem("AI Engine", true),
+            // _buildStatusItem("Last Update: 2 mins ago", null),
           ],
         ),
       ),

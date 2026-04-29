@@ -58,7 +58,7 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Form(
                 key: viewModel.formKey,
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     CustomTextFormField(
                       hintText: 'Enter username',
@@ -77,7 +77,25 @@ class _LoginScreenState extends State<LoginScreen> {
                       validator: (value) =>
                           AppValidators.validatePassword(password: value),
                     ),
-                    SizedBox(height: 60.h),
+                    SizedBox(height: 0.h),
+
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: TextButton(
+                        onPressed: () {
+                          Navigator.pushNamed(
+                            context,
+                            AppRoutes.forgetPasswordRoute,
+                          );
+                        },
+                        isSemanticButton: false,
+                        child: Text(
+                          'forget password?',
+                          style: AppStyles.bold20primary,
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 30.h),
                     BlocConsumer<LoginViewModel, LoginStates>(
                       bloc: viewModel,
                       listener: (context, state) {
@@ -94,6 +112,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           String? role = getRoleFromToken(token ?? '');
 
                           String? userId = getUserIdFromToken(token ?? '');
+                          String? acYear = getAcademicYearFromToken(
+                            token ?? "",
+                          );
 
                           print(role);
 
@@ -116,6 +137,12 @@ class _LoginScreenState extends State<LoginScreen> {
                             Navigator.pushReplacementNamed(
                               context,
                               AppRoutes.studentRoute,
+                              arguments: acYear,
+                            );
+                          } else if (role == 'Manager') {
+                            Navigator.pushReplacementNamed(
+                              context,
+                              AppRoutes.managerRoute,
                               arguments: state.response.data,
                             );
                           } else if (role == 'Admin') {
@@ -182,6 +209,24 @@ class _LoginScreenState extends State<LoginScreen> {
       final Map<String, dynamic> data = json.decode(decoded);
 
       return data["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"];
+    } catch (e) {
+      return null;
+    }
+  }
+
+  String? getAcademicYearFromToken(String token) {
+    try {
+      final parts = token.split('.');
+      if (parts.length != 3) return null;
+
+      final payload = parts[1];
+      final normalized = base64Url.normalize(payload);
+      final decoded = utf8.decode(base64Url.decode(normalized));
+
+      final Map<String, dynamic> data = json.decode(decoded);
+
+      // المفتاح اللي موجود في الـ Token بتاعك هو AcademicYearId
+      return data["AcademicYearId"]?.toString();
     } catch (e) {
       return null;
     }

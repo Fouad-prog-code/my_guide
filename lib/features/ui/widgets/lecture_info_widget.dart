@@ -30,7 +30,7 @@ class LectureInfoWidget extends StatelessWidget {
               ),
               SizedBox(height: 5.h),
               Text(
-                time.split(' - ')[0],
+                time,
                 style: AppStyles.regural16Black.copyWith(fontSize: 12.sp),
               ),
             ],

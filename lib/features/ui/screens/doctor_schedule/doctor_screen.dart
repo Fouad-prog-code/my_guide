@@ -107,7 +107,7 @@ class _DoctorScreenState extends State<DoctorScreen> {
                     day: doctorData[index].dayName ?? '',
                     numOfLectures: doctorData[index].lectures?.length ?? 0,
                     isStudent: false,
-                    lectures: doctorData[index].lectures ?? [],
+                    doctoLectures: doctorData[index].lectures ?? [],
                   );
                 },
               ),

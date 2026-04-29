@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
 import 'package:my_guide/core/utils/app_colors.dart';
-
 import 'package:my_guide/core/utils/app_styles.dart';
 import 'package:my_guide/domain/entities/response/doctor/doctor_lectures.dart';
+import 'package:my_guide/domain/entities/response/student_lecture.dart';
 import 'package:my_guide/features/ui/widgets/build_detail_row.dart';
 import 'package:my_guide/features/ui/widgets/build_divider.dart';
 
@@ -13,13 +12,23 @@ class LectureDetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Map<String, dynamic> args =
+    final args =
         ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>? ??
         {};
 
-    DoctorLectures lecture = args['lecture'];
-    String day = args['day'];
-    bool isStudent = args['isStudent'];
+    final dynamic lectureData = args['lecture'];
+
+    DoctorLectures? doctorLecture;
+    StudentLecture? studentLecture;
+
+    if (lectureData is DoctorLectures) {
+      doctorLecture = lectureData;
+    } else if (lectureData is StudentLecture) {
+      studentLecture = lectureData;
+    }
+
+    final String day = args['day'] ?? '';
+    final bool isStudent = args['isStudent'] ?? false;
 
     return Scaffold(
       appBar: AppBar(
@@ -48,32 +57,33 @@ class LectureDetailsScreen extends StatelessWidget {
                     BuildDetailRow(
                       icon: Icons.school,
                       label: 'Course Name',
-                      value: lecture.courseName ?? '',
+                      value:
+                          doctorLecture?.courseName ?? studentLecture?.subjectName ?? 'Unknown',
                     ),
                     BuildDivider(),
                     isStudent
                         ? BuildDetailRow(
                             icon: Icons.person,
                             label: 'Doctor',
-                            value: 'Dr. Ahmed Mohamed',
+                            value: studentLecture?.doctorName ?? 'Unknown',
                           )
                         : BuildDetailRow(
                             icon: Icons.bar_chart_rounded,
                             label: 'Grade',
-                            value: lecture.gradeName ?? '',
+                            value: doctorLecture?.gradeName ?? 'Unknown',
                           ),
                     BuildDivider(),
                     BuildDetailRow(
                       icon: Icons.location_on_outlined,
                       label: 'Location',
-                      value: lecture.roomName ?? '',
+                      value: doctorLecture?.roomName ?? studentLecture?.roomName ?? 'Unknown',
                     ),
                     BuildDivider(),
                     BuildDetailRow(
                       icon: Icons.access_time_outlined,
                       label: 'Time',
                       value:
-                          '$day ➡️ ${lecture.startTime} : ${lecture.endTime}',
+                          '$day ➡️ ${doctorLecture?.startTime ?? studentLecture?.startTime ?? ''} : ${doctorLecture?.endTime ?? studentLecture?.endTime ?? ''}',
                     ),
                   ],
                 ),

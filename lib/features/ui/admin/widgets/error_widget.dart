@@ -11,7 +11,10 @@ class ErrorsWidget extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Center(child: Text(message, style: AppStyles.bold20DarkGray)),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 12.w),
+          child: Center(child: Text(message, style: AppStyles.bold20DarkGray)),
+        ),
         SizedBox(height: 8.h),
         ElevatedButton(
           onPressed: onPressed,

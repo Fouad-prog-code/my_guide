@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:my_guide/features/ui/admin/widgets/timetable_pdf.dart';
 import 'package:printing/printing.dart';
 import 'package:flutter/foundation.dart';
@@ -48,7 +49,7 @@ class _TimetableGridScreenState extends State<TimetableGridScreen> {
           IconButton(
             icon: const Icon(Icons.picture_as_pdf),
             onPressed: () async {
-              print("PDF button clicked 🔥");
+              // print("PDF button clicked 🔥");
 
               final pdf = TimetablePdf.generate(widget.data);
 
@@ -66,88 +67,90 @@ class _TimetableGridScreenState extends State<TimetableGridScreen> {
       body: Center(
         child: SingleChildScrollView(
           scrollDirection: Axis.horizontal,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              /// HEADER
-              Row(
-                children: [
-                  const SizedBox(width: 100),
-                  ...hours.map(
-                    (h) => Container(
-                      width: 140,
-                      padding: const EdgeInsets.all(10),
-                      alignment: Alignment.center,
-                      child: Text(
-                        h,
-                        style: const TextStyle(fontWeight: FontWeight.bold),
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16.w),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Row(
+                  children: [
+                    const SizedBox(width: 100),
+                    ...hours.map(
+                      (h) => Container(
+                        width: 140,
+                        padding: const EdgeInsets.all(10),
+                        alignment: Alignment.center,
+                        child: Text(
+                          h,
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-
-              /// BODY
-              ...days.map((day) {
-                return Row(
-                  children: [
-                    Container(
-                      width: 100,
-                      height: 90,
-                      alignment: Alignment.center,
-                      color: Colors.grey[200],
-                      child: Text(day),
-                    ),
-
-                    ...hours.map((hour) {
-                      final item = widget.data
-                          .where((e) => e["day"] == day && e["hour"] == hour)
-                          .toList();
-
-                      final cell = item.isNotEmpty ? item.first : null;
-
-                      return Container(
-                        width: 140,
-                        height: 90,
-                        margin: const EdgeInsets.all(4),
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey),
-                          borderRadius: BorderRadius.circular(8),
-                          color: cell != null
-                              ? Colors.blue.shade50
-                              : Colors.white,
-                        ),
-                        child: cell != null
-                            ? Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    cell["subject"],
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    "Dr ${getDoctor(cell["doctorId"])}",
-                                    style: const TextStyle(
-                                      fontSize: 11,
-                                      color: Colors.grey,
-                                    ),
-                                  ),
-                                  Text(
-                                    cell["room"],
-                                    style: const TextStyle(fontSize: 11),
-                                  ),
-                                ],
-                              )
-                            : const SizedBox(),
-                      );
-                    }),
                   ],
-                );
-              }),
-            ],
+                ),
+
+                /// BODY
+                ...days.map((day) {
+                  return Row(
+                    children: [
+                      Container(
+                        width: 100,
+                        height: 90,
+                        alignment: Alignment.center,
+                        color: Colors.grey[200],
+                        child: Text(day),
+                      ),
+
+                      ...hours.map((hour) {
+                        final item = widget.data
+                            .where((e) => e["day"] == day && e["hour"] == hour)
+                            .toList();
+
+                        final cell = item.isNotEmpty ? item.first : null;
+
+                        return Container(
+                          width: 140,
+                          height: 90,
+                          margin: const EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey),
+                            borderRadius: BorderRadius.circular(8),
+                            color: cell != null
+                                ? Colors.blue.shade50
+                                : Colors.white,
+                          ),
+                          child: cell != null
+                              ? Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      cell["subject"],
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      "Dr ${getDoctor(cell["doctorId"])}",
+                                      style: const TextStyle(
+                                        fontSize: 11,
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                    Text(
+                                      cell["room"],
+                                      style: const TextStyle(fontSize: 11),
+                                    ),
+                                  ],
+                                )
+                              : const SizedBox(),
+                        );
+                      }),
+                    ],
+                  );
+                }),
+              ],
+            ),
           ),
         ),
       ),

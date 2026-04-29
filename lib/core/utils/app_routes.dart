@@ -5,4 +5,5 @@ class AppRoutes {
   static String managerRoute = 'manager_route';
   static String lectureDetailsRoute = 'lecture_details_route';
   static String adminlayoutRoute = 'admin_layout_route';
+  static String forgetPasswordRoute = 'forget_password_route';
 }
