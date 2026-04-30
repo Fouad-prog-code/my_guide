@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:my_guide/config/di.dart';
+import 'package:my_guide/core/utils/app_colors.dart';
+import 'package:my_guide/features/ui/admin/screens/dashboard_screen/cubit/dashboard_states.dart';
+import 'package:my_guide/features/ui/admin/screens/dashboard_screen/cubit/dashboard_view_model.dart';
 import 'package:my_guide/features/ui/admin/widgets/data_manager.dart';
 import 'package:my_guide/features/ui/admin/screens/group_time_table_screen.dart';
+import 'package:my_guide/features/ui/admin/widgets/error_widget.dart';
 
 class GenerateTimeTabelsScreen extends StatefulWidget {
   const GenerateTimeTabelsScreen({super.key});
@@ -16,9 +22,12 @@ class _GenerateTimeTabelsScreenState extends State<GenerateTimeTabelsScreen>
   bool _isGenerating = false;
   late TabController _tabController;
 
+  DashboardViewModel viewModel = getIt<DashboardViewModel>();
+
   @override
   void initState() {
     super.initState();
+    viewModel.getDashboard();
     _tabController = TabController(length: 2, vsync: this);
   }
 
@@ -94,32 +103,52 @@ class _GenerateTimeTabelsScreenState extends State<GenerateTimeTabelsScreen>
             const SizedBox(height: 40),
 
             // Status cards
-            Wrap(
-              spacing: 16,
-              runSpacing: 16,
-              alignment: WrapAlignment.center,
-              children: [
-                _buildStatusCard(
-                  "Doctors",
-                  dataManager.getTotalDoctors().toString(),
-                  dataManager.getTotalDoctors() > 0,
-                ),
-                _buildStatusCard(
-                  "Subjects",
-                  dataManager.getTotalSubjects().toString(),
-                  dataManager.getTotalSubjects() > 0,
-                ),
-                _buildStatusCard(
-                  "Rooms",
-                  dataManager.getTotalRooms().toString(),
-                  dataManager.getTotalRooms() > 0,
-                ),
-                _buildStatusCard(
-                  "Groups",
-                  dataManager.getTotalGroups().toString(),
-                  dataManager.getTotalGroups() > 0,
-                ),
-              ],
+            BlocBuilder<DashboardViewModel, DashboardStates>(
+              bloc: viewModel,
+              builder: (context, state) {
+                if (state is DashboardErrorState) {
+                  return ErrorsWidget(
+                    message: state.message,
+                    onPressed: () {
+                      viewModel.getDashboard();
+                    },
+                  );
+                } else if (state is DashboardSuccessState) {
+                  final data = state.dashboardResponse.data;
+                  return Wrap(
+                    spacing: 16,
+                    runSpacing: 16,
+                    alignment: WrapAlignment.center,
+                    children: [
+                      _buildStatusCard(
+                        label: "Doctors",
+                        count: data?.totalDoctors.toString() ?? '',
+                        isComplete: data!.totalDoctors! > 0,
+                      ),
+                      _buildStatusCard(
+                        label: "Subjects",
+                        count: data.totalSubjects.toString(),
+                        isComplete: data.totalSubjects! > 0,
+                      ),
+                      _buildStatusCard(
+                        label: "Rooms",
+                        count: data.totalRooms.toString(),
+                        isComplete: data.totalRooms! > 0,
+                      ),
+                      _buildStatusCard(
+                        label: "Groups",
+                        count: data.totalGroups.toString(),
+                        isComplete: data.totalGroups! > 0,
+                      ),
+                    ],
+                  );
+                }
+                return Center(
+                  child: CircularProgressIndicator(
+                    color: AppColors.darkGrayColor,
+                  ),
+                );
+              },
             ),
 
             const SizedBox(height: 60),
@@ -350,7 +379,11 @@ class _GenerateTimeTabelsScreenState extends State<GenerateTimeTabelsScreen>
     );
   }
 
-  Widget _buildStatusCard(String label, String count, bool isComplete) {
+  Widget _buildStatusCard({
+    required String label,
+    required String count,
+    required bool isComplete,
+  }) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(

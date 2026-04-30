@@ -12,6 +12,8 @@ import 'package:my_guide/features/ui/admin/screens/student_screen/cubit/student_
 import 'package:my_guide/features/ui/admin/screens/student_screen/cubit/student_view_model.dart';
 import 'package:my_guide/features/ui/admin/screens/year_details_screen.dart';
 import 'package:my_guide/features/ui/admin/widgets/error_widget.dart';
+import 'package:my_guide/features/ui/admin/widgets/password_text_form_field.dart';
+import 'package:my_guide/features/ui/widgets/custom_password_text_field.dart';
 
 class StudentScreen extends StatefulWidget {
   const StudentScreen({super.key});
@@ -38,7 +40,7 @@ class _StudentScreenState extends State<StudentScreen> {
   }
 
   bool isLoading = false;
-
+  bool isVisible = false;
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -93,7 +95,7 @@ class _StudentScreenState extends State<StudentScreen> {
                 );
               } else if (state is GetStudentErrorState) {
                 return Padding(
-                  padding: EdgeInsets.only(top: 250.h),
+                  padding: EdgeInsets.only(top: 100.h),
                   child: ErrorsWidget(
                     message: state.message,
                     onPressed: () {
@@ -242,14 +244,10 @@ class _StudentScreenState extends State<StudentScreen> {
                         AppValidators.validateUserName(userName: value),
                   ),
                   const SizedBox(height: 10),
-                  TextFormField(
+                  PasswordTextFormField(
                     controller: viewModel.passwordController,
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                    decoration: const InputDecoration(labelText: "Password"),
-                    obscureText: true,
-                    validator: (value) =>
-                        AppValidators.validateRegisterPassword(password: value),
                   ),
+
                   const SizedBox(height: 10),
                   TextFormField(
                     controller: viewModel.fullNameController,

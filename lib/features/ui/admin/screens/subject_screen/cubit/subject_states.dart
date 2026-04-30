@@ -1,5 +1,5 @@
 import 'package:my_guide/domain/entities/response/add_subject/add_subject_response.dart';
-import 'package:my_guide/domain/entities/response/get_subject/get_subject_response.dart';
+import 'package:my_guide/domain/entities/response/delete_subject/delete_subject_response.dart';
 
 abstract class SubjectStates {}
 
@@ -28,3 +28,17 @@ class AddSubjectSuccessState extends SubjectStates {
 }
 
 class GetSubjectSuccessState extends SubjectStates {}
+
+class DeleteSubjectLoadingState extends SubjectStates {}
+
+class DeleteSubjectErrorState extends SubjectStates {
+  String message;
+
+  DeleteSubjectErrorState({required this.message});
+}
+
+class DeleteSubjectSuccessState extends SubjectStates {
+  DeleteSubjectResponse deleteSubjectResponse;
+
+  DeleteSubjectSuccessState({required this.deleteSubjectResponse});
+}

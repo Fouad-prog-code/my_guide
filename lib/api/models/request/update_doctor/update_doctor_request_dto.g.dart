@@ -13,7 +13,6 @@ UpdateDoctorRequestDto _$UpdateDoctorRequestDtoFromJson(
   nationalId: json['nationalId'] as String?,
   fullName: json['fullName'] as String?,
   username: json['username'] as String?,
-  password: json['password'] as String?,
 );
 
 Map<String, dynamic> _$UpdateDoctorRequestDtoToJson(
@@ -23,5 +22,4 @@ Map<String, dynamic> _$UpdateDoctorRequestDtoToJson(
   'nationalId': instance.nationalId,
   'fullName': instance.fullName,
   'username': instance.username,
-  'password': instance.password,
 };

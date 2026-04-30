@@ -506,6 +506,65 @@ class _ApiServices implements ApiServices {
   }
 
   @override
+  Future<DeleteDoctorResponseDto> deleteDoctor(int id, String token) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{r'Authorization': token};
+    _headers.removeWhere((k, v) => v == null);
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<DeleteDoctorResponseDto>(
+      Options(method: 'DELETE', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            'api/Doctor/DeleteDoctor/${id}',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late DeleteDoctorResponseDto _value;
+    try {
+      _value = DeleteDoctorResponseDto.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<DeleteSubjectResponseDto> deleteSubject(
+    String name,
+    String token,
+  ) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{r'Authorization': token};
+    _headers.removeWhere((k, v) => v == null);
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<DeleteSubjectResponseDto>(
+      Options(method: 'DELETE', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            'api/Admin/DeleteCourse/${name}',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late DeleteSubjectResponseDto _value;
+    try {
+      _value = DeleteSubjectResponseDto.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
   Future<RoomResponseDto> getRooms(String token) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -554,6 +613,34 @@ class _ApiServices implements ApiServices {
     late StudentScheduleResponseDto _value;
     try {
       _value = StudentScheduleResponseDto.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<DashboardResponseDto> getDashboard(String token) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{r'Authorization': token};
+    _headers.removeWhere((k, v) => v == null);
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<DashboardResponseDto>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            'api/Admin/DashboardOverview',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late DashboardResponseDto _value;
+    try {
+      _value = DashboardResponseDto.fromJson(_result.data!);
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options);
       rethrow;

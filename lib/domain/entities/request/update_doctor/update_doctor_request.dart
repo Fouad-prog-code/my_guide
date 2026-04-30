@@ -7,13 +7,5 @@ class UpdateDoctorRequest {
 
   final String? username;
 
-  final String? password;
-
-  UpdateDoctorRequest({
-    this.id,
-    this.nationalId,
-    this.fullName,
-    this.username,
-    this.password,
-  });
+  UpdateDoctorRequest({this.id, this.nationalId, this.fullName, this.username});
 }

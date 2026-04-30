@@ -11,6 +11,7 @@ import 'package:my_guide/features/ui/admin/screens/doctor_screen/cubit/doctor_st
 import 'package:my_guide/features/ui/admin/screens/doctor_screen/cubit/doctor_view_model.dart';
 import 'package:my_guide/features/ui/admin/screens/manager_screen/cubit/manager_states.dart';
 import 'package:my_guide/features/ui/admin/screens/manager_screen/cubit/manager_view_model.dart';
+import 'package:my_guide/features/ui/admin/widgets/password_text_form_field.dart';
 
 class ManagerScreen extends StatefulWidget {
   const ManagerScreen({super.key});
@@ -72,7 +73,7 @@ class _ManagerScreenState extends State<ManagerScreen> {
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   trailing: ElevatedButton.icon(
-                    onPressed: () => showAddTeacherDialog(context),
+                    onPressed: () => showAddManagerDialog(context),
                     icon: const Icon(Icons.add),
                     label: const Text("Add"),
                     style: ElevatedButton.styleFrom(
@@ -225,7 +226,7 @@ class _ManagerScreenState extends State<ManagerScreen> {
   }
 
   // ================= ADD DOCTOR =================
-  void showAddTeacherDialog(BuildContext context) {
+  void showAddManagerDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -257,13 +258,7 @@ class _ManagerScreenState extends State<ManagerScreen> {
                   decoration: const InputDecoration(labelText: "National ID"),
                   validator: (v) => AppValidators.validateNationalId(id: v),
                 ),
-                TextFormField(
-                  controller: viewModel.passwordController,
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                  decoration: const InputDecoration(labelText: "Password"),
-                  validator: (value) =>
-                      AppValidators.validateRegisterPassword(password: value),
-                ),
+                PasswordTextFormField(controller: viewModel.passwordController),
               ],
             ),
           ),

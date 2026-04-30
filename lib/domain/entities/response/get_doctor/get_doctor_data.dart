@@ -5,5 +5,15 @@ class GetDoctorData {
 
   final List<String>? lectures;
 
-  GetDoctorData({this.doctorName, this.doctorId, this.lectures});
+  final String? nationalId;
+
+  final String? userName;
+
+  GetDoctorData({
+    this.doctorName,
+    this.doctorId,
+    this.lectures,
+    this.nationalId,
+    this.userName,
+  });
 }

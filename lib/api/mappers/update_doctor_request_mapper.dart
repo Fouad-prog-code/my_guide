@@ -8,7 +8,6 @@ extension UpdateDoctorRequestMapper on UpdateDoctorRequest {
       nationalId: nationalId,
       fullName: fullName,
       username: username,
-      password: password,
     );
   }
 }

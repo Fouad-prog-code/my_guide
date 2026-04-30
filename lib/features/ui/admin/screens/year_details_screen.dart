@@ -97,7 +97,7 @@ class _YearDetailsScreenState extends State<YearDetailsScreen> {
                                 DialogUtils.showMessage(
                                   context: context,
                                   title: 'Confirm Delete',
-                                  msg: 'Do you want to delete this room?',
+                                  msg: 'Do you want to delete this student?',
                                   nagtActionName: 'Delete',
                                   postActionName: 'Cancel',
                                   nagtAction: () =>

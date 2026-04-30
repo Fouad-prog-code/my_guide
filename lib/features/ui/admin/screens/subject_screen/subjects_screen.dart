@@ -35,105 +35,147 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
 
     return BlocProvider(
       create: (context) => viewModel,
-      child: Scaffold(
-        backgroundColor: Colors.grey[50],
-        body: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            children: [
-              /// HEADER
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    "Subjects Management",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  ElevatedButton.icon(
-                    onPressed: () =>
-                        _openSubjectDialog(context, doctors: doctors),
-                    icon: const Icon(Icons.add),
-                    label: const Text("Add"),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blueGrey[900],
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 12,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+      child: BlocListener<SubjectViewModel, SubjectStates>(
+        listener: (context, state) {
+          if (state is AddSubjectSuccessState ||
+              // state is UpdateRoomSuccessState ||
+              state is DeleteSubjectSuccessState) {
+            if (Navigator.canPop(context)) {
+              Navigator.pop(context);
+            }
+
+            viewModel.getSubject();
+
+            String msg = "Operation Successful";
+            if (state is DeleteSubjectSuccessState) {
+              msg = state.deleteSubjectResponse.data ?? "Deleted";
+            }
+            // if (state is UpdateRoomSuccessState) {
+            //   msg = state.updateRoomResponse.data ?? "Updated";
+            // }
+            if (state is AddSubjectSuccessState) {
+              msg = state.addSubjectResponse.data ?? '';
+            }
+            SnackBarUtils.showSuccessSnackBar(context, msg);
+          }
+
+          if (state is AddSubjectErrorState ||
+              //state is UpdateRoomErrorState ||
+              state is DeleteSubjectErrorState) {
+            String errorMsg = "";
+            if (state is AddSubjectErrorState)
+              errorMsg = state.addSubjectmessage;
+            // if (state is UpdateRoomErrorState) errorMsg = state.message;
+            if (state is DeleteSubjectErrorState) errorMsg = state.message;
+
+            DialogUtils.showErrorDialog(context, errorMsg);
+          }
+        },
+        child: Scaffold(
+          backgroundColor: Colors.grey[50],
+          body: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              children: [
+                /// HEADER
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      "Subjects Management",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 20),
-
-              /// LIST
-              BlocBuilder<SubjectViewModel, SubjectStates>(
-                builder: (context, state) {
-                  if (state is GetSubjectErrorState) {
-                    return Padding(
-                      padding: EdgeInsets.only(top: 250.h),
-                      child: ErrorsWidget(
-                        message: state.getSubjectmessage,
-                        onPressed: () {
-                          viewModel.getSubject();
-                        },
-                      ),
-                    );
-                  } else if (state is GetSubjectLoadingState) {
-                    return Center(
-                      child: Padding(
-                        padding: EdgeInsets.only(top: 300.h),
-                        child: CircularProgressIndicator(
-                          color: AppColors.darkGrayColor,
+                    ElevatedButton.icon(
+                      onPressed: () =>
+                          _openSubjectDialog(context, doctors: doctors),
+                      icon: const Icon(Icons.add),
+                      label: const Text("Add"),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blueGrey[900],
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 12,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
                         ),
                       ),
-                    );
-                  } else {
-                    var subjects = viewModel.getSubjectResponse?.data ?? [];
+                    ),
+                  ],
+                ),
 
-                    return subjects.isEmpty
-                        ? Center(
-                            child: Padding(
-                              padding: EdgeInsets.only(top: 250.h),
-                              child: Text(
-                                textAlign: TextAlign.center,
-                                "No subjects added yet",
-                                style: AppStyles.bold22DarkGray,
+                const SizedBox(height: 20),
+
+                /// LIST
+                BlocBuilder<SubjectViewModel, SubjectStates>(
+                  builder: (context, state) {
+                    if (state is GetSubjectErrorState) {
+                      return Padding(
+                        padding: EdgeInsets.only(top: 250.h),
+                        child: ErrorsWidget(
+                          message: state.getSubjectmessage,
+                          onPressed: () {
+                            viewModel.getSubject();
+                          },
+                        ),
+                      );
+                    } else if (state is GetSubjectLoadingState) {
+                      return Center(
+                        child: Padding(
+                          padding: EdgeInsets.only(top: 300.h),
+                          child: CircularProgressIndicator(
+                            color: AppColors.darkGrayColor,
+                          ),
+                        ),
+                      );
+                    } else {
+                      var subjects = viewModel.getSubjectResponse?.data ?? [];
+
+                      return subjects.isEmpty
+                          ? Center(
+                              child: Padding(
+                                padding: EdgeInsets.only(top: 250.h),
+                                child: Text(
+                                  textAlign: TextAlign.center,
+                                  "No subjects added yet",
+                                  style: AppStyles.bold22DarkGray,
+                                ),
                               ),
-                            ),
-                          )
-                        : Expanded(
-                            child: ListView.builder(
-                              itemCount: subjects.length,
-                              itemBuilder: (_, index) {
-                                return Card(
-                                  margin: const EdgeInsets.only(bottom: 12),
-                                  child: ListTile(
-                                    title: Text(
-                                      subjects[index].subjectName ?? '',
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
+                            )
+                          : Expanded(
+                              child: ListView.builder(
+                                itemCount: subjects.length,
+                                itemBuilder: (_, index) {
+                                  return Card(
+                                    margin: const EdgeInsets.only(bottom: 12),
+                                    child: ListTile(
+                                      title: Text(
+                                        subjects[index].subjectName ?? '',
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      subtitle: Text(
+                                        "Dr: ${subjects[index].doctorName}\n"
+                                        "Depts: ${(subjects[index].departments as List).join(", ")}",
+                                      ),
+                                      trailing: _buildActions(
+                                        name: subjects[index].subjectName ?? '',
                                       ),
                                     ),
-                                    subtitle: Text(
-                                      "Dr: ${subjects[index].doctorName}\n"
-                                      "Depts: ${(subjects[index].departments as List).join(", ")}",
-                                    ),
-                                    trailing: _buildActions(),
-                                  ),
-                                );
-                              },
-                            ),
-                          );
-                  }
-                },
-              ),
-            ],
+                                  );
+                                },
+                              ),
+                            );
+                    }
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -141,7 +183,7 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
   }
 
   /// ================= ACTIONS =================
-  Widget _buildActions() {
+  Widget _buildActions({required String name}) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -151,7 +193,16 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
         ),
         IconButton(
           icon: const Icon(Icons.delete_outline, color: Colors.red),
-          onPressed: () {},
+          onPressed: () {
+            DialogUtils.showMessage(
+              context: context,
+              title: 'Confirm Delete',
+              msg: 'Do you want to delete this Course?',
+              nagtActionName: 'Delete',
+              postActionName: 'Cancel',
+              nagtAction: () => viewModel.deleteSubject(name: name),
+            );
+          },
         ),
       ],
     );
@@ -171,180 +222,160 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
         : [];
     showDialog(
       context: context,
-      builder: (dialogContext) => BlocProvider.value(
-        value: viewModel,
-        child: StatefulBuilder(
-          builder: (context, setDialogState) => AlertDialog(
-            title: Text(subject == null ? "Add New Subject" : "Edit Subject"),
-            content: SingleChildScrollView(
-              child: Form(
-                key: viewModel.formKey,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    TextFormField(
-                      controller: nameController,
-                      validator: (val) => (val == null || val.isEmpty)
-                          ? 'Required field'
-                          : null,
-                      decoration: const InputDecoration(
-                        labelText: "Subject Name",
+      builder: (dialogContext) => StatefulBuilder(
+        builder: (context, setDialogState) => AlertDialog(
+          title: Text(subject == null ? "Add New Subject" : "Edit Subject"),
+          content: SingleChildScrollView(
+            child: Form(
+              key: viewModel.formKey,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextFormField(
+                    controller: nameController,
+                    validator: (val) =>
+                        (val == null || val.isEmpty) ? 'Required field' : null,
+                    decoration: const InputDecoration(
+                      labelText: "Subject Name",
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  DropdownButtonFormField<int>(
+                    value: viewModel.selectedDoctorId,
+                    hint: const Text("Select Doctor"),
+                    decoration: const InputDecoration(
+                      labelText: "Assign Doctor",
+                    ),
+                    items: doctors
+                        .map(
+                          (doc) => DropdownMenuItem<int>(
+                            value: doc['id'],
+                            child: Text(doc['name']),
+                          ),
+                        )
+                        .toList(),
+                    onChanged: (val) =>
+                        setDialogState(() => viewModel.selectedDoctorId = val),
+                  ),
+                  const SizedBox(height: 12),
+                  DropdownButtonFormField<String>(
+                    value: viewModel.selectedYear,
+                    decoration: const InputDecoration(labelText: "Year"),
+                    items:
+                        [
+                              "First Year",
+                              "Second Year",
+                              "Third Year",
+                              "Fourth Year",
+                            ]
+                            .map(
+                              (y) => DropdownMenuItem(value: y, child: Text(y)),
+                            )
+                            .toList(),
+                    onChanged: (val) {
+                      setDialogState(() {
+                        viewModel.selectedYear = val;
+                        if (val != "Fourth Year") selectedDepts.clear();
+                      });
+                    },
+                  ),
+                  if (viewModel.selectedYear == "Fourth Year") ...[
+                    const SizedBox(height: 16),
+                    const Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        "Departments:",
+                        style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ),
-                    const SizedBox(height: 12),
-                    DropdownButtonFormField<int>(
-                      value: viewModel.selectedDoctorId,
-                      hint: const Text("Select Doctor"),
-                      decoration: const InputDecoration(
-                        labelText: "Assign Doctor",
-                      ),
-                      items: doctors
-                          .map(
-                            (doc) => DropdownMenuItem<int>(
-                              value: doc['id'],
-                              child: Text(doc['name']),
-                            ),
-                          )
-                          .toList(),
-                      onChanged: (val) => setDialogState(
-                        () => viewModel.selectedDoctorId = val,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    DropdownButtonFormField<String>(
-                      value: viewModel.selectedYear,
-                      decoration: const InputDecoration(labelText: "Year"),
-                      items:
+                    const SizedBox(height: 8),
+                    Wrap(
+                      spacing: 8,
+                      children:
                           [
-                                "First Year",
-                                "Second Year",
-                                "Third Year",
-                                "Fourth Year",
-                              ]
-                              .map(
-                                (y) =>
-                                    DropdownMenuItem(value: y, child: Text(y)),
-                              )
-                              .toList(),
-                      onChanged: (val) {
-                        setDialogState(() {
-                          viewModel.selectedYear = val;
-                          if (val != "Fourth Year") selectedDepts.clear();
-                        });
-                      },
+                            "Computer Science",
+                            "Information Technology",
+                            "Information Systems",
+                            "Network",
+                          ].map((dept) {
+                            final isSelected = selectedDepts.contains(dept);
+                            return FilterChip(
+                              label: Text(dept),
+                              selected: isSelected,
+                              selectedColor: Colors.blueGrey[100],
+                              onSelected: (bool value) {
+                                setDialogState(() {
+                                  value
+                                      ? selectedDepts.add(dept)
+                                      : selectedDepts.remove(dept);
+                                });
+                              },
+                            );
+                          }).toList(),
                     ),
-                    if (viewModel.selectedYear == "Fourth Year") ...[
-                      const SizedBox(height: 16),
-                      const Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          "Departments:",
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Wrap(
-                        spacing: 8,
-                        children:
-                            [
-                              "Computer Science",
-                              "Information Technology",
-                              "Information Systems",
-                              "Network",
-                            ].map((dept) {
-                              final isSelected = selectedDepts.contains(dept);
-                              return FilterChip(
-                                label: Text(dept),
-                                selected: isSelected,
-                                selectedColor: Colors.blueGrey[100],
-                                onSelected: (bool value) {
-                                  setDialogState(() {
-                                    value
-                                        ? selectedDepts.add(dept)
-                                        : selectedDepts.remove(dept);
-                                  });
-                                },
-                              );
-                            }).toList(),
-                      ),
-                    ],
                   ],
-                ),
+                ],
               ),
             ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(dialogContext),
-                child: const Text("Cancel"),
-              ),
-              BlocConsumer<SubjectViewModel, SubjectStates>(
-                listener: (context, state) {
-                  if (state is AddSubjectErrorState) {
-                    DialogUtils.showErrorDialog(
-                      context,
-                      state.addSubjectmessage,
-                    );
-                  }
-                  if (state is AddSubjectSuccessState) {
-                    viewModel.getSubject();
-                    Navigator.pop(dialogContext);
-                    SnackBarUtils.showSuccessSnackBar(
-                      context,
-                      state.addSubjectResponse.data ?? '',
-                    );
-                  }
-                },
-                builder: (context, state) {
-                  final isLoading = state is AddSubjectLoadingState;
-                  return ElevatedButton(
-                    onPressed: isLoading
-                        ? null
-                        : () async {
-                            if (viewModel.selectedDoctorId == null ||
-                                viewModel.selectedYear == null) {
-                              DialogUtils.showErrorDialog(
-                                context,
-                                'Please fill all fields',
-                              );
-                              return;
-                            }
-                            if (viewModel.selectedYear == "Fourth Year" &&
-                                selectedDepts.isEmpty) {
-                              DialogUtils.showErrorDialog(
-                                context,
-                                'Please select at least one department',
-                              );
-                              return;
-                            }
-                            final doctor = doctors.firstWhere(
-                              (doc) => doc['id'] == viewModel.selectedDoctorId,
-                            );
-                            viewModel.addSubject(
-                              token:
-                                  await SharedPreferencesUtils.getData(
-                                    key: 'token',
-                                  ) ??
-                                  '',
-                              addSubjectRequest: AddSubjectRequest(
-                                lectureName: nameController.text,
-                                doctorName: doctor['name'],
-                                yearName: viewModel.selectedYear,
-                                departmentNames: selectedDepts,
-                              ),
-                            );
-                          },
-                    child: isLoading
-                        ? const SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                        : const Text("Save"),
-                  );
-                },
-              ),
-            ],
           ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext),
+              child: const Text("Cancel"),
+            ),
+            BlocBuilder<SubjectViewModel, SubjectStates>(
+              bloc: viewModel,
+
+              builder: (context, state) {
+                final isLoading = state is AddSubjectLoadingState;
+                return ElevatedButton(
+                  onPressed: isLoading
+                      ? null
+                      : () async {
+                          if (viewModel.selectedDoctorId == null ||
+                              viewModel.selectedYear == null) {
+                            DialogUtils.showErrorDialog(
+                              context,
+                              'Please fill all fields',
+                            );
+                            return;
+                          }
+                          if (viewModel.selectedYear == "Fourth Year" &&
+                              selectedDepts.isEmpty) {
+                            DialogUtils.showErrorDialog(
+                              context,
+                              'Please select at least one department',
+                            );
+                            return;
+                          }
+                          final doctor = doctors.firstWhere(
+                            (doc) => doc['id'] == viewModel.selectedDoctorId,
+                          );
+                          viewModel.addSubject(
+                            token:
+                                await SharedPreferencesUtils.getData(
+                                  key: 'token',
+                                ) ??
+                                '',
+                            addSubjectRequest: AddSubjectRequest(
+                              lectureName: nameController.text,
+                              doctorName: doctor['name'],
+                              yearName: viewModel.selectedYear,
+                              departmentNames: selectedDepts,
+                            ),
+                          );
+                        },
+                  child: isLoading
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Text("Save"),
+                );
+              },
+            ),
+          ],
         ),
       ),
     );

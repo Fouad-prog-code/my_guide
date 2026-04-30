@@ -15,9 +15,6 @@ import 'package:my_guide/features/ui/auth/forget_password/cubit/reset_password_v
 import 'package:my_guide/features/ui/widgets/custom_elevated_button.dart';
 import 'package:my_guide/features/ui/widgets/custom_password_text_field.dart';
 import 'package:my_guide/features/ui/widgets/custom_text_form_field.dart';
-// افترضت وجود الـ ViewModel والـ States في هذا المسار، قم بتعديله حسب مشروعك
-// import 'package:my_guide/features/ui/auth/forget_password/cubit/forget_password_view_model.dart';
-// import 'package:my_guide/features/ui/auth/forget_password/cubit/forget_password_states.dart';
 
 class ForgetPasswordScreen extends StatefulWidget {
   const ForgetPasswordScreen({super.key});
@@ -58,10 +55,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Image.asset(
-                    AppAssets.userImage,
-                    height: 100.h,
-                  ), // يمكنك تغيير الصورة بصورة قفل مثلاً
+                  Image.asset(AppAssets.userImage, height: 100.h),
                   SizedBox(height: 12.h),
                   Text(
                     'Reset Password',
@@ -72,13 +66,12 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
             ),
 
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 30.h),
+              padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 20.h),
               child: Form(
                 key: viewModel.formKey,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    // حقل اسم المستخدم
                     CustomTextFormField(
                       hintText: 'Enter username',
                       labelText: 'Username',
@@ -91,7 +84,6 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                     ),
                     SizedBox(height: 20.h),
 
-                    // حقل الرقم القومي (National ID)
                     CustomTextFormField(
                       hintText: 'Enter National ID',
                       labelText: 'National ID',
@@ -116,7 +108,6 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
 
                     SizedBox(height: 40.h),
 
-                    // زر التغيير مع الـ Bloc (أو بدونه مؤقتاً للتجربة)
                     BlocConsumer<ResetPasswordViewModel, ResetPasswordStates>(
                       bloc: viewModel,
                       listener: (context, state) {

@@ -113,7 +113,7 @@ class AppValidators {
   }
 
   static String? validateUserName({required String? userName}) {
-    if (userName == null || userName.isEmpty) {
+    if (userName == null || userName.trim().isEmpty) {
       return 'enter userName';
     }
     return null;

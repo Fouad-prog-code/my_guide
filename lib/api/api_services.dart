@@ -11,9 +11,12 @@ import 'package:my_guide/api/models/request/updata_room/update_room_request_dto.
 import 'package:my_guide/api/models/request/update_doctor/update_doctor_request_dto.dart';
 import 'package:my_guide/api/models/response/add_room/add_room_response_dto.dart';
 import 'package:my_guide/api/models/response/add_subject/add_subject_response_dto.dart';
+import 'package:my_guide/api/models/response/delete_doctor/delete_doctor_response_dto.dart';
 import 'package:my_guide/api/models/response/delete_room/delete_room_response_dto.dart';
+import 'package:my_guide/api/models/response/delete_subject/delete_subject_response_dto.dart';
 import 'package:my_guide/api/models/response/doctor/doctor_response_dto.dart';
 import 'package:my_guide/api/models/response/forget_password/forget_password_response_dto.dart';
+import 'package:my_guide/api/models/response/get_dashboard/dashboard_response_dto.dart';
 import 'package:my_guide/api/models/response/get_doctor/get_doctor_response_dto.dart';
 import 'package:my_guide/api/models/response/get_room/get_room_response_dto.dart';
 import 'package:my_guide/api/models/response/get_student/get_student_response_dto.dart';
@@ -116,11 +119,28 @@ abstract class ApiServices {
     @Header("Authorization") String token,
   );
 
+  @DELETE(ApiEndpoints.deleteDoctorApi)
+  Future<DeleteDoctorResponseDto> deleteDoctor(
+    @Path("Id") int id,
+    @Header("Authorization") String token,
+  );
+
+  @DELETE(ApiEndpoints.deleteSubjectApi)
+  Future<DeleteSubjectResponseDto> deleteSubject(
+    @Path("Name") String name,
+    @Header("Authorization") String token,
+  );
+
   @GET(ApiEndpoints.roomEndPoint)
   Future<RoomResponseDto> getRooms(@Header("Authorization") String token);
 
   @GET(ApiEndpoints.studentScheduleEndPoint)
   Future<StudentScheduleResponseDto> getStudentSchedule(
+    @Header("Authorization") String token,
+  );
+
+  @GET(ApiEndpoints.dashboardApi)
+  Future<DashboardResponseDto> getDashboard(
     @Header("Authorization") String token,
   );
 }

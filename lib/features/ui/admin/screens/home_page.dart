@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:my_guide/core/utils/app_colors.dart';
 import 'package:my_guide/core/utils/app_styles.dart';
-import 'package:my_guide/features/ui/admin/screens/dashboard_screen.dart';
+import 'package:my_guide/features/ui/admin/screens/dashboard_screen/dashboard_screen.dart';
 import 'package:my_guide/features/ui/admin/screens/doctor_screen/doctors_screen.dart';
 import 'package:my_guide/features/ui/admin/screens/generate_time_tables.dart';
 import 'package:my_guide/features/ui/admin/screens/manager_screen/manager_screen.dart';

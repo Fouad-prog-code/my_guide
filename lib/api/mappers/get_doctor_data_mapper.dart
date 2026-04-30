@@ -7,6 +7,8 @@ extension GetDoctorDataMapper on GetDoctorDataDto {
       doctorId: doctorId,
       doctorName: doctorName,
       lectures: lectures,
+      nationalId: nationalId,
+      userName: userName,
     );
   }
 }

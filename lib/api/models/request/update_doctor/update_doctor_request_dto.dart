@@ -12,15 +12,12 @@ class UpdateDoctorRequestDto {
   final String? fullName;
   @JsonKey(name: "username")
   final String? username;
-  @JsonKey(name: "password")
-  final String? password;
 
-  UpdateDoctorRequestDto ({
+  UpdateDoctorRequestDto({
     this.id,
     this.nationalId,
     this.fullName,
     this.username,
-    this.password,
   });
 
   factory UpdateDoctorRequestDto.fromJson(Map<String, dynamic> json) {
@@ -31,5 +28,3 @@ class UpdateDoctorRequestDto {
     return _$UpdateDoctorRequestDtoToJson(this);
   }
 }
-
-
