@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart'; // أضفنا المكتبة دي
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_guide/core/utils/dialog_utils.dart';
+import 'package:my_guide/core/utils/snack_bar_utils.dart';
 import 'package:my_guide/domain/entities/response/get_student/get_student_data.dart';
 import 'package:my_guide/domain/entities/response/get_student/view_student_dots.dart';
 import 'package:my_guide/features/ui/admin/screens/student_screen/cubit/student_states.dart';
@@ -27,10 +28,30 @@ class YearDetailsScreen extends StatefulWidget {
 }
 
 class _YearDetailsScreenState extends State<YearDetailsScreen> {
+  final List<String> departments = [
+    'Computer Science',
+    'Information Technology',
+    'Network',
+    'Information Systems',
+  ];
+
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<StudentViewModel, StudentStates>(
+    return BlocConsumer<StudentViewModel, StudentStates>(
       bloc: widget.viewModel,
+      listener: (context, state) {
+        if (state is UpdateStudentErrorState) {
+          DialogUtils.showErrorDialog(context, state.message);
+        } else if (state is UpdateStudentSuccessState) {
+          Navigator.pop(context);
+          widget.viewModel.getStudent();
+
+          SnackBarUtils.showSuccessSnackBar(
+            context,
+            state.studentResponse.data ?? '',
+          );
+        }
+      },
       builder: (context, state) {
         final currentStudentsData =
             widget.viewModel.getStudentResponse?.data ?? widget.allStudents;
@@ -121,58 +142,154 @@ class _YearDetailsScreenState extends State<YearDetailsScreen> {
 
   void _showEditDialog(ViewStudentDots student, String year) {
     final nameController = TextEditingController(text: student.studentName);
-
     final idController = TextEditingController(text: student.userName);
+    final nationalIdController = TextEditingController(
+      text: student.nationalId,
+    );
+
+    String? localYear = year;
+    String? localDept = student.departmentName;
 
     showDialog(
       context: context,
+      builder: (dialogContext) => BlocBuilder<StudentViewModel, StudentStates>(
+        bloc: widget.viewModel,
+        builder: (context, state) {
+          bool isLoading = state is UpdateStudentLoadingState;
 
-      builder: (context) => AlertDialog(
-        title: const Text("Edit Student Info"),
+          return StatefulBuilder(
+            builder: (context, setState) {
+              return AlertDialog(
+                title: const Text("Edit Student Info"),
+                content: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      TextField(
+                        controller: nameController,
+                        decoration: const InputDecoration(
+                          labelText: "Full Name",
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      TextField(
+                        controller: idController,
+                        decoration: const InputDecoration(
+                          labelText: "User Name / ID",
+                        ),
+                        keyboardType: TextInputType.number,
+                      ),
+                      const SizedBox(height: 10),
+                      TextField(
+                        controller: nationalIdController,
+                        decoration: const InputDecoration(
+                          labelText: "National ID",
+                        ),
+                        keyboardType: TextInputType.number,
+                      ),
+                      const SizedBox(height: 15),
 
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
+                      // Year Dropdown
+                      DropdownButtonFormField<String>(
+                        value: localYear,
+                        decoration: const InputDecoration(
+                          labelText: "Select Year",
+                          border: OutlineInputBorder(),
+                        ),
+                        items: widget.viewModel.yearsList
+                            .map(
+                              (y) => DropdownMenuItem(value: y, child: Text(y)),
+                            )
+                            .toList(),
+                        onChanged: (val) {
+                          setState(() {
+                            localYear = val;
+                          });
+                        },
+                      ),
 
-          children: [
-            TextField(
-              controller: nameController,
+                      if (localYear == 'Fourth Year') ...[
+                        const SizedBox(height: 15),
+                        DropdownButtonFormField<String>(
+                          value: localDept,
+                          decoration: const InputDecoration(
+                            labelText: "Select Department",
+                            border: OutlineInputBorder(),
+                          ),
 
-              decoration: const InputDecoration(labelText: "Full Name"),
-            ),
+                          items: departments
+                              .map(
+                                (d) =>
+                                    DropdownMenuItem(value: d, child: Text(d)),
+                              )
+                              .toList(),
+                          onChanged: (val) {
+                            setState(() => localDept = val);
+                          },
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: isLoading
+                        ? null
+                        : () => Navigator.pop(dialogContext),
+                    child: const Text("Cancel"),
+                  ),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blueGrey[900],
+                    ),
+                    onPressed: isLoading
+                        ? null
+                        : () {
+                            bool isChanged =
+                                (nameController.text != student.studentName ||
+                                idController.text != student.userName ||
+                                nationalIdController.text !=
+                                    student.nationalId ||
+                                localDept != student.departmentName ||
+                                localYear != year);
 
-            const SizedBox(height: 10),
+                            if (!isChanged) {
+                              DialogUtils.showErrorDialog(
+                                context,
 
-            TextField(
-              controller: idController,
+                                'Please change anything first',
+                              );
 
-              decoration: const InputDecoration(labelText: "User Name / ID"),
+                              return;
+                            }
 
-              keyboardType: TextInputType.number,
-            ),
-          ],
-        ),
-
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-
-            child: const Text("Cancel"),
-          ),
-
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.blueGrey[900],
-            ),
-
-            onPressed: () {},
-
-            child: const Text(
-              "Save Changes",
-
-              style: TextStyle(color: Colors.white),
-            ),
-          ),
-        ],
+                            widget.viewModel.updateStudent(
+                              id: student.studentId ?? 0,
+                              fullName: nameController.text,
+                              userName: idController.text,
+                              nationalId: nationalIdController.text,
+                              yearName: localYear ?? '',
+                              deptName: localDept ?? '',
+                            );
+                          },
+                    child: isLoading
+                        ? const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                            ),
+                          )
+                        : const Text(
+                            "Save Changes",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                  ),
+                ],
+              );
+            },
+          );
+        },
       ),
     );
   }

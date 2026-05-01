@@ -39,15 +39,12 @@ class _DoctorsScreenState extends State<DoctorsScreen> {
           if (state is AddDoctorSuccessState ||
               state is UpdateDoctorSuccessState ||
               state is DeleteDoctorSuccessState) {
-            // 1. نقفل أي ديالوج مفتوح (زي ديالوج التأكيد أو الإضافة)
             if (Navigator.canPop(context)) {
               Navigator.pop(context);
             }
 
-            // 2. تحديث القائمة
             viewModel.getDoctor();
 
-            // 3. التعامل مع رسالة النجاح (سواء SnackBar أو Dialog)
             if (state is DeleteDoctorSuccessState) {
               var responseData = state.deleteDoctorResponse.data;
               var mainMessage = responseData!.orphanedSubjects!.isNotEmpty
@@ -93,6 +90,11 @@ class _DoctorsScreenState extends State<DoctorsScreen> {
             if (state is DeleteDoctorErrorState) errorMsg = state.message;
 
             DialogUtils.showErrorDialog(context, errorMsg);
+          }
+
+          if (state is DeleteDoctorLoadingState) {
+            Navigator.pop(context);
+            DialogUtils.showLoading(context: context, message: 'Deleting...');
           }
         },
         child: Scaffold(

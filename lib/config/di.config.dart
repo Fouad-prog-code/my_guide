@@ -61,6 +61,8 @@ import '../api/data_sources/remote/update_manager_remote_data_source_impl.dart'
     as _i941;
 import '../api/data_sources/remote/update_room_remote_data_source_impl.dart'
     as _i28;
+import '../api/data_sources/remote/update_student_remote_data_source_impl.dart'
+    as _i325;
 import '../api/dio/dio_module.dart' as _i223;
 import '../data/data_sources/remote/add_doctor_remote_data_source.dart'
     as _i580;
@@ -103,6 +105,8 @@ import '../data/data_sources/remote/update_manager_remote_data_source.dart'
     as _i177;
 import '../data/data_sources/remote/update_room_remote_data_source.dart'
     as _i156;
+import '../data/data_sources/remote/update_student_remote_data_source.dart'
+    as _i91;
 import '../data/repositories/add_doctor_repository_impl.dart' as _i712;
 import '../data/repositories/add_manager_repository_impl.dart' as _i938;
 import '../data/repositories/add_room_repository_impl.dart' as _i89;
@@ -127,6 +131,7 @@ import '../data/repositories/student_repository_impl.dart' as _i382;
 import '../data/repositories/update_doctor_repository_impl.dart' as _i724;
 import '../data/repositories/update_manager_repository_impl.dart' as _i954;
 import '../data/repositories/update_room_repository_impl.dart' as _i496;
+import '../data/repositories/update_student_repository_impl.dart' as _i309;
 import '../domain/repositories/add_doctor_repository.dart' as _i495;
 import '../domain/repositories/add_manager_repository.dart' as _i846;
 import '../domain/repositories/add_room_repository.dart' as _i446;
@@ -151,6 +156,7 @@ import '../domain/repositories/student_/student_repository.dart' as _i646;
 import '../domain/repositories/update_doctor_repository.dart' as _i365;
 import '../domain/repositories/update_manager_repository.dart' as _i375;
 import '../domain/repositories/update_room_repository.dart' as _i602;
+import '../domain/repositories/update_student_repository.dart' as _i697;
 import '../domain/use_case/add_doctor_use_case.dart' as _i972;
 import '../domain/use_case/add_manager_use_case.dart' as _i380;
 import '../domain/use_case/add_room_use_case.dart' as _i352;
@@ -175,6 +181,7 @@ import '../domain/use_case/student_schedule_use_case.dart' as _i993;
 import '../domain/use_case/update_doctor_use_case.dart' as _i456;
 import '../domain/use_case/update_manager_use_case.dart' as _i324;
 import '../domain/use_case/update_room_use_case.dart' as _i811;
+import '../domain/use_case/update_student_use_case.dart' as _i968;
 import '../features/ui/admin/screens/dashboard_screen/cubit/dashboard_view_model.dart'
     as _i856;
 import '../features/ui/admin/screens/doctor_screen/cubit/doctor_view_model.dart'
@@ -361,6 +368,11 @@ extension GetItInjectableX on _i174.GetIt {
       () =>
           _i524.LoginRemoteDataSourceImpl(apiServices: gh<_i124.ApiServices>()),
     );
+    gh.factory<_i91.UpdateStudentRemoteDataSource>(
+      () => _i325.UpdateStudentRemoteDataSourceImpl(
+        apiServices: gh<_i124.ApiServices>(),
+      ),
+    );
     gh.factory<_i259.GetManagerRepository>(
       () => _i281.GetManagerRepositoryImpl(
         remoteDataSource: gh<_i243.GetManagerRemoteDataSource>(),
@@ -406,9 +418,19 @@ extension GetItInjectableX on _i174.GetIt {
         remoteDataSource: gh<_i407.DeleteManagerRemoteDataSource>(),
       ),
     );
+    gh.factory<_i697.UpdateStudentRepository>(
+      () => _i309.UpdateStudentRepositoryImpl(
+        updateStudentRemoteDataSource: gh<_i91.UpdateStudentRemoteDataSource>(),
+      ),
+    );
     gh.factory<_i387.DeleteDoctorRepository>(
       () => _i829.DeleteDoctorRepositoryImpl(
         deleteDoctorRemoteDataSource: gh<_i477.DeleteDoctorRemoteDataSource>(),
+      ),
+    );
+    gh.factory<_i968.UpdateStudentUseCase>(
+      () => _i968.UpdateStudentUseCase(
+        updateStudentRepository: gh<_i697.UpdateStudentRepository>(),
       ),
     );
     gh.factory<_i177.GetDoctorRepository>(
@@ -632,6 +654,7 @@ extension GetItInjectableX on _i174.GetIt {
         addStudentUseCase: gh<_i805.AddStudentUseCase>(),
         getStudentUseCase: gh<_i882.GetStudentUseCase>(),
         deleteStudentUseCase: gh<_i473.DeleteStudentUseCase>(),
+        updateStudentUseCase: gh<_i968.UpdateStudentUseCase>(),
       ),
     );
     return this;

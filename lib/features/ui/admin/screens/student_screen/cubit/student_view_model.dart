@@ -9,6 +9,8 @@ import 'package:my_guide/domain/entities/response/get_student/get_student_respon
 import 'package:my_guide/domain/use_case/add_student_use_case.dart';
 import 'package:my_guide/domain/use_case/delete_student_use_case.dart';
 import 'package:my_guide/domain/use_case/get_student_use_case.dart';
+import 'package:my_guide/domain/use_case/update_student_use_case.dart';
+import 'package:my_guide/domain/entities/request/update_student/update_student_request.dart';
 import 'package:my_guide/features/ui/admin/screens/student_screen/cubit/student_states.dart';
 
 @injectable
@@ -16,11 +18,13 @@ class StudentViewModel extends Cubit<StudentStates> {
   AddStudentUseCase addStudentUseCase;
   GetStudentUseCase getStudentUseCase;
   DeleteStudentUseCase deleteStudentUseCase;
+  UpdateStudentUseCase updateStudentUseCase;
 
   StudentViewModel({
     required this.addStudentUseCase,
     required this.getStudentUseCase,
     required this.deleteStudentUseCase,
+    required this.updateStudentUseCase,
   }) : super(StudentInitState());
 
   String? selectedYear;
@@ -116,6 +120,48 @@ class StudentViewModel extends Cubit<StudentStates> {
           : e.message;
       emit(
         DeleteStudentErrorState(
+          message: message ?? 'UnExpected error occurred',
+        ),
+      );
+    }
+  }
+
+  updateStudent({
+    required int id,
+    required String fullName,
+    required String userName,
+    required String nationalId,
+    required String yearName,
+    required String deptName,
+  }) async {
+    try {
+      emit(UpdateStudentLoadingState());
+
+      String? token = await SharedPreferencesUtils.getData(key: 'token');
+
+      UpdateStudentRequest updateStudentRequest = UpdateStudentRequest(
+        id: id,
+        fullName: fullName,
+        userName: userName,
+        nationalId: nationalId,
+        academicYear: yearName,
+        department: deptName,
+      );
+
+      var response = await updateStudentUseCase.invoke(
+        updateStudentRequest,
+        token ?? '',
+      );
+
+      emit(UpdateStudentSuccessState(studentResponse: response));
+    } on AppError catch (e) {
+      emit(UpdateStudentErrorState(message: e.errorMessage));
+    } on DioException catch (e) {
+      final message = (e.error is AppError)
+          ? (e.error as AppError).errorMessage
+          : e.message;
+      emit(
+        UpdateStudentErrorState(
           message: message ?? 'UnExpected error occurred',
         ),
       );

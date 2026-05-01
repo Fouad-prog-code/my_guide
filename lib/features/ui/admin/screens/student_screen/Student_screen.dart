@@ -13,7 +13,6 @@ import 'package:my_guide/features/ui/admin/screens/student_screen/cubit/student_
 import 'package:my_guide/features/ui/admin/screens/year_details_screen.dart';
 import 'package:my_guide/features/ui/admin/widgets/error_widget.dart';
 import 'package:my_guide/features/ui/admin/widgets/password_text_form_field.dart';
-import 'package:my_guide/features/ui/widgets/custom_password_text_field.dart';
 
 class StudentScreen extends StatefulWidget {
   const StudentScreen({super.key});
@@ -58,8 +57,13 @@ class _StudentScreenState extends State<StudentScreen> {
             );
           }
 
-          if (state is DeleteStudentSuccessState) {
+          if (state is DeleteStudentLoadingState) {
             Navigator.pop(context);
+            DialogUtils.showLoading(context: context, message: 'Deleting...');
+          }
+
+          if (state is DeleteStudentSuccessState) {
+            DialogUtils.hideLoading(context: context);
             viewModel.getStudent();
             SnackBarUtils.showSuccessSnackBar(
               context,

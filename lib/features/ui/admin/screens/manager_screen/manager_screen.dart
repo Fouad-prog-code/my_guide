@@ -73,8 +73,8 @@ class _ManagerScreenState extends State<ManagerScreen> {
           }
 
           if (state is DeleteManagerLoadingState) {
-            // we could show a loading dialog or just rely on the UI button being disabled if we were inside the dialog
-            // but for deletion from list, we might want to show a general loading dialog if we want to block UI
+            Navigator.pop(context);
+            DialogUtils.showLoading(context: context, message: 'Deleting...');
           }
         },
         child: Scaffold(
@@ -190,7 +190,8 @@ class _ManagerScreenState extends State<ManagerScreen> {
                                         DialogUtils.showMessage(
                                           context: context,
                                           title: 'Confirm Delete',
-                                          msg: 'Do you want to delete this manager?',
+                                          msg:
+                                              'Do you want to delete this manager?',
                                           nagtActionName: 'Delete',
                                           postActionName: 'Cancel',
                                           nagtAction: () {

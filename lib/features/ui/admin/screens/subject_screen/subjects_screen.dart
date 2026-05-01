@@ -75,6 +75,11 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
 
             DialogUtils.showErrorDialog(context, errorMsg);
           }
+
+          if (state is DeleteSubjectLoadingState) {
+            Navigator.pop(context);
+            DialogUtils.showLoading(context: context, message: 'Deleting...');
+          }
         },
         child: Scaffold(
           backgroundColor: Colors.grey[50],

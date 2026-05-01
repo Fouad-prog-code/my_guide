@@ -76,6 +76,11 @@ class _RoomsScreenState extends State<RoomsScreen> {
             Navigator.pop(context);
             DialogUtils.showErrorDialog(context, errorMsg);
           }
+
+          if (state is DeleteRoomLoadingState) {
+            Navigator.pop(context);
+            DialogUtils.showLoading(context: context, message: 'Deleting...');
+          }
         },
         child: Scaffold(
           backgroundColor: const Color(0xFFF5F7F9),

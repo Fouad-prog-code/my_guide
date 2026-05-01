@@ -42,3 +42,17 @@ class DeleteStudentSuccessState extends StudentStates {
 
   DeleteStudentSuccessState({required this.studentResponse});
 }
+
+class UpdateStudentLoadingState extends StudentStates {}
+
+class UpdateStudentErrorState extends StudentStates {
+  String message;
+
+  UpdateStudentErrorState({required this.message});
+}
+
+class UpdateStudentSuccessState extends StudentStates {
+  UpdateOrDeleteUserResponse studentResponse;
+
+  UpdateStudentSuccessState({required this.studentResponse});
+}

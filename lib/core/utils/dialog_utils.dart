@@ -1,7 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:my_guide/core/utils/app_colors.dart';
 import 'package:my_guide/core/utils/app_styles.dart';
 
 class DialogUtils {
+  static showLoading({required BuildContext context, required String message}) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return AlertDialog(
+          content: Row(
+            children: [
+              CircularProgressIndicator(color: AppColors.redColor),
+              Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Text(message, style: AppStyles.regular20primary),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  static hideLoading({required BuildContext context}) {
+    Navigator.pop(context);
+  }
+
   static void showErrorDialog(BuildContext context, String message) {
     showDialog(
       context: context,
@@ -15,6 +40,7 @@ class DialogUtils {
             Text("Error"),
           ],
         ),
+
         content: Text(message),
         actions: [
           TextButton(

@@ -21,6 +21,12 @@ class AppStyles {
     fontWeight: FontWeight.bold, // regural
   );
 
+  static TextStyle regular20primary = GoogleFonts.cairo(
+    color: AppColors.primaryColor,
+    fontSize: 20,
+    fontWeight: FontWeight.w400, // regural
+  );
+
   static TextStyle regural22White = GoogleFonts.cairo(
     color: AppColors.whiteColor,
     fontSize: 22,
