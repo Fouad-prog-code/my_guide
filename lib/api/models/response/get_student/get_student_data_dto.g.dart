@@ -10,7 +10,7 @@ GetStudentDataDto _$GetStudentDataDtoFromJson(Map<String, dynamic> json) =>
     GetStudentDataDto(
       yearName: json['yearName'] as String?,
       viewStudentDtos: (json['viewStudentDtos'] as List<dynamic>?)
-          ?.map((e) => ViewStudentDto.fromJson(e as Map<String, dynamic>))
+          ?.map((e) => ViewStudentDtosDto.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
 

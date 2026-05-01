@@ -1,4 +1,4 @@
-class ViewStudent {
+class ViewStudentDots {
   final String? studentName;
 
   final String? userName;
@@ -7,10 +7,13 @@ class ViewStudent {
 
   final int? studentId;
 
-  ViewStudent({
+  final String? nationalId;
+
+  ViewStudentDots({
     this.studentName,
     this.userName,
     this.departmentName,
     this.studentId,
+    this.nationalId,
   });
 }

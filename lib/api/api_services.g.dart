@@ -327,6 +327,34 @@ class _ApiServices implements ApiServices {
   }
 
   @override
+  Future<GetManagerResponseDto> getManager(String token) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{r'Authorization': token};
+    _headers.removeWhere((k, v) => v == null);
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<GetManagerResponseDto>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            'api/Admin/ManagerManagment',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late GetManagerResponseDto _value;
+    try {
+      _value = GetManagerResponseDto.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
   Future<GetRoomResponseDto> getRoom(String token) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -475,6 +503,38 @@ class _ApiServices implements ApiServices {
   }
 
   @override
+  Future<UpdateOrDeleteUserResponseDto> updateManager(
+    UpdateManagerRequestDto updateManagerRequestDto,
+    String token,
+  ) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{r'Authorization': token};
+    _headers.removeWhere((k, v) => v == null);
+    final _data = <String, dynamic>{};
+    _data.addAll(updateManagerRequestDto.toJson());
+    final _options = _setStreamType<UpdateOrDeleteUserResponseDto>(
+      Options(method: 'PUT', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            'api/Admin/UpdateManager',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late UpdateOrDeleteUserResponseDto _value;
+    try {
+      _value = UpdateOrDeleteUserResponseDto.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
   Future<UpdateOrDeleteUserResponseDto> deleteStudent(
     int id,
     String token,
@@ -489,6 +549,37 @@ class _ApiServices implements ApiServices {
           .compose(
             _dio.options,
             'api/Student/DeleteStudent/${id}',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late UpdateOrDeleteUserResponseDto _value;
+    try {
+      _value = UpdateOrDeleteUserResponseDto.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<UpdateOrDeleteUserResponseDto> deleteManager(
+    int managerId,
+    String token,
+  ) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{r'Authorization': token};
+    _headers.removeWhere((k, v) => v == null);
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<UpdateOrDeleteUserResponseDto>(
+      Options(method: 'DELETE', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            'api/Admin/DeleteManager/${managerId}',
             queryParameters: queryParameters,
             data: _data,
           )

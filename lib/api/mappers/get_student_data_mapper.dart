@@ -7,7 +7,7 @@ extension GetStudentDataMapper on GetStudentDataDto {
     return GetStudentData(
       yearName: yearName,
       viewStudentDtos:
-          viewStudentDtos?.map((s) => s.toViewStudent()).toList() ?? [],
+          viewStudentDtos?.map((s) => s.toViewStudentDots()).toList() ?? [],
     );
   }
 }

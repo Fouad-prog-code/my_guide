@@ -46,14 +46,24 @@ class _RoomsScreenState extends State<RoomsScreen> {
             String msg = "Operation Successful";
             if (state is DeleteRoomSuccessState) {
               msg = state.deleteRoomResponse.data ?? "Deleted";
+              DialogUtils.showMessage(
+                context: context,
+                msg: msg,
+                title: state.deleteRoomResponse.message,
+                nagtActionName: 'Ok',
+                nagtAction: () {
+                  Navigator.pop(context);
+                },
+              );
             }
             if (state is UpdateRoomSuccessState) {
               msg = state.updateRoomResponse.data ?? "Updated";
+              SnackBarUtils.showSuccessSnackBar(context, msg);
             }
             if (state is AddRoomSuccessState) {
               msg = state.addRoomResponse.data ?? '';
+              SnackBarUtils.showSuccessSnackBar(context, msg);
             }
-            SnackBarUtils.showSuccessSnackBar(context, msg);
           }
 
           if (state is AddRoomErrorState ||
@@ -63,7 +73,7 @@ class _RoomsScreenState extends State<RoomsScreen> {
             if (state is AddRoomErrorState) errorMsg = state.message;
             if (state is UpdateRoomErrorState) errorMsg = state.message;
             if (state is DeleteRoomErrorState) errorMsg = state.message;
-
+            Navigator.pop(context);
             DialogUtils.showErrorDialog(context, errorMsg);
           }
         },
@@ -108,7 +118,7 @@ class _RoomsScreenState extends State<RoomsScreen> {
                       }
                       if (state is GetRoomErrorState) {
                         return Padding(
-                          padding: EdgeInsets.only(top: 250.h),
+                          padding: EdgeInsets.only(top: 70.h),
                           child: ErrorsWidget(
                             message: state.message,
                             onPressed: () => viewModel.getRoom(),

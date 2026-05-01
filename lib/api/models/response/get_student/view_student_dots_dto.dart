@@ -1,9 +1,8 @@
 import 'package:json_annotation/json_annotation.dart';
-
-part 'view_student_dto.g.dart';
+part 'view_student_dots_dto.g.dart';
 
 @JsonSerializable()
-class ViewStudentDto {
+class ViewStudentDtosDto {
   @JsonKey(name: "studentName")
   final String? studentName;
   @JsonKey(name: "userName")
@@ -12,19 +11,22 @@ class ViewStudentDto {
   final dynamic? departmentName;
   @JsonKey(name: "studentId")
   final int? studentId;
+  @JsonKey(name: "nationalId")
+  final String? nationalId;
 
-  ViewStudentDto({
+  ViewStudentDtosDto({
     this.studentName,
     this.userName,
     this.departmentName,
     this.studentId,
+    this.nationalId,
   });
 
-  factory ViewStudentDto.fromJson(Map<String, dynamic> json) {
-    return _$ViewStudentDtoFromJson(json);
+  factory ViewStudentDtosDto.fromJson(Map<String, dynamic> json) {
+    return _$ViewStudentDtosDtoFromJson(json);
   }
 
   Map<String, dynamic> toJson() {
-    return _$ViewStudentDtoToJson(this);
+    return _$ViewStudentDtosDtoToJson(this);
   }
 }

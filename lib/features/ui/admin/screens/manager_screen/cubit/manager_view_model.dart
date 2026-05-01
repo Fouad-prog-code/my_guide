@@ -5,16 +5,30 @@ import 'package:injectable/injectable.dart';
 import 'package:my_guide/core/cache/shared_preferences.dart';
 import 'package:my_guide/core/errors/app_error.dart';
 import 'package:my_guide/domain/entities/request/add_doctor_or_manager/add_doctor_or_manager_request.dart';
+import 'package:my_guide/domain/entities/request/update_manager/update_manager_request.dart';
 import 'package:my_guide/domain/use_case/add_manager_use_case.dart';
+import 'package:my_guide/domain/use_case/delete_manager_use_case.dart';
+import 'package:my_guide/domain/use_case/get_manager_use_case.dart';
+import 'package:my_guide/domain/use_case/update_manager_use_case.dart';
+import 'package:my_guide/domain/entities/response/get_manager/get_manager_response.dart';
 
 import 'package:my_guide/features/ui/admin/screens/manager_screen/cubit/manager_states.dart';
 
 @injectable
 class ManagerViewModel extends Cubit<ManagerStates> {
   AddManagerUseCase addManagerUseCase;
+  GetManagerUseCase getManagerUseCase;
+  UpdateManagerUseCase updateManagerUseCase;
+  DeleteManagerUseCase deleteManagerUseCase;
 
-  ManagerViewModel({required this.addManagerUseCase})
-    : super(ManagerInitState());
+  GetManagerResponse? getManagerResponse;
+
+  ManagerViewModel({
+    required this.addManagerUseCase,
+    required this.getManagerUseCase,
+    required this.updateManagerUseCase,
+    required this.deleteManagerUseCase,
+  }) : super(ManagerInitState());
 
   final fullNameController = TextEditingController();
   final idController = TextEditingController();
@@ -43,6 +57,11 @@ class ManagerViewModel extends Cubit<ManagerStates> {
         );
 
         emit(AddManagerSuccessState(addManagerResponse: response));
+
+        userNameController.clear();
+        idController.clear();
+        passwordController.clear();
+        fullNameController.clear();
       } on AppError catch (e) {
         emit(AddManagerErrorState(message: e.errorMessage));
       } on DioException catch (e) {
@@ -56,52 +75,78 @@ class ManagerViewModel extends Cubit<ManagerStates> {
     }
   }
 
-  // getDoctor() async {
-  //   try {
-  //     emit(GetDoctorLoadingState());
+  getManager() async {
+    try {
+      emit(GetManagerLoadingState());
 
-  //     String? token = await SharedPreferencesUtils.getData(key: 'token');
+      String? token = await SharedPreferencesUtils.getData(key: 'token');
 
-  //     var response = await getDoctorUseCase.invoke(token ?? '');
-  //     getDoctorResponse = response;
-  //     emit(GetDoctorSuccessState());
-  //     // fullNameController.clear();
-  //     // userNameController.clear();
-  //     // passwordController.clear();
-  //     // idController.clear();
-  //   } on AppError catch (e) {
-  //     emit(GetDoctorErrorState(message: e.errorMessage));
-  //   } on DioException catch (e) {
-  //     final message = (e.error is AppError)
-  //         ? (e.error as AppError).errorMessage
-  //         : e.message;
-  //     emit(
-  //       GetDoctorErrorState(message: message ?? 'UnExpected error occurred'),
-  //     );
-  //   }
+      var response = await getManagerUseCase.invoke(token ?? '');
+      getManagerResponse = response;
+      emit(GetManagerSuccessState());
+    } on AppError catch (e) {
+      emit(GetManagerErrorState(message: e.errorMessage));
+    } on DioException catch (e) {
+      final message = (e.error is AppError)
+          ? (e.error as AppError).errorMessage
+          : e.message;
+      emit(
+        GetManagerErrorState(message: message ?? 'UnExpected error occurred'),
+      );
+    }
+  }
+
+  updateManager({required UpdateManagerRequest updateManagerRequest}) async {
+    try {
+      emit(UpdateManagerLoadingState());
+
+      String? token = await SharedPreferencesUtils.getData(key: 'token');
+
+      var response = await updateManagerUseCase.invoke(
+        updateManagerRequest,
+        token ?? '',
+      );
+
+      emit(UpdateManagerSuccessState(updateManagerResponse: response));
+    } on AppError catch (e) {
+      emit(UpdateManagerErrorState(message: e.errorMessage));
+    } on DioException catch (e) {
+      final message = (e.error is AppError)
+          ? (e.error as AppError).errorMessage
+          : e.message;
+      emit(
+        UpdateManagerErrorState(
+          message: message ?? 'UnExpected error occurred',
+        ),
+      );
+    }
+  }
+
   // }
 
-  // updateDoctor({required UpdateDoctorRequest updateDoctorRequest}) async {
-  //   try {
-  //     emit(UpdateDoctorLoadingState());
+  deleteManager({required int managerId}) async {
+    try {
+      emit(DeleteManagerLoadingState());
 
-  //     String? token = await SharedPreferencesUtils.getData(key: 'token');
+      String? token = await SharedPreferencesUtils.getData(key: 'token');
 
-  //     var response = await updateDoctorUseCase.invoke(
-  //       updateDoctorRequest,
-  //       token ?? '',
-  //     );
+      var response = await deleteManagerUseCase.invoke(
+        managerId,
+        token ?? '',
+      );
 
-  //     emit(UpdateDoctorSuccessState(updateDoctorResponse: response));
-  //   } on AppError catch (e) {
-  //     emit(UpdateDoctorErrorState(message: e.errorMessage));
-  //   } on DioException catch (e) {
-  //     final message = (e.error is AppError)
-  //         ? (e.error as AppError).errorMessage
-  //         : e.message;
-  //     emit(
-  //       UpdateDoctorErrorState(message: message ?? 'UnExpected error occurred'),
-  //     );
-  //   }
-  // }
+      emit(DeleteManagerSuccessState(deleteManagerResponse: response));
+    } on AppError catch (e) {
+      emit(DeleteManagerErrorState(message: e.errorMessage));
+    } on DioException catch (e) {
+      final message = (e.error is AppError)
+          ? (e.error as AppError).errorMessage
+          : e.message;
+      emit(
+        DeleteManagerErrorState(
+          message: message ?? 'UnExpected error occurred',
+        ),
+      );
+    }
+  }
 }

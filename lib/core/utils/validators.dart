@@ -147,12 +147,6 @@ class AppValidators {
         // Ensure each word has at least 2 characters
         return 'Each name part must be at least 2 characters';
       }
-      // Check if the word contains only letters (basic check)
-      if (!RegExp(r"^[a-zA-Z]+$").hasMatch(word)) {
-        // This basic check might be too restrictive for international names.
-        // Use the regex from Method 1 for broader support.
-        return 'Invalid characters found in name';
-      }
     }
 
     return null; // The input is valid

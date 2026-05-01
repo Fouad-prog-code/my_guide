@@ -9,6 +9,7 @@ import 'package:my_guide/api/models/request/login/login_request_dto.dart';
 import 'package:my_guide/api/models/common/add_user/add_user_response_dto.dart';
 import 'package:my_guide/api/models/request/updata_room/update_room_request_dto.dart';
 import 'package:my_guide/api/models/request/update_doctor/update_doctor_request_dto.dart';
+import 'package:my_guide/api/models/request/update_manager/update_manager_request_dto.dart';
 import 'package:my_guide/api/models/response/add_room/add_room_response_dto.dart';
 import 'package:my_guide/api/models/response/add_subject/add_subject_response_dto.dart';
 import 'package:my_guide/api/models/response/delete_doctor/delete_doctor_response_dto.dart';
@@ -21,6 +22,7 @@ import 'package:my_guide/api/models/response/get_doctor/get_doctor_response_dto.
 import 'package:my_guide/api/models/response/get_room/get_room_response_dto.dart';
 import 'package:my_guide/api/models/response/get_student/get_student_response_dto.dart';
 import 'package:my_guide/api/models/response/get_subject/get_subject_response_dto.dart';
+import 'package:my_guide/api/models/response/get_manager/get_manager_response_dto.dart';
 import 'package:my_guide/api/models/response/login/login_response_dto.dart';
 import 'package:my_guide/api/models/response/room_response_dto.dart';
 import 'package:my_guide/api/models/response/student_schedule_response_dto.dart';
@@ -87,6 +89,9 @@ abstract class ApiServices {
   @GET(ApiEndpoints.getDoctorApi)
   Future<GetDoctorResponseDto> getDoctor(@Header("Authorization") String token);
 
+  @GET(ApiEndpoints.getManagerApi)
+  Future<GetManagerResponseDto> getManager(@Header("Authorization") String token);
+
   @GET(ApiEndpoints.getRoomApi)
   Future<GetRoomResponseDto> getRoom(@Header("Authorization") String token);
 
@@ -113,9 +118,21 @@ abstract class ApiServices {
     @Header("Authorization") String token,
   );
 
+  @PUT(ApiEndpoints.updateManagerApi)
+  Future<UpdateOrDeleteUserResponseDto> updateManager(
+    @Body() UpdateManagerRequestDto updateManagerRequestDto,
+    @Header("Authorization") String token,
+  );
+
   @DELETE(ApiEndpoints.deleteStudentApi)
   Future<UpdateOrDeleteUserResponseDto> deleteStudent(
     @Path("Id") int id,
+    @Header("Authorization") String token,
+  );
+
+  @DELETE(ApiEndpoints.deleteManagerApi)
+  Future<UpdateOrDeleteUserResponseDto> deleteManager(
+    @Path("ManagerId") int managerId,
     @Header("Authorization") String token,
   );
 

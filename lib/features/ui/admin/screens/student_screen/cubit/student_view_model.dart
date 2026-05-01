@@ -59,6 +59,12 @@ class StudentViewModel extends Cubit<StudentStates> {
         var response = await addStudentUseCase.invoke(addStudentRequest, token);
 
         emit(AddStudentSuccessState(addUserResponse: response));
+        fullNameController.clear();
+        passwordController.clear();
+        idController.clear();
+        userNameController.clear();
+        selectedYear = null;
+        selectedDept = null;
       } on AppError catch (e) {
         emit(AddStudentErrorState(message: e.errorMessage));
       } on DioException catch (e) {

@@ -7,19 +7,35 @@ class ManagerInitState extends ManagerStates {}
 
 class AddManagerLoadingState extends ManagerStates {}
 
-//class GetDoctorLoadingState extends ManagerStates {}
-
 class AddManagerErrorState extends ManagerStates {
   String message;
 
   AddManagerErrorState({required this.message});
 }
 
-// class GetDoctorErrorState extends ManagerStates {
-//   String message;
+class GetManagerLoadingState extends ManagerStates {}
 
-//   GetDoctorErrorState({required this.message});
-// }
+class GetManagerSuccessState extends ManagerStates {}
+
+class GetManagerErrorState extends ManagerStates {
+  final String message;
+
+  GetManagerErrorState({required this.message});
+}
+
+class UpdateManagerLoadingState extends ManagerStates {}
+
+class UpdateManagerSuccessState extends ManagerStates {
+  UpdateOrDeleteUserResponse updateManagerResponse;
+
+  UpdateManagerSuccessState({required this.updateManagerResponse});
+}
+
+class UpdateManagerErrorState extends ManagerStates {
+  final String message;
+
+  UpdateManagerErrorState({required this.message});
+}
 
 class AddManagerSuccessState extends ManagerStates {
   AddUserResponse addManagerResponse;
@@ -27,18 +43,16 @@ class AddManagerSuccessState extends ManagerStates {
   AddManagerSuccessState({required this.addManagerResponse});
 }
 
-// class GetDoctorSuccessState extends ManagerStates {}
+class DeleteManagerLoadingState extends ManagerStates {}
 
-// class UpdateDoctorLoadingState extends ManagerStates {}
+class DeleteManagerSuccessState extends ManagerStates {
+  UpdateOrDeleteUserResponse deleteManagerResponse;
 
-// class UpdateDoctorErrorState extends ManagerStates {
-//   String message;
+  DeleteManagerSuccessState({required this.deleteManagerResponse});
+}
 
-//   UpdateDoctorErrorState({required this.message});
-// }
+class DeleteManagerErrorState extends ManagerStates {
+  final String message;
 
-// class UpdateDoctorSuccessState extends ManagerStates {
-//   UpdateOrDeleteUserResponse updateDoctorResponse;
-
-//   UpdateDoctorSuccessState({required this.updateDoctorResponse});
-// }
+  DeleteManagerErrorState({required this.message});
+}

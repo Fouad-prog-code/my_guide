@@ -8,6 +8,8 @@ import 'package:my_guide/core/utils/app_styles.dart';
 import 'package:my_guide/core/utils/dialog_utils.dart';
 import 'package:my_guide/core/utils/snack_bar_utils.dart';
 import 'package:my_guide/domain/entities/request/add_subject/add_subject_request.dart';
+import 'package:my_guide/domain/entities/response/get_doctor/get_doctor_data.dart';
+import 'package:my_guide/features/ui/admin/screens/doctor_screen/cubit/doctor_view_model.dart';
 import 'package:my_guide/features/ui/admin/screens/subject_screen/cubit/subject_states.dart';
 import 'package:my_guide/features/ui/admin/screens/subject_screen/cubit/subject_view_model.dart';
 import 'package:my_guide/features/ui/admin/widgets/data_manager.dart';
@@ -23,15 +25,18 @@ class SubjectsScreen extends StatefulWidget {
 class _SubjectsScreenState extends State<SubjectsScreen> {
   SubjectViewModel viewModel = getIt<SubjectViewModel>();
 
+  DoctorViewModel doctorViewModel = getIt<DoctorViewModel>();
+
   @override
   void initState() {
     super.initState();
     viewModel.getSubject();
+    doctorViewModel.getDoctor();
   }
 
   @override
   Widget build(BuildContext context) {
-    final List<Map<String, dynamic>> doctors = DataManager().doctors;
+    //  final List<Map<String, dynamic>> doctors = DataManager().doctors;
 
     return BlocProvider(
       create: (context) => viewModel,
@@ -89,8 +94,10 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
                       ),
                     ),
                     ElevatedButton.icon(
-                      onPressed: () =>
-                          _openSubjectDialog(context, doctors: doctors),
+                      onPressed: () => _openSubjectDialog(
+                        context,
+                        doctors: doctorViewModel.allDoctors,
+                      ),
                       icon: const Icon(Icons.add),
                       label: const Text("Add"),
                       style: ElevatedButton.styleFrom(
@@ -212,7 +219,7 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
   void _openSubjectDialog(
     BuildContext context, {
     Map<String, dynamic>? subject,
-    required List<Map<String, dynamic>> doctors,
+    required List<GetDoctorData> doctors,
   }) {
     final nameController = TextEditingController(text: subject?['name'] ?? "");
     viewModel.selectedYear = subject?['year']?.toString();
@@ -243,14 +250,15 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
                   DropdownButtonFormField<int>(
                     value: viewModel.selectedDoctorId,
                     hint: const Text("Select Doctor"),
-                    decoration: const InputDecoration(
-                      labelText: "Assign Doctor",
-                    ),
+
+                    borderRadius: BorderRadius.circular(18.r),
+
+                    decoration: InputDecoration(labelText: "Assign Doctor"),
                     items: doctors
                         .map(
                           (doc) => DropdownMenuItem<int>(
-                            value: doc['id'],
-                            child: Text(doc['name']),
+                            value: doc.doctorId,
+                            child: Text(doc.doctorName ?? ''),
                           ),
                         )
                         .toList(),
@@ -349,7 +357,7 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
                             return;
                           }
                           final doctor = doctors.firstWhere(
-                            (doc) => doc['id'] == viewModel.selectedDoctorId,
+                            (doc) => doc.doctorId == viewModel.selectedDoctorId,
                           );
                           viewModel.addSubject(
                             token:
@@ -359,7 +367,7 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
                                 '',
                             addSubjectRequest: AddSubjectRequest(
                               lectureName: nameController.text,
-                              doctorName: doctor['name'],
+                              doctorName: doctor.doctorName,
                               yearName: viewModel.selectedYear,
                               departmentNames: selectedDepts,
                             ),

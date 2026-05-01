@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart'; // أضفنا المكتبة دي
 import 'package:my_guide/core/utils/dialog_utils.dart';
 import 'package:my_guide/domain/entities/response/get_student/get_student_data.dart';
-import 'package:my_guide/domain/entities/response/get_student/view_student.dart';
+import 'package:my_guide/domain/entities/response/get_student/view_student_dots.dart';
 import 'package:my_guide/features/ui/admin/screens/student_screen/cubit/student_states.dart';
 import 'package:my_guide/features/ui/admin/screens/student_screen/cubit/student_view_model.dart';
 
@@ -35,7 +35,7 @@ class _YearDetailsScreenState extends State<YearDetailsScreen> {
         final currentStudentsData =
             widget.viewModel.getStudentResponse?.data ?? widget.allStudents;
 
-        List<ViewStudent> filteredList = [];
+        List<ViewStudentDots> filteredList = [];
         for (var yearData in currentStudentsData) {
           if (yearData.yearName == widget.yearName) {
             if (widget.deptName.isEmpty) {
@@ -86,7 +86,8 @@ class _YearDetailsScreenState extends State<YearDetailsScreen> {
                           children: [
                             IconButton(
                               icon: const Icon(Icons.edit, color: Colors.blue),
-                              onPressed: () => _showEditDialog(student),
+                              onPressed: () =>
+                                  _showEditDialog(student, widget.yearName),
                             ),
                             IconButton(
                               icon: const Icon(
@@ -118,7 +119,7 @@ class _YearDetailsScreenState extends State<YearDetailsScreen> {
     );
   }
 
-  void _showEditDialog(ViewStudent student) {
+  void _showEditDialog(ViewStudentDots student, String year) {
     final nameController = TextEditingController(text: student.studentName);
 
     final idController = TextEditingController(text: student.userName);
