@@ -24,6 +24,8 @@ class ApiEndpoints {
   static const String updateDoctorApi = 'api/Doctor/updateDoctor';
   
   static const String updateStudentApi = 'api/Student/update';
+  
+  static const String updateCourseApi = 'api/Admin/UpdateCourse';
 
   static const String deleteStudentApi = 'api/Student/DeleteStudent/{Id}';
 

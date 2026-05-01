@@ -11,6 +11,7 @@ import 'package:my_guide/api/models/request/updata_room/update_room_request_dto.
 import 'package:my_guide/api/models/request/update_doctor/update_doctor_request_dto.dart';
 import 'package:my_guide/api/models/request/update_manager/update_manager_request_dto.dart';
 import 'package:my_guide/api/models/request/update_student/update_student_request_dto.dart';
+import 'package:my_guide/api/models/request/update_course/update_course_request_dto.dart';
 import 'package:my_guide/api/models/response/add_room/add_room_response_dto.dart';
 import 'package:my_guide/api/models/response/add_subject/add_subject_response_dto.dart';
 import 'package:my_guide/api/models/response/delete_doctor/delete_doctor_response_dto.dart';
@@ -128,6 +129,12 @@ abstract class ApiServices {
   @PUT(ApiEndpoints.updateStudentApi)
   Future<UpdateOrDeleteUserResponseDto> updateStudent(
     @Body() UpdateStudentRequestDto updateStudentRequestDto,
+    @Header("Authorization") String token,
+  );
+
+  @PUT(ApiEndpoints.updateCourseApi)
+  Future<UpdateOrDeleteUserResponseDto> updateCourse(
+    @Body() UpdateCourseRequestDto updateCourseRequestDto,
     @Header("Authorization") String token,
   );
 

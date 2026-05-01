@@ -112,11 +112,6 @@ class _LoginScreenState extends State<LoginScreen> {
                           String? role = getRoleFromToken(token ?? '');
 
                           String? userId = getUserIdFromToken(token ?? '');
-                          String? acYear = getAcademicYearFromToken(
-                            token ?? "",
-                          );
-
-                          print(role);
 
                           SharedPreferencesUtils.setData(
                             key: 'token',
@@ -137,13 +132,19 @@ class _LoginScreenState extends State<LoginScreen> {
                             Navigator.pushReplacementNamed(
                               context,
                               AppRoutes.studentRoute,
-                              arguments: acYear,
+                              arguments: {
+                                'data': state.response.data,
+                                'userId': userId,
+                              },
                             );
                           } else if (role == 'Manager') {
                             Navigator.pushReplacementNamed(
                               context,
                               AppRoutes.managerRoute,
-                              arguments: state.response.data,
+                              arguments: {
+                                'data': state.response.data,
+                                'userId': userId,
+                              },
                             );
                           } else if (role == 'Admin') {
                             Navigator.pushReplacementNamed(
@@ -209,24 +210,6 @@ class _LoginScreenState extends State<LoginScreen> {
       final Map<String, dynamic> data = json.decode(decoded);
 
       return data["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"];
-    } catch (e) {
-      return null;
-    }
-  }
-
-  String? getAcademicYearFromToken(String token) {
-    try {
-      final parts = token.split('.');
-      if (parts.length != 3) return null;
-
-      final payload = parts[1];
-      final normalized = base64Url.normalize(payload);
-      final decoded = utf8.decode(base64Url.decode(normalized));
-
-      final Map<String, dynamic> data = json.decode(decoded);
-
-      // المفتاح اللي موجود في الـ Token بتاعك هو AcademicYearId
-      return data["AcademicYearId"]?.toString();
     } catch (e) {
       return null;
     }

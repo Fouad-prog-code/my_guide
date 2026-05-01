@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:my_guide/core/cache/shared_preferences.dart';
 import 'package:my_guide/core/utils/app_colors.dart';
+import 'package:my_guide/core/utils/app_routes.dart';
 import 'package:my_guide/core/utils/app_styles.dart';
+import 'package:my_guide/domain/entities/response/login/data_response.dart';
 import 'package:my_guide/features/ui/admin/screens/dashboard_screen/dashboard_screen.dart';
 import 'package:my_guide/features/ui/admin/screens/doctor_screen/doctors_screen.dart';
 import 'package:my_guide/features/ui/admin/screens/generate_time_tables.dart';
@@ -41,11 +45,9 @@ class _AdminLayoutState extends State<AdminLayout> {
 
   @override
   Widget build(BuildContext context) {
-    // تحديد هل الشاشة موبيل بناءً على العرض
     bool isMobile = MediaQuery.of(context).size.width < 850;
-
+    final data = ModalRoute.of(context)!.settings.arguments as Data;
     return Scaffold(
-      // في الموبيل بنضيف AppBar و Drawer
       appBar: isMobile
           ? AppBar(
               centerTitle: true,
@@ -58,14 +60,10 @@ class _AdminLayoutState extends State<AdminLayout> {
               elevation: 0,
             )
           : null,
-      drawer: isMobile ? _buildDrawer() : null,
+      drawer: isMobile ? _buildDrawer(data) : null,
 
       body: Row(
         children: [
-          /// Sidebar يظهر فقط في حالة الويب/تابلت
-          if (!isMobile) _buildSidebar(),
-
-          /// المحتوى الرئيسي
           Expanded(
             child: SafeArea(
               // لضمان عدم التداخل مع النوتش في الموبيل
@@ -75,7 +73,6 @@ class _AdminLayoutState extends State<AdminLayout> {
         ],
       ),
 
-      // إضافة Bottom Navigation في حالة الموبيل فقط لسهولة الوصول بالإبهام
       bottomNavigationBar: isMobile
           ? BottomNavigationBar(
               currentIndex: index,
@@ -98,53 +95,57 @@ class _AdminLayoutState extends State<AdminLayout> {
     );
   }
 
-  Widget _buildSidebar() {
-    return Container(
-      width: 260,
-      color: Colors.blueGrey[900],
-      child: Column(
-        children: [
-          const DrawerHeader(
-            child: Center(
-              child: Text(
-                "ADMIN PANEL",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: menuItems.length,
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              itemBuilder: (context, i) =>
-                  sidebarItem(menuItems[i]['title'], menuItems[i]['icon'], i),
-            ),
-          ),
-          const Divider(color: Colors.white24),
-          sidebarItem("Logout", Icons.logout, -1),
-          const SizedBox(height: 20),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildDrawer() {
+  Widget _buildDrawer(Data data) {
     return Drawer(
       child: Container(
         color: Colors.blueGrey[900],
         child: Column(
           children: [
-            const UserAccountsDrawerHeader(
-              decoration: BoxDecoration(color: Colors.blueGrey),
-              accountName: Text("Admin User"),
-              accountEmail: Text("admin@system.com"),
-              currentAccountPicture: CircleAvatar(
-                backgroundColor: Colors.white,
-                child: Icon(Icons.person),
+            Container(
+              padding: EdgeInsets.only(top: 80.h, bottom: 28.h),
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: Colors.blueGrey,
+                borderRadius: BorderRadius.only(
+                  bottomRight: Radius.circular(50.r),
+                ),
+              ),
+              child: Column(
+                children: [
+                  Container(
+                    padding: EdgeInsets.all(3.r),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: Colors.white.withOpacity(0.5),
+                        width: 2.w,
+                      ),
+                    ),
+                    child: CircleAvatar(
+                      backgroundColor: Colors.white,
+                      radius: 40.r,
+                      child: Icon(
+                        Icons.person,
+                        size: 40.r,
+                        color: Colors.blueGrey,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 15.h),
+                  Text(
+                    data.fullName ?? 'User Name',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 22.sp,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  SizedBox(height: 8.h),
+                  Text(
+                    data.userName ?? '@username',
+                    style: TextStyle(color: Colors.white70, fontSize: 14.sp),
+                  ),
+                ],
               ),
             ),
             ...List.generate(
@@ -161,33 +162,39 @@ class _AdminLayoutState extends State<AdminLayout> {
                 },
               ),
             ),
+            SizedBox(height: 42.h),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 22.w),
+              child: ElevatedButton(
+                onPressed: () {
+                  SharedPreferencesUtils.removeData(key: 'token');
+                  Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    AppRoutes.loginRoute,
+                    (_) => false,
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.redColor,
+
+                  padding: EdgeInsets.symmetric(vertical: 16.h),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadiusGeometry.circular(18.r),
+                  ),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.logout, size: 24, color: AppColors.whiteColor),
+                    SizedBox(width: 8.w),
+                    Text("Logout", style: AppStyles.blod24White),
+                  ],
+                ),
+              ),
+            ),
           ],
         ),
       ),
-    );
-  }
-
-  Widget sidebarItem(String title, IconData icon, int i) {
-    bool isSelected = index == i;
-    return ListTile(
-      leading: Icon(icon, color: isSelected ? Colors.white : Colors.grey[400]),
-      title: Text(
-        title,
-        style: TextStyle(
-          color: isSelected ? Colors.white : Colors.grey[300],
-          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-        ),
-      ),
-      selected: isSelected,
-      selectedTileColor: Colors.blueGrey[700],
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-      onTap: () {
-        if (i == -1) {
-          showLogoutDialog(context);
-        } else {
-          setState(() => index = i);
-        }
-      },
     );
   }
 

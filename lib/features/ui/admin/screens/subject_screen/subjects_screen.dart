@@ -8,11 +8,14 @@ import 'package:my_guide/core/utils/app_styles.dart';
 import 'package:my_guide/core/utils/dialog_utils.dart';
 import 'package:my_guide/core/utils/snack_bar_utils.dart';
 import 'package:my_guide/domain/entities/request/add_subject/add_subject_request.dart';
+import 'package:my_guide/domain/entities/request/update_course/update_course_request.dart';
 import 'package:my_guide/domain/entities/response/get_doctor/get_doctor_data.dart';
+import 'package:my_guide/domain/entities/response/get_subject/get_subject_data.dart';
 import 'package:my_guide/features/ui/admin/screens/doctor_screen/cubit/doctor_view_model.dart';
 import 'package:my_guide/features/ui/admin/screens/subject_screen/cubit/subject_states.dart';
 import 'package:my_guide/features/ui/admin/screens/subject_screen/cubit/subject_view_model.dart';
-import 'package:my_guide/features/ui/admin/widgets/data_manager.dart';
+import 'package:collection/collection.dart';
+import 'package:my_guide/features/ui/admin/widgets/edit_subject_dialoge.dart';
 import 'package:my_guide/features/ui/admin/widgets/error_widget.dart';
 
 class SubjectsScreen extends StatefulWidget {
@@ -36,14 +39,12 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    //  final List<Map<String, dynamic>> doctors = DataManager().doctors;
-
     return BlocProvider(
       create: (context) => viewModel,
       child: BlocListener<SubjectViewModel, SubjectStates>(
         listener: (context, state) {
           if (state is AddSubjectSuccessState ||
-              // state is UpdateRoomSuccessState ||
+              state is UpdateCourseSuccessState ||
               state is DeleteSubjectSuccessState) {
             if (Navigator.canPop(context)) {
               Navigator.pop(context);
@@ -55,9 +56,9 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
             if (state is DeleteSubjectSuccessState) {
               msg = state.deleteSubjectResponse.data ?? "Deleted";
             }
-            // if (state is UpdateRoomSuccessState) {
-            //   msg = state.updateRoomResponse.data ?? "Updated";
-            // }
+            if (state is UpdateCourseSuccessState) {
+              msg = state.response.data ?? "Updated";
+            }
             if (state is AddSubjectSuccessState) {
               msg = state.addSubjectResponse.data ?? '';
             }
@@ -65,12 +66,13 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
           }
 
           if (state is AddSubjectErrorState ||
-              //state is UpdateRoomErrorState ||
+              state is UpdateCourseErrorState ||
               state is DeleteSubjectErrorState) {
             String errorMsg = "";
-            if (state is AddSubjectErrorState)
+            if (state is AddSubjectErrorState) {
               errorMsg = state.addSubjectmessage;
-            // if (state is UpdateRoomErrorState) errorMsg = state.message;
+            }
+            if (state is UpdateCourseErrorState) errorMsg = state.message;
             if (state is DeleteSubjectErrorState) errorMsg = state.message;
 
             DialogUtils.showErrorDialog(context, errorMsg);
@@ -99,7 +101,7 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
                       ),
                     ),
                     ElevatedButton.icon(
-                      onPressed: () => _openSubjectDialog(
+                      onPressed: () => _showAddSubjectDialog(
                         context,
                         doctors: doctorViewModel.allDoctors,
                       ),
@@ -162,22 +164,21 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
                               child: ListView.builder(
                                 itemCount: subjects.length,
                                 itemBuilder: (_, index) {
+                                  final subject = subjects[index];
                                   return Card(
                                     margin: const EdgeInsets.only(bottom: 12),
                                     child: ListTile(
                                       title: Text(
-                                        subjects[index].subjectName ?? '',
+                                        subject.subjectName ?? '',
                                         style: const TextStyle(
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
                                       subtitle: Text(
-                                        "Dr: ${subjects[index].doctorName}\n"
-                                        "Depts: ${(subjects[index].departments as List).join(", ")}",
+                                        "Dr: ${subject.doctorName}\n"
+                                        "Depts: ${(subject.departments as List).join(", ")}",
                                       ),
-                                      trailing: _buildActions(
-                                        name: subjects[index].subjectName ?? '',
-                                      ),
+                                      trailing: _buildActions(subject: subject),
                                     ),
                                   );
                                 },
@@ -195,13 +196,17 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
   }
 
   /// ================= ACTIONS =================
-  Widget _buildActions({required String name}) {
+  Widget _buildActions({required GetSubjectData subject}) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
         IconButton(
           icon: const Icon(Icons.edit, color: Colors.blue),
-          onPressed: () {},
+          onPressed: () => _showEditSubjectDialog(
+            context,
+            subject: subject,
+            doctors: doctorViewModel.allDoctors,
+          ),
         ),
         IconButton(
           icon: const Icon(Icons.delete_outline, color: Colors.red),
@@ -212,7 +217,8 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
               msg: 'Do you want to delete this Course?',
               nagtActionName: 'Delete',
               postActionName: 'Cancel',
-              nagtAction: () => viewModel.deleteSubject(name: name),
+              nagtAction: () =>
+                  viewModel.deleteSubject(name: subject.subjectName ?? ''),
             );
           },
         ),
@@ -220,23 +226,21 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
     );
   }
 
-  /// ================= DIALOG =================
-  void _openSubjectDialog(
+  /// ================= ADD DIALOG =================
+  void _showAddSubjectDialog(
     BuildContext context, {
-    Map<String, dynamic>? subject,
     required List<GetDoctorData> doctors,
   }) {
-    final nameController = TextEditingController(text: subject?['name'] ?? "");
-    viewModel.selectedYear = subject?['year']?.toString();
-    viewModel.selectedDoctorId = subject?['doctorId'];
-    List<String> selectedDepts = subject?['department'] != null
-        ? List<String>.from(subject!['department'])
-        : [];
+    final nameController = TextEditingController();
+    viewModel.selectedYear = null;
+    viewModel.selectedDoctorId = null;
+    List<String> selectedDepts = [];
+
     showDialog(
       context: context,
       builder: (dialogContext) => StatefulBuilder(
         builder: (context, setDialogState) => AlertDialog(
-          title: Text(subject == null ? "Add New Subject" : "Edit Subject"),
+          title: const Text("Add New Subject"),
           content: SingleChildScrollView(
             child: Form(
               key: viewModel.formKey,
@@ -255,10 +259,10 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
                   DropdownButtonFormField<int>(
                     value: viewModel.selectedDoctorId,
                     hint: const Text("Select Doctor"),
-
                     borderRadius: BorderRadius.circular(18.r),
-
-                    decoration: InputDecoration(labelText: "Assign Doctor"),
+                    decoration: const InputDecoration(
+                      labelText: "Assign Doctor",
+                    ),
                     items: doctors
                         .map(
                           (doc) => DropdownMenuItem<int>(
@@ -338,7 +342,6 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
             ),
             BlocBuilder<SubjectViewModel, SubjectStates>(
               bloc: viewModel,
-
               builder: (context, state) {
                 final isLoading = state is AddSubjectLoadingState;
                 return ElevatedButton(
@@ -357,7 +360,7 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
                               selectedDepts.isEmpty) {
                             DialogUtils.showErrorDialog(
                               context,
-                              'Please select at least one department',
+                              'please select one department at least',
                             );
                             return;
                           }
@@ -384,12 +387,29 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
                           height: 20,
                           child: CircularProgressIndicator(strokeWidth: 2),
                         )
-                      : const Text("Save"),
+                      : const Text("Add"),
                 );
               },
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  /// ================= EDIT DIALOG =================
+
+  void _showEditSubjectDialog(
+    BuildContext context, {
+    required GetSubjectData subject,
+    required List<GetDoctorData> doctors,
+  }) {
+    showDialog(
+      context: context,
+      builder: (_) => EditSubjectDialog(
+        subject: subject,
+        doctors: doctors,
+        viewModel: viewModel,
       ),
     );
   }

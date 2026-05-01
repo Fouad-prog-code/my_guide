@@ -175,7 +175,7 @@ class _YearDetailsScreenState extends State<YearDetailsScreen> {
                       TextField(
                         controller: idController,
                         decoration: const InputDecoration(
-                          labelText: "User Name / ID",
+                          labelText: "User Name",
                         ),
                         keyboardType: TextInputType.number,
                       ),
@@ -260,6 +260,16 @@ class _YearDetailsScreenState extends State<YearDetailsScreen> {
                                 'Please change anything first',
                               );
 
+                              return;
+                            }
+
+                            if (localYear == 'Fourth Year' &&
+                                (localDept == null || localDept!.isEmpty)) {
+                              DialogUtils.showErrorDialog(
+                                context,
+
+                                'Please select a department first',
+                              );
                               return;
                             }
 

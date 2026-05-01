@@ -1,19 +1,15 @@
-class GetSubjectData {
+class UpdateCourseRequest {
   final int? id;
-
-  final String? subjectName;
-
+  final String? name;
   final String? doctorName;
-
   final String? academicYear;
-
   final List<String>? departments;
 
-  GetSubjectData({
-    this.subjectName,
-    this.doctorName,
-    this.departments,
-    this.academicYear,
+  UpdateCourseRequest({
     this.id,
+    this.name,
+    this.doctorName,
+    this.academicYear,
+    this.departments,
   });
 }

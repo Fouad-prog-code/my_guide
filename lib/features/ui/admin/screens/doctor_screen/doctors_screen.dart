@@ -74,6 +74,10 @@ class _DoctorsScreenState extends State<DoctorsScreen> {
               }
               if (state is AddDoctorSuccessState) {
                 msg = state.addDoctorResponse.message ?? 'Added Successfully';
+                viewModel.fullNameController.clear();
+                viewModel.idController.clear();
+                viewModel.userNameController.clear();
+                viewModel.passwordController.clear();
               }
 
               SnackBarUtils.showSuccessSnackBar(context, msg);

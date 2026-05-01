@@ -4,8 +4,10 @@ import 'package:my_guide/domain/entities/response/get_subject/get_subject_data.d
 extension GetSubjectDataMapper on GetSubjectDataDto {
   GetSubjectData toGetSubjectData() {
     return GetSubjectData(
+      id: id,
       subjectName: subjectName,
       doctorName: doctorName,
+      academicYear: academicYear,
       departments: departments,
     );
   }

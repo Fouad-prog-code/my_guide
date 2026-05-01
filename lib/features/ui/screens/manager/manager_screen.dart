@@ -8,6 +8,7 @@ import 'package:my_guide/domain/entities/response/login/data_response.dart';
 import 'package:my_guide/features/ui/admin/widgets/error_widget.dart';
 import 'package:my_guide/features/ui/screens/room/cubit/room_state_model.dart';
 import 'package:my_guide/features/ui/screens/room/cubit/room_view_model.dart';
+import 'package:my_guide/features/ui/widgets/drawer_widget.dart';
 import 'package:my_guide/features/ui/widgets/schedule2_day_widget.dart';
 
 import '../../../../../core/utils/app_colors.dart';
@@ -76,10 +77,14 @@ class _RoomInfoState extends State<ManagerScreen> {
 
   @override
   Widget build(BuildContext context) {
-    Data? data = ModalRoute.of(context)!.settings.arguments as Data;
+    Map<String, dynamic> map =
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+
+    Data data = map['data'];
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 125.h,
+        iconTheme: IconThemeData(color: AppColors.whiteColor),
         backgroundColor: AppColors.primaryColor,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(bottom: Radius.circular(42.r)),
@@ -109,6 +114,7 @@ class _RoomInfoState extends State<ManagerScreen> {
           ),
         ),
       ),
+      drawer: DrawerWidget(data: data),
       body: BlocBuilder<RoomViewModel, RoomStates>(
         bloc: roomViewModel,
         builder: (context, state) {

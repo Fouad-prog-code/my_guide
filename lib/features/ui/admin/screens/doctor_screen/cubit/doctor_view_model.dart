@@ -52,10 +52,10 @@ class DoctorViewModel extends Cubit<DoctorStates> {
         var response = await addDoctorUseCase.invoke(addDoctorRequest, token);
 
         emit(AddDoctorSuccessState(addDoctorResponse: response));
-        userNameController.clear();
-        idController.clear();
-        passwordController.clear();
-        fullNameController.clear();
+        // userNameController.clear();
+        // idController.clear();
+        // passwordController.clear();
+        // fullNameController.clear();
       } on AppError catch (e) {
         emit(AddDoctorErrorState(message: e.errorMessage));
       } on DioException catch (e) {

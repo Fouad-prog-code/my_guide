@@ -9,6 +9,8 @@ import 'package:my_guide/domain/entities/response/get_subject/get_subject_respon
 import 'package:my_guide/domain/use_case/add_subject_use_case.dart';
 import 'package:my_guide/domain/use_case/delete_subject_use_case.dart';
 import 'package:my_guide/domain/use_case/get_subject_use_case.dart';
+import 'package:my_guide/domain/use_case/update_course_use_case.dart';
+import 'package:my_guide/domain/entities/request/update_course/update_course_request.dart';
 import 'package:my_guide/features/ui/admin/screens/subject_screen/cubit/subject_states.dart';
 
 @injectable
@@ -16,11 +18,13 @@ class SubjectViewModel extends Cubit<SubjectStates> {
   AddSubjectUseCase addSubjectUseCase;
   GetSubjectUseCase getSubjectUseCase;
   DeleteSubjectUseCase deleteSubjectUseCase;
+  UpdateCourseUseCase updateCourseUseCase;
 
   SubjectViewModel({
     required this.addSubjectUseCase,
     required this.getSubjectUseCase,
     required this.deleteSubjectUseCase,
+    required this.updateCourseUseCase,
   }) : super(SubjectInitState());
 
   GlobalKey<FormState> formKey = GlobalKey();
@@ -100,6 +104,30 @@ class SubjectViewModel extends Cubit<SubjectStates> {
         DeleteSubjectErrorState(
           message: message ?? 'UnExpected error occurred',
         ),
+      );
+    }
+  }
+
+  updateCourse({required UpdateCourseRequest updateCourseRequest}) async {
+    try {
+      emit(UpdateCourseLoadingState());
+
+      String? token = await SharedPreferencesUtils.getData(key: 'token');
+
+      var response = await updateCourseUseCase.invoke(
+        updateCourseRequest,
+        token ?? '',
+      );
+
+      emit(UpdateCourseSuccessState(response: response));
+    } on AppError catch (e) {
+      emit(UpdateCourseErrorState(message: e.errorMessage));
+    } on DioException catch (e) {
+      final message = (e.error is AppError)
+          ? (e.error as AppError).errorMessage
+          : e.message;
+      emit(
+        UpdateCourseErrorState(message: message ?? 'UnExpected error occurred'),
       );
     }
   }

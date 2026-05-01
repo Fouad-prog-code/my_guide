@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:my_guide/config/di.dart';
 import 'package:my_guide/domain/entities/response/lectures.dart';
+import 'package:my_guide/features/ui/admin/widgets/error_widget.dart';
 import 'package:my_guide/features/ui/screens/room/cubit/room_state_model.dart';
 import 'package:my_guide/features/ui/screens/room/cubit/room_view_model.dart';
 import 'package:my_guide/features/ui/widgets/schedule2_day_widget.dart';
@@ -56,8 +57,11 @@ class _RoomInfoState extends State<RoomInfo> {
         bloc: roomViewModel,
         builder: (context, state) {
           if (state is RoomErrorState) {
-            return Center(
-              child: Text(state.errorMessage, style: AppStyles.bold20primary),
+            return ErrorsWidget(
+              message: state.errorMessage,
+              onPressed: () {
+                roomViewModel.getRooms();
+              },
             );
           } else if (state is RoomSuccessState) {
             final data = state.roomResponse.data ?? [];

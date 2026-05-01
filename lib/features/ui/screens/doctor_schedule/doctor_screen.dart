@@ -5,8 +5,10 @@ import 'package:my_guide/config/di.dart';
 import 'package:my_guide/core/utils/app_colors.dart';
 import 'package:my_guide/core/utils/app_styles.dart';
 import 'package:my_guide/domain/entities/response/login/data_response.dart';
+import 'package:my_guide/features/ui/admin/widgets/error_widget.dart';
 import 'package:my_guide/features/ui/screens/doctor_schedule/cubit/doctor_schedule_states.dart';
 import 'package:my_guide/features/ui/screens/doctor_schedule/cubit/doctor_schedule_view_model.dart';
+import 'package:my_guide/features/ui/widgets/drawer_widget.dart';
 import 'package:my_guide/features/ui/widgets/schedule_day_widget.dart';
 
 class DoctorScreen extends StatefulWidget {
@@ -44,11 +46,12 @@ class _DoctorScreenState extends State<DoctorScreen> {
         {};
 
     Data data = args['data'] ?? {};
-
+    final String doctorId = args["userId"] ?? '';
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 125.h,
         backgroundColor: AppColors.primaryColor,
+        iconTheme: IconThemeData(color: AppColors.whiteColor),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(bottom: Radius.circular(42.r)),
         ),
@@ -58,10 +61,11 @@ class _DoctorScreenState extends State<DoctorScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text.rich(
+                maxLines: 2,
                 TextSpan(
                   children: [
                     TextSpan(
-                      text: 'Welcome ',
+                      text: 'Welcome Dr. ',
                       style: AppStyles.regural24White.copyWith(
                         fontWeight: FontWeight.normal,
                       ),
@@ -84,18 +88,25 @@ class _DoctorScreenState extends State<DoctorScreen> {
           ),
         ),
       ),
+      drawer: DrawerWidget(data: data),
       body: BlocBuilder<DoctorScheduleViewModel, DoctorScheduleStates>(
         bloc: viewModel,
         builder: (context, state) {
           if (state is DoctorErrorState) {
-            return Center(
-              child: Text(state.message, style: AppStyles.bold20primary),
+            return ErrorsWidget(
+              message: state.message,
+              onPressed: () {
+                viewModel.getDoctorScedule(
+                  doctorId: int.parse(doctorId),
+                  token: data.token ?? "",
+                );
+              },
             );
           } else if (state is DoctorSuccessState) {
             final doctorData = state.response.data ?? [];
             if (doctorData.isEmpty) {
               return Center(
-                child: Text('No Data Found', style: AppStyles.bold20primary),
+                child: Text('No Data Found', style: AppStyles.bold20DarkGray),
               );
             }
             return Padding(

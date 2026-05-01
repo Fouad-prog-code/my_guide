@@ -1,12 +1,16 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:my_guide/config/di.dart';
 import 'package:my_guide/domain/entities/response/lectures.dart';
+import 'package:my_guide/domain/entities/response/login/data_response.dart';
 import 'package:my_guide/features/ui/admin/widgets/error_widget.dart';
 import 'package:my_guide/features/ui/screens/student/cubit/student_state_model.dart';
 import 'package:my_guide/features/ui/screens/student/cubit/student_view_model.dart';
+import 'package:my_guide/features/ui/widgets/drawer_widget.dart';
 import 'package:my_guide/features/ui/widgets/schedule_day_widget.dart';
 
 import '../../../../core/utils/app_colors.dart';
@@ -32,11 +36,19 @@ class _StudentScreenState extends State<StudentScreen> {
 
   @override
   Widget build(BuildContext context) {
-    String? acYear = ModalRoute.of(context)!.settings.arguments as String;
+    Map<String, dynamic> map =
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+
+    Data data = map['data'];
+    String? userId = map['userId'];
+
+    String? acYear = getAcademicYearFromToken(data.token ?? '');
+
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 125.h,
         backgroundColor: AppColors.primaryColor,
+        iconTheme: IconThemeData(color: AppColors.whiteColor),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(bottom: Radius.circular(42.r)),
         ),
@@ -53,13 +65,15 @@ class _StudentScreenState extends State<StudentScreen> {
               ),
               SizedBox(height: 12.h),
               Text(
-                acYear,
+                acYear ?? '',
                 style: AppStyles.regural16White.copyWith(color: Colors.white70),
               ),
             ],
           ),
         ),
       ),
+
+      drawer: DrawerWidget(data: data),
       body: BlocBuilder<StudentViewModel, StudentStates>(
         bloc: studentViewModel,
         builder: (context, state) {
@@ -74,7 +88,7 @@ class _StudentScreenState extends State<StudentScreen> {
             final data = state.studentScheduleResponse.data ?? [];
             if (data.isEmpty) {
               return Center(
-                child: Text('No Data Found', style: AppStyles.bold20primary),
+                child: Text('No Data Found', style: AppStyles.bold20DarkGray),
               );
             }
             // Sort days: Saturday → Thursday
@@ -136,5 +150,23 @@ class _StudentScreenState extends State<StudentScreen> {
         },
       ),
     );
+  }
+
+  String? getAcademicYearFromToken(String token) {
+    try {
+      final parts = token.split('.');
+      if (parts.length != 3) return null;
+
+      final payload = parts[1];
+      final normalized = base64Url.normalize(payload);
+      final decoded = utf8.decode(base64Url.decode(normalized));
+
+      final Map<String, dynamic> data = json.decode(decoded);
+
+      // المفتاح اللي موجود في الـ Token بتاعك هو AcademicYearId
+      return data["AcademicYearId"]?.toString();
+    } catch (e) {
+      return null;
+    }
   }
 }
