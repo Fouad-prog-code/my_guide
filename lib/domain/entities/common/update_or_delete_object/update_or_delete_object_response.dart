@@ -1,4 +1,4 @@
-class UpdateOrDeleteUserResponse {
+class UpdateOrDeleteObjectResponse {
   final bool? succeeded;
 
   final String? message;
@@ -11,7 +11,7 @@ class UpdateOrDeleteUserResponse {
 
   final dynamic? meta;
 
-  UpdateOrDeleteUserResponse({
+  UpdateOrDeleteObjectResponse({
     this.succeeded,
     this.message,
     this.data,

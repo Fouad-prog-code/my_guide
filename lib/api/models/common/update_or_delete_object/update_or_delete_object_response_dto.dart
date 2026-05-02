@@ -1,9 +1,9 @@
 import 'package:json_annotation/json_annotation.dart';
 
-part 'update_or_delete_user_response_dto.g.dart';
+part 'update_or_delete_object_response_dto.g.dart';
 
 @JsonSerializable()
-class UpdateOrDeleteUserResponseDto {
+class UpdateOrDeleteObjectResponseDto {
   @JsonKey(name: "succeeded")
   final bool? succeeded;
   @JsonKey(name: "message")
@@ -17,7 +17,7 @@ class UpdateOrDeleteUserResponseDto {
   @JsonKey(name: "meta")
   final dynamic? meta;
 
-  UpdateOrDeleteUserResponseDto({
+  UpdateOrDeleteObjectResponseDto({
     this.succeeded,
     this.message,
     this.data,
@@ -26,11 +26,11 @@ class UpdateOrDeleteUserResponseDto {
     this.meta,
   });
 
-  factory UpdateOrDeleteUserResponseDto.fromJson(Map<String, dynamic> json) {
-    return _$UpdateOrDeleteUserResponseDtoFromJson(json);
+  factory UpdateOrDeleteObjectResponseDto.fromJson(Map<String, dynamic> json) {
+    return _$UpdateOrDeleteObjectResponseDtoFromJson(json);
   }
 
   Map<String, dynamic> toJson() {
-    return _$UpdateOrDeleteUserResponseDtoToJson(this);
+    return _$UpdateOrDeleteObjectResponseDtoToJson(this);
   }
 }

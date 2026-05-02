@@ -13,18 +13,23 @@ class ApiEndpoints {
   static const String getStudentApi = 'api/Admin/StudentManagment';
   static const String getManagerApi = 'api/Admin/ManagerManagment';
 
+  static const String getDepartmentApi = 'api/Admin/DepartmentManagment';
+
   static const String updateRoomApi = 'api/Room/UpdateRoom';
-  
+
   static const String updateManagerApi = 'api/Admin/UpdateManager';
+
+  static const String updateDepartmentApi =
+      'api/Department/UpdateDepartemnt'; //
 
   static const String deleteRoomApi = 'api/Room/DeleteRoom/{Id}';
 
   static const String deleteManagerApi = 'api/Admin/DeleteManager/{ManagerId}';
 
   static const String updateDoctorApi = 'api/Doctor/updateDoctor';
-  
+
   static const String updateStudentApi = 'api/Student/update';
-  
+
   static const String updateCourseApi = 'api/Admin/UpdateCourse';
 
   static const String deleteStudentApi = 'api/Student/DeleteStudent/{Id}';
@@ -42,4 +47,6 @@ class ApiEndpoints {
       'api/Student/GetMyScheduleAsync';
 
   static const String dashboardApi = 'api/Admin/DashboardOverview';
+
+  static const String addDepartmentApi = 'api/Admin/AddDepartment';
 }

@@ -67,7 +67,10 @@ class _ManagerScreenState extends State<ManagerScreen> {
             String errorMsg = "";
             if (state is AddManagerErrorState) errorMsg = state.message;
             if (state is UpdateManagerErrorState) errorMsg = state.message;
-            if (state is DeleteManagerErrorState) errorMsg = state.message;
+            if (state is DeleteManagerErrorState) {
+              DialogUtils.hideLoading(context: context);
+              errorMsg = state.message;
+            }
 
             DialogUtils.showErrorDialog(context, errorMsg);
           }

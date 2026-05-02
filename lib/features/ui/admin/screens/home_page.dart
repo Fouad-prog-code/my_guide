@@ -6,6 +6,7 @@ import 'package:my_guide/core/utils/app_routes.dart';
 import 'package:my_guide/core/utils/app_styles.dart';
 import 'package:my_guide/domain/entities/response/login/data_response.dart';
 import 'package:my_guide/features/ui/admin/screens/dashboard_screen/dashboard_screen.dart';
+import 'package:my_guide/features/ui/admin/screens/department_screen/department_screen.dart';
 import 'package:my_guide/features/ui/admin/screens/doctor_screen/doctors_screen.dart';
 import 'package:my_guide/features/ui/admin/screens/generate_time_tables.dart';
 import 'package:my_guide/features/ui/admin/screens/manager_screen/manager_screen.dart';
@@ -29,6 +30,7 @@ class _AdminLayoutState extends State<AdminLayout> {
     SubjectsScreen(),
     DoctorsScreen(),
     ManagerScreen(),
+    DepartmentScreen(),
     RoomsScreen(),
     GenerateTimeTabelsScreen(),
   ];
@@ -38,60 +40,47 @@ class _AdminLayoutState extends State<AdminLayout> {
     {'title': 'Students', 'icon': Icons.people},
     {'title': 'Subjects', 'icon': Icons.book},
     {'title': 'Doctors', 'icon': Icons.local_hospital},
-    {'title': 'Manager', 'icon': Icons.manage_accounts},
+    {'title': 'Managers', 'icon': Icons.manage_accounts},
+    {'title': 'Departments', 'icon': Icons.account_tree},
     {'title': 'Rooms', 'icon': Icons.room},
     {'title': 'Generate', 'icon': Icons.schedule},
   ];
 
   @override
   Widget build(BuildContext context) {
-    bool isMobile = MediaQuery.of(context).size.width < 850;
     final data = ModalRoute.of(context)!.settings.arguments as Data;
     return Scaffold(
-      appBar: isMobile
-          ? AppBar(
-              centerTitle: true,
-              iconTheme: IconThemeData(color: AppColors.whiteColor),
-              title: Text(
-                menuItems[index]['title'],
-                style: AppStyles.blod24White,
-              ),
-              backgroundColor: Colors.blueGrey[900],
-              elevation: 0,
-            )
-          : null,
-      drawer: isMobile ? _buildDrawer(data) : null,
-
-      body: Row(
-        children: [
-          Expanded(
-            child: SafeArea(
-              // لضمان عدم التداخل مع النوتش في الموبيل
-              child: screens[index],
-            ),
-          ),
-        ],
+      appBar: AppBar(
+        centerTitle: true,
+        iconTheme: IconThemeData(color: AppColors.whiteColor),
+        title: Text(menuItems[index]['title'], style: AppStyles.blod24White),
+        backgroundColor: Colors.blueGrey[900],
+        elevation: 0,
       ),
 
-      bottomNavigationBar: isMobile
-          ? BottomNavigationBar(
-              currentIndex: index,
-              onTap: (i) => setState(() => index = i),
-              type: BottomNavigationBarType.fixed,
-              selectedItemColor: Colors.blueGrey[900],
-              unselectedItemColor: Colors.grey,
-              showUnselectedLabels: false,
-              iconSize: 24,
-              items: menuItems
-                  .map(
-                    (item) => BottomNavigationBarItem(
-                      icon: Icon(item['icon']),
-                      label: item['title'],
-                    ),
-                  )
-                  .toList(),
+      drawer: _buildDrawer(data),
+
+      body: Row(
+        children: [Expanded(child: SafeArea(child: screens[index]))],
+      ),
+
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: index,
+        onTap: (i) => setState(() => index = i),
+        type: BottomNavigationBarType.fixed,
+        selectedItemColor: Colors.blueGrey[900],
+        unselectedItemColor: Colors.grey,
+        showUnselectedLabels: false,
+        iconSize: 24,
+        items: menuItems
+            .map(
+              (item) => BottomNavigationBarItem(
+                icon: Icon(item['icon']),
+                label: item['title'],
+              ),
             )
-          : null,
+            .toList(),
+      ),
     );
   }
 
@@ -162,9 +151,9 @@ class _AdminLayoutState extends State<AdminLayout> {
                 },
               ),
             ),
-            SizedBox(height: 42.h),
+            SizedBox(height: 32.h),
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 22.w),
+              padding: EdgeInsets.symmetric(horizontal: 26.w),
               child: ElevatedButton(
                 onPressed: () {
                   SharedPreferencesUtils.removeData(key: 'token');
@@ -177,7 +166,7 @@ class _AdminLayoutState extends State<AdminLayout> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.redColor,
 
-                  padding: EdgeInsets.symmetric(vertical: 16.h),
+                  padding: EdgeInsets.symmetric(vertical: 8.h),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadiusGeometry.circular(18.r),
                   ),
@@ -194,27 +183,6 @@ class _AdminLayoutState extends State<AdminLayout> {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  void showLogoutDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text("Logout"),
-        content: const Text("Are you sure you want to logout?"),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text("Cancel"),
-          ),
-          ElevatedButton(
-            onPressed: () =>
-                Navigator.of(context).popUntil((route) => route.isFirst),
-            child: const Text("Logout"),
-          ),
-        ],
       ),
     );
   }

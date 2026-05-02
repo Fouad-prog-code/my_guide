@@ -1,5 +1,8 @@
-import 'package:my_guide/domain/entities/common/update_or_delete_doctor/update_or_delete_user_response.dart';
+import 'package:my_guide/domain/entities/common/update_or_delete_object/update_or_delete_object_response.dart';
 
 abstract class DeleteManagerRemoteDataSource {
-  Future<UpdateOrDeleteUserResponse> deleteManager(int managerId, String token);
+  Future<UpdateOrDeleteObjectResponse> deleteManager(
+    int managerId,
+    String token,
+  );
 }

@@ -1,9 +1,9 @@
-import 'package:my_guide/api/models/common/update_or_delete_user/update_or_delete_user_response_dto.dart';
-import 'package:my_guide/domain/entities/common/update_or_delete_doctor/update_or_delete_user_response.dart';
+import 'package:my_guide/api/models/common/update_or_delete_object/update_or_delete_object_response_dto.dart';
+import 'package:my_guide/domain/entities/common/update_or_delete_object/update_or_delete_object_response.dart';
 
-extension UpdateOrDeleteUserResponseMapper on UpdateOrDeleteUserResponseDto {
-  UpdateOrDeleteUserResponse toUpdateOrDeleteUserResponse() {
-    return UpdateOrDeleteUserResponse(
+extension UpdateOrDeleteUserResponseMapper on UpdateOrDeleteObjectResponseDto {
+  UpdateOrDeleteObjectResponse toUpdateOrDeleteObjectResponse() {
+    return UpdateOrDeleteObjectResponse(
       succeeded: succeeded,
       statusCode: statusCode,
       message: message,

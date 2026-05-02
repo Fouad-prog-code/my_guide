@@ -1,5 +1,5 @@
 import 'package:my_guide/domain/entities/common/add_user/add_user_response.dart';
-import 'package:my_guide/domain/entities/common/update_or_delete_doctor/update_or_delete_user_response.dart';
+import 'package:my_guide/domain/entities/common/update_or_delete_object/update_or_delete_object_response.dart';
 
 abstract class StudentStates {}
 
@@ -38,7 +38,7 @@ class DeleteStudentErrorState extends StudentStates {
 }
 
 class DeleteStudentSuccessState extends StudentStates {
-  UpdateOrDeleteUserResponse studentResponse;
+  UpdateOrDeleteObjectResponse studentResponse;
 
   DeleteStudentSuccessState({required this.studentResponse});
 }
@@ -52,7 +52,7 @@ class UpdateStudentErrorState extends StudentStates {
 }
 
 class UpdateStudentSuccessState extends StudentStates {
-  UpdateOrDeleteUserResponse studentResponse;
+  UpdateOrDeleteObjectResponse studentResponse;
 
   UpdateStudentSuccessState({required this.studentResponse});
 }

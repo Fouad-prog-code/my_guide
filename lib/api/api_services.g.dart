@@ -471,7 +471,7 @@ class _ApiServices implements ApiServices {
   }
 
   @override
-  Future<UpdateOrDeleteUserResponseDto> updateDoctor(
+  Future<UpdateOrDeleteObjectResponseDto> updateDoctor(
     UpdateDoctorRequestDto updateDoctorRequestDto,
     String token,
   ) async {
@@ -481,7 +481,7 @@ class _ApiServices implements ApiServices {
     _headers.removeWhere((k, v) => v == null);
     final _data = <String, dynamic>{};
     _data.addAll(updateDoctorRequestDto.toJson());
-    final _options = _setStreamType<UpdateOrDeleteUserResponseDto>(
+    final _options = _setStreamType<UpdateOrDeleteObjectResponseDto>(
       Options(method: 'PUT', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
@@ -492,9 +492,9 @@ class _ApiServices implements ApiServices {
           .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
     );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
-    late UpdateOrDeleteUserResponseDto _value;
+    late UpdateOrDeleteObjectResponseDto _value;
     try {
-      _value = UpdateOrDeleteUserResponseDto.fromJson(_result.data!);
+      _value = UpdateOrDeleteObjectResponseDto.fromJson(_result.data!);
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options);
       rethrow;
@@ -503,7 +503,7 @@ class _ApiServices implements ApiServices {
   }
 
   @override
-  Future<UpdateOrDeleteUserResponseDto> updateManager(
+  Future<UpdateOrDeleteObjectResponseDto> updateManager(
     UpdateManagerRequestDto updateManagerRequestDto,
     String token,
   ) async {
@@ -513,7 +513,7 @@ class _ApiServices implements ApiServices {
     _headers.removeWhere((k, v) => v == null);
     final _data = <String, dynamic>{};
     _data.addAll(updateManagerRequestDto.toJson());
-    final _options = _setStreamType<UpdateOrDeleteUserResponseDto>(
+    final _options = _setStreamType<UpdateOrDeleteObjectResponseDto>(
       Options(method: 'PUT', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
@@ -524,9 +524,9 @@ class _ApiServices implements ApiServices {
           .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
     );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
-    late UpdateOrDeleteUserResponseDto _value;
+    late UpdateOrDeleteObjectResponseDto _value;
     try {
-      _value = UpdateOrDeleteUserResponseDto.fromJson(_result.data!);
+      _value = UpdateOrDeleteObjectResponseDto.fromJson(_result.data!);
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options);
       rethrow;
@@ -535,7 +535,7 @@ class _ApiServices implements ApiServices {
   }
 
   @override
-  Future<UpdateOrDeleteUserResponseDto> updateStudent(
+  Future<UpdateOrDeleteObjectResponseDto> updateStudent(
     UpdateStudentRequestDto updateStudentRequestDto,
     String token,
   ) async {
@@ -545,7 +545,7 @@ class _ApiServices implements ApiServices {
     _headers.removeWhere((k, v) => v == null);
     final _data = <String, dynamic>{};
     _data.addAll(updateStudentRequestDto.toJson());
-    final _options = _setStreamType<UpdateOrDeleteUserResponseDto>(
+    final _options = _setStreamType<UpdateOrDeleteObjectResponseDto>(
       Options(method: 'PUT', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
@@ -556,9 +556,9 @@ class _ApiServices implements ApiServices {
           .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
     );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
-    late UpdateOrDeleteUserResponseDto _value;
+    late UpdateOrDeleteObjectResponseDto _value;
     try {
-      _value = UpdateOrDeleteUserResponseDto.fromJson(_result.data!);
+      _value = UpdateOrDeleteObjectResponseDto.fromJson(_result.data!);
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options);
       rethrow;
@@ -567,7 +567,7 @@ class _ApiServices implements ApiServices {
   }
 
   @override
-  Future<UpdateOrDeleteUserResponseDto> updateCourse(
+  Future<UpdateOrDeleteObjectResponseDto> updateCourse(
     UpdateCourseRequestDto updateCourseRequestDto,
     String token,
   ) async {
@@ -577,7 +577,7 @@ class _ApiServices implements ApiServices {
     _headers.removeWhere((k, v) => v == null);
     final _data = <String, dynamic>{};
     _data.addAll(updateCourseRequestDto.toJson());
-    final _options = _setStreamType<UpdateOrDeleteUserResponseDto>(
+    final _options = _setStreamType<UpdateOrDeleteObjectResponseDto>(
       Options(method: 'PUT', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
@@ -588,9 +588,9 @@ class _ApiServices implements ApiServices {
           .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
     );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
-    late UpdateOrDeleteUserResponseDto _value;
+    late UpdateOrDeleteObjectResponseDto _value;
     try {
-      _value = UpdateOrDeleteUserResponseDto.fromJson(_result.data!);
+      _value = UpdateOrDeleteObjectResponseDto.fromJson(_result.data!);
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options);
       rethrow;
@@ -599,7 +599,39 @@ class _ApiServices implements ApiServices {
   }
 
   @override
-  Future<UpdateOrDeleteUserResponseDto> deleteStudent(
+  Future<UpdateOrDeleteObjectResponseDto> updateDepartment(
+    UpdateDepartmentRequestDto updateDepartmentRequestDto,
+    String token,
+  ) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{r'Authorization': token};
+    _headers.removeWhere((k, v) => v == null);
+    final _data = <String, dynamic>{};
+    _data.addAll(updateDepartmentRequestDto.toJson());
+    final _options = _setStreamType<UpdateOrDeleteObjectResponseDto>(
+      Options(method: 'PUT', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            'api/Department/UpdateDepartemnt',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late UpdateOrDeleteObjectResponseDto _value;
+    try {
+      _value = UpdateOrDeleteObjectResponseDto.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<UpdateOrDeleteObjectResponseDto> deleteStudent(
     int id,
     String token,
   ) async {
@@ -608,7 +640,7 @@ class _ApiServices implements ApiServices {
     final _headers = <String, dynamic>{r'Authorization': token};
     _headers.removeWhere((k, v) => v == null);
     const Map<String, dynamic>? _data = null;
-    final _options = _setStreamType<UpdateOrDeleteUserResponseDto>(
+    final _options = _setStreamType<UpdateOrDeleteObjectResponseDto>(
       Options(method: 'DELETE', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
@@ -619,9 +651,9 @@ class _ApiServices implements ApiServices {
           .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
     );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
-    late UpdateOrDeleteUserResponseDto _value;
+    late UpdateOrDeleteObjectResponseDto _value;
     try {
-      _value = UpdateOrDeleteUserResponseDto.fromJson(_result.data!);
+      _value = UpdateOrDeleteObjectResponseDto.fromJson(_result.data!);
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options);
       rethrow;
@@ -630,7 +662,7 @@ class _ApiServices implements ApiServices {
   }
 
   @override
-  Future<UpdateOrDeleteUserResponseDto> deleteManager(
+  Future<UpdateOrDeleteObjectResponseDto> deleteManager(
     int managerId,
     String token,
   ) async {
@@ -639,7 +671,7 @@ class _ApiServices implements ApiServices {
     final _headers = <String, dynamic>{r'Authorization': token};
     _headers.removeWhere((k, v) => v == null);
     const Map<String, dynamic>? _data = null;
-    final _options = _setStreamType<UpdateOrDeleteUserResponseDto>(
+    final _options = _setStreamType<UpdateOrDeleteObjectResponseDto>(
       Options(method: 'DELETE', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
@@ -650,9 +682,9 @@ class _ApiServices implements ApiServices {
           .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
     );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
-    late UpdateOrDeleteUserResponseDto _value;
+    late UpdateOrDeleteObjectResponseDto _value;
     try {
-      _value = UpdateOrDeleteUserResponseDto.fromJson(_result.data!);
+      _value = UpdateOrDeleteObjectResponseDto.fromJson(_result.data!);
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options);
       rethrow;
@@ -796,6 +828,66 @@ class _ApiServices implements ApiServices {
     late DashboardResponseDto _value;
     try {
       _value = DashboardResponseDto.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<AddDepartmentResponseDto> addDepartment(
+    AddDepartmentRequestDto addDepartmentRequestDto,
+    String token,
+  ) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{r'Authorization': token};
+    _headers.removeWhere((k, v) => v == null);
+    final _data = <String, dynamic>{};
+    _data.addAll(addDepartmentRequestDto.toJson());
+    final _options = _setStreamType<AddDepartmentResponseDto>(
+      Options(method: 'POST', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            'api/Admin/AddDepartment',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late AddDepartmentResponseDto _value;
+    try {
+      _value = AddDepartmentResponseDto.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<GetDepartmentResponseDto> getDepartment(String token) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{r'Authorization': token};
+    _headers.removeWhere((k, v) => v == null);
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<GetDepartmentResponseDto>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            'api/Admin/DepartmentManagment',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late GetDepartmentResponseDto _value;
+    try {
+      _value = GetDepartmentResponseDto.fromJson(_result.data!);
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options);
       rethrow;

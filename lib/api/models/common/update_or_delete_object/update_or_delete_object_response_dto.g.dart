@@ -1,14 +1,14 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'update_or_delete_user_response_dto.dart';
+part of 'update_or_delete_object_response_dto.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-UpdateOrDeleteUserResponseDto _$UpdateOrDeleteUserResponseDtoFromJson(
+UpdateOrDeleteObjectResponseDto _$UpdateOrDeleteObjectResponseDtoFromJson(
   Map<String, dynamic> json,
-) => UpdateOrDeleteUserResponseDto(
+) => UpdateOrDeleteObjectResponseDto(
   succeeded: json['succeeded'] as bool?,
   message: json['message'] as String?,
   data: json['data'] as String?,
@@ -17,8 +17,8 @@ UpdateOrDeleteUserResponseDto _$UpdateOrDeleteUserResponseDtoFromJson(
   meta: json['meta'],
 );
 
-Map<String, dynamic> _$UpdateOrDeleteUserResponseDtoToJson(
-  UpdateOrDeleteUserResponseDto instance,
+Map<String, dynamic> _$UpdateOrDeleteObjectResponseDtoToJson(
+  UpdateOrDeleteObjectResponseDto instance,
 ) => <String, dynamic>{
   'succeeded': instance.succeeded,
   'message': instance.message,

@@ -73,7 +73,7 @@ class _RoomsScreenState extends State<RoomsScreen> {
             if (state is AddRoomErrorState) errorMsg = state.message;
             if (state is UpdateRoomErrorState) errorMsg = state.message;
             if (state is DeleteRoomErrorState) errorMsg = state.message;
-            Navigator.pop(context);
+            //Navigator.pop(context);
             DialogUtils.showErrorDialog(context, errorMsg);
           }
 

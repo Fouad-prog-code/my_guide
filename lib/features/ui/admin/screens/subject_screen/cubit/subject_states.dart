@@ -1,6 +1,6 @@
 import 'package:my_guide/domain/entities/response/add_subject/add_subject_response.dart';
 import 'package:my_guide/domain/entities/response/delete_subject/delete_subject_response.dart';
-import 'package:my_guide/domain/entities/common/update_or_delete_doctor/update_or_delete_user_response.dart';
+import 'package:my_guide/domain/entities/common/update_or_delete_object/update_or_delete_object_response.dart';
 
 abstract class SubjectStates {}
 
@@ -53,7 +53,7 @@ class UpdateCourseErrorState extends SubjectStates {
 }
 
 class UpdateCourseSuccessState extends SubjectStates {
-  UpdateOrDeleteUserResponse response;
+  UpdateOrDeleteObjectResponse response;
 
   UpdateCourseSuccessState({required this.response});
 }

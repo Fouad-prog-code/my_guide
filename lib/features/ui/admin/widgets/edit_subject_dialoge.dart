@@ -4,6 +4,7 @@ import 'package:my_guide/core/utils/dialog_utils.dart';
 import 'package:my_guide/domain/entities/request/update_course/update_course_request.dart';
 import 'package:my_guide/domain/entities/response/get_doctor/get_doctor_data.dart';
 import 'package:my_guide/domain/entities/response/get_subject/get_subject_data.dart';
+import 'package:my_guide/features/ui/admin/screens/department_screen/cubit/department_view_model.dart';
 import 'package:my_guide/features/ui/admin/screens/subject_screen/cubit/subject_states.dart';
 import 'package:my_guide/features/ui/admin/screens/subject_screen/cubit/subject_view_model.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -12,12 +13,14 @@ class EditSubjectDialog extends StatefulWidget {
   final GetSubjectData subject;
   final List<GetDoctorData> doctors;
   final SubjectViewModel viewModel;
+  final DepartmentViewModel departmentViewModel;
 
   const EditSubjectDialog({
     super.key,
     required this.subject,
     required this.doctors,
     required this.viewModel,
+    required this.departmentViewModel,
   });
 
   @override
@@ -143,27 +146,23 @@ class _EditSubjectDialogState extends State<EditSubjectDialog> {
 
                 Wrap(
                   spacing: 8,
-                  children:
-                      [
-                        "Computer Science",
-                        "Information Technology",
-                        "Information Systems",
-                        "Network",
-                      ].map((dept) {
-                        final isSelected = selectedDepts.contains(dept);
+                  children: widget.departmentViewModel.departmentNames.map((
+                    dept,
+                  ) {
+                    final isSelected = selectedDepts.contains(dept);
 
-                        return FilterChip(
-                          label: Text(dept),
-                          selected: isSelected,
-                          onSelected: (value) {
-                            setState(() {
-                              value
-                                  ? selectedDepts.add(dept)
-                                  : selectedDepts.remove(dept);
-                            });
-                          },
-                        );
-                      }).toList(),
+                    return FilterChip(
+                      label: Text(dept),
+                      selected: isSelected,
+                      onSelected: (value) {
+                        setState(() {
+                          value
+                              ? selectedDepts.add(dept)
+                              : selectedDepts.remove(dept);
+                        });
+                      },
+                    );
+                  }).toList(),
                 ),
 
                 const SizedBox(height: 8),

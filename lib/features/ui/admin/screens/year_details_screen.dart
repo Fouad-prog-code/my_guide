@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_guide/core/utils/dialog_utils.dart';
 import 'package:my_guide/core/utils/snack_bar_utils.dart';
+import 'package:my_guide/core/utils/validators.dart';
 import 'package:my_guide/domain/entities/response/get_student/get_student_data.dart';
 import 'package:my_guide/domain/entities/response/get_student/view_student_dots.dart';
+import 'package:my_guide/features/ui/admin/screens/department_screen/cubit/department_view_model.dart';
 import 'package:my_guide/features/ui/admin/screens/student_screen/cubit/student_states.dart';
 import 'package:my_guide/features/ui/admin/screens/student_screen/cubit/student_view_model.dart';
 
@@ -13,6 +15,7 @@ class YearDetailsScreen extends StatefulWidget {
   final String deptName;
   final List<GetStudentData> allStudents;
   final StudentViewModel viewModel;
+  final DepartmentViewModel departmentViewModel;
 
   const YearDetailsScreen({
     super.key,
@@ -21,6 +24,7 @@ class YearDetailsScreen extends StatefulWidget {
     required this.deptName,
     required this.allStudents,
     required this.viewModel,
+    required this.departmentViewModel,
   });
 
   @override
@@ -28,13 +32,6 @@ class YearDetailsScreen extends StatefulWidget {
 }
 
 class _YearDetailsScreenState extends State<YearDetailsScreen> {
-  final List<String> departments = [
-    'Computer Science',
-    'Information Technology',
-    'Network',
-    'Information Systems',
-  ];
-
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<StudentViewModel, StudentStates>(
@@ -149,6 +146,7 @@ class _YearDetailsScreenState extends State<YearDetailsScreen> {
 
     String? localYear = year;
     String? localDept = student.departmentName;
+    GlobalKey<FormState> formKey = GlobalKey();
 
     showDialog(
       context: context,
@@ -162,73 +160,93 @@ class _YearDetailsScreenState extends State<YearDetailsScreen> {
               return AlertDialog(
                 title: const Text("Edit Student Info"),
                 content: SingleChildScrollView(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      TextField(
-                        controller: nameController,
-                        decoration: const InputDecoration(
-                          labelText: "Full Name",
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      TextField(
-                        controller: idController,
-                        decoration: const InputDecoration(
-                          labelText: "User Name",
-                        ),
-                        keyboardType: TextInputType.number,
-                      ),
-                      const SizedBox(height: 10),
-                      TextField(
-                        controller: nationalIdController,
-                        decoration: const InputDecoration(
-                          labelText: "National ID",
-                        ),
-                        keyboardType: TextInputType.number,
-                      ),
-                      const SizedBox(height: 15),
-
-                      // Year Dropdown
-                      DropdownButtonFormField<String>(
-                        value: localYear,
-                        decoration: const InputDecoration(
-                          labelText: "Select Year",
-                          border: OutlineInputBorder(),
-                        ),
-                        items: widget.viewModel.yearsList
-                            .map(
-                              (y) => DropdownMenuItem(value: y, child: Text(y)),
-                            )
-                            .toList(),
-                        onChanged: (val) {
-                          setState(() {
-                            localYear = val;
-                          });
-                        },
-                      ),
-
-                      if (localYear == 'Fourth Year') ...[
-                        const SizedBox(height: 15),
-                        DropdownButtonFormField<String>(
-                          value: localDept,
+                  child: Form(
+                    key: formKey,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        TextFormField(
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          controller: nameController,
                           decoration: const InputDecoration(
-                            labelText: "Select Department",
+                            labelText: "Full Name",
+                          ),
+                          validator: (value) =>
+                              AppValidators.validateFullName(fullName: value),
+                        ),
+                        const SizedBox(height: 10),
+                        TextFormField(
+                          controller: idController,
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          decoration: const InputDecoration(
+                            labelText: "User Name",
+                          ),
+                          validator: (value) =>
+                              AppValidators.validateUserName(userName: value),
+                          keyboardType: TextInputType.number,
+                        ),
+                        const SizedBox(height: 10),
+                        TextFormField(
+                          controller: nationalIdController,
+                          maxLength: 14,
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          decoration: const InputDecoration(
+                            labelText: "National ID",
+                          ),
+                          validator: (value) =>
+                              AppValidators.validateNationalId(id: value),
+                          keyboardType: TextInputType.number,
+                        ),
+                        const SizedBox(height: 15),
+
+                        // Year Dropdown
+                        DropdownButtonFormField<String>(
+                          value: localYear,
+                          decoration: const InputDecoration(
+                            labelText: "Select Year",
                             border: OutlineInputBorder(),
                           ),
-
-                          items: departments
+                          items: widget.viewModel.yearsList
                               .map(
-                                (d) =>
-                                    DropdownMenuItem(value: d, child: Text(d)),
+                                (y) =>
+                                    DropdownMenuItem(value: y, child: Text(y)),
                               )
                               .toList(),
                           onChanged: (val) {
-                            setState(() => localDept = val);
+                            setState(() {
+                              localYear = val;
+                            });
                           },
                         ),
+
+                        if (localYear == 'Fourth Year') ...[
+                          const SizedBox(height: 15),
+                          DropdownButtonFormField<String>(
+                            value: localDept,
+                            decoration: const InputDecoration(
+                              labelText: "Select Department",
+                              border: OutlineInputBorder(),
+                            ),
+
+                            items: widget.departmentViewModel.departmentNames
+                                .map(
+                                  (d) => DropdownMenuItem(
+                                    value: d,
+                                    child: Text(d),
+                                  ),
+                                )
+                                .toList(),
+                            onChanged: (val) {
+                              setState(() => localDept = val);
+                            },
+                            validator: (val) =>
+                                (localYear == 'Fourth Year' && val == null)
+                                ? "Please select a department"
+                                : null,
+                          ),
+                        ],
                       ],
-                    ],
+                    ),
                   ),
                 ),
                 actions: [
@@ -245,42 +263,44 @@ class _YearDetailsScreenState extends State<YearDetailsScreen> {
                     onPressed: isLoading
                         ? null
                         : () {
-                            bool isChanged =
-                                (nameController.text != student.studentName ||
-                                idController.text != student.userName ||
-                                nationalIdController.text !=
-                                    student.nationalId ||
-                                localDept != student.departmentName ||
-                                localYear != year);
+                            if (formKey.currentState!.validate()) {
+                              bool isChanged =
+                                  (nameController.text != student.studentName ||
+                                  idController.text != student.userName ||
+                                  nationalIdController.text !=
+                                      student.nationalId ||
+                                  localDept != student.departmentName ||
+                                  localYear != year);
 
-                            if (!isChanged) {
-                              DialogUtils.showErrorDialog(
-                                context,
+                              if (!isChanged) {
+                                DialogUtils.showErrorDialog(
+                                  context,
 
-                                'Please change anything first',
+                                  'Please change anything first',
+                                );
+
+                                return;
+                              }
+
+                              if (localYear == 'Fourth Year' &&
+                                  (localDept == null || localDept!.isEmpty)) {
+                                DialogUtils.showErrorDialog(
+                                  context,
+
+                                  'Please select a department first',
+                                );
+                                return;
+                              }
+
+                              widget.viewModel.updateStudent(
+                                id: student.studentId ?? 0,
+                                fullName: nameController.text,
+                                userName: idController.text,
+                                nationalId: nationalIdController.text,
+                                yearName: localYear ?? '',
+                                deptName: localDept ?? '',
                               );
-
-                              return;
                             }
-
-                            if (localYear == 'Fourth Year' &&
-                                (localDept == null || localDept!.isEmpty)) {
-                              DialogUtils.showErrorDialog(
-                                context,
-
-                                'Please select a department first',
-                              );
-                              return;
-                            }
-
-                            widget.viewModel.updateStudent(
-                              id: student.studentId ?? 0,
-                              fullName: nameController.text,
-                              userName: idController.text,
-                              nationalId: nationalIdController.text,
-                              yearName: localYear ?? '',
-                              deptName: localDept ?? '',
-                            );
                           },
                     child: isLoading
                         ? const SizedBox(

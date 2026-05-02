@@ -1,5 +1,5 @@
 import 'package:my_guide/domain/entities/common/add_user/add_user_response.dart';
-import 'package:my_guide/domain/entities/common/update_or_delete_doctor/update_or_delete_user_response.dart';
+import 'package:my_guide/domain/entities/common/update_or_delete_object/update_or_delete_object_response.dart';
 
 abstract class ManagerStates {}
 
@@ -26,7 +26,7 @@ class GetManagerErrorState extends ManagerStates {
 class UpdateManagerLoadingState extends ManagerStates {}
 
 class UpdateManagerSuccessState extends ManagerStates {
-  UpdateOrDeleteUserResponse updateManagerResponse;
+  UpdateOrDeleteObjectResponse updateManagerResponse;
 
   UpdateManagerSuccessState({required this.updateManagerResponse});
 }
@@ -46,7 +46,7 @@ class AddManagerSuccessState extends ManagerStates {
 class DeleteManagerLoadingState extends ManagerStates {}
 
 class DeleteManagerSuccessState extends ManagerStates {
-  UpdateOrDeleteUserResponse deleteManagerResponse;
+  UpdateOrDeleteObjectResponse deleteManagerResponse;
 
   DeleteManagerSuccessState({required this.deleteManagerResponse});
 }

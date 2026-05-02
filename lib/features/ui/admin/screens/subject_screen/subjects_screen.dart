@@ -8,13 +8,12 @@ import 'package:my_guide/core/utils/app_styles.dart';
 import 'package:my_guide/core/utils/dialog_utils.dart';
 import 'package:my_guide/core/utils/snack_bar_utils.dart';
 import 'package:my_guide/domain/entities/request/add_subject/add_subject_request.dart';
-import 'package:my_guide/domain/entities/request/update_course/update_course_request.dart';
 import 'package:my_guide/domain/entities/response/get_doctor/get_doctor_data.dart';
 import 'package:my_guide/domain/entities/response/get_subject/get_subject_data.dart';
+import 'package:my_guide/features/ui/admin/screens/department_screen/cubit/department_view_model.dart';
 import 'package:my_guide/features/ui/admin/screens/doctor_screen/cubit/doctor_view_model.dart';
 import 'package:my_guide/features/ui/admin/screens/subject_screen/cubit/subject_states.dart';
 import 'package:my_guide/features/ui/admin/screens/subject_screen/cubit/subject_view_model.dart';
-import 'package:collection/collection.dart';
 import 'package:my_guide/features/ui/admin/widgets/edit_subject_dialoge.dart';
 import 'package:my_guide/features/ui/admin/widgets/error_widget.dart';
 
@@ -30,11 +29,14 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
 
   DoctorViewModel doctorViewModel = getIt<DoctorViewModel>();
 
+  DepartmentViewModel deptViewModel = getIt<DepartmentViewModel>();
+
   @override
   void initState() {
     super.initState();
     viewModel.getSubject();
     doctorViewModel.getDoctor();
+    deptViewModel.getDepartment();
   }
 
   @override
@@ -73,7 +75,10 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
               errorMsg = state.addSubjectmessage;
             }
             if (state is UpdateCourseErrorState) errorMsg = state.message;
-            if (state is DeleteSubjectErrorState) errorMsg = state.message;
+            if (state is DeleteSubjectErrorState) {
+              DialogUtils.hideLoading(context: context);
+              errorMsg = state.message;
+            }
 
             DialogUtils.showErrorDialog(context, errorMsg);
           }
@@ -308,27 +313,21 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
                     const SizedBox(height: 8),
                     Wrap(
                       spacing: 8,
-                      children:
-                          [
-                            "Computer Science",
-                            "Information Technology",
-                            "Information Systems",
-                            "Network",
-                          ].map((dept) {
-                            final isSelected = selectedDepts.contains(dept);
-                            return FilterChip(
-                              label: Text(dept),
-                              selected: isSelected,
-                              selectedColor: Colors.blueGrey[100],
-                              onSelected: (bool value) {
-                                setDialogState(() {
-                                  value
-                                      ? selectedDepts.add(dept)
-                                      : selectedDepts.remove(dept);
-                                });
-                              },
-                            );
-                          }).toList(),
+                      children: deptViewModel.departmentNames.map((dept) {
+                        final isSelected = selectedDepts.contains(dept);
+                        return FilterChip(
+                          label: Text(dept),
+                          selected: isSelected,
+                          selectedColor: Colors.blueGrey[100],
+                          onSelected: (bool value) {
+                            setDialogState(() {
+                              value
+                                  ? selectedDepts.add(dept)
+                                  : selectedDepts.remove(dept);
+                            });
+                          },
+                        );
+                      }).toList(),
                     ),
                   ],
                 ],
@@ -410,6 +409,7 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
         subject: subject,
         doctors: doctors,
         viewModel: viewModel,
+        departmentViewModel: deptViewModel,
       ),
     );
   }

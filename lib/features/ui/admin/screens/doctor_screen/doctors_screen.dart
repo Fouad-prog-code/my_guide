@@ -91,7 +91,10 @@ class _DoctorsScreenState extends State<DoctorsScreen> {
             String errorMsg = "";
             if (state is AddDoctorErrorState) errorMsg = state.message;
             if (state is UpdateDoctorErrorState) errorMsg = state.message;
-            if (state is DeleteDoctorErrorState) errorMsg = state.message;
+            if (state is DeleteDoctorErrorState) {
+              DialogUtils.hideLoading(context: context);
+              errorMsg = state.message;
+            }
 
             DialogUtils.showErrorDialog(context, errorMsg);
           }

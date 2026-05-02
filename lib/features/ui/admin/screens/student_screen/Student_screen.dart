@@ -8,6 +8,8 @@ import 'package:my_guide/core/utils/dialog_utils.dart';
 import 'package:my_guide/core/utils/snack_bar_utils.dart';
 import 'package:my_guide/core/utils/validators.dart';
 import 'package:my_guide/domain/entities/response/get_student/get_student_data.dart';
+import 'package:my_guide/features/ui/admin/screens/department_screen/cubit/department_states.dart';
+import 'package:my_guide/features/ui/admin/screens/department_screen/cubit/department_view_model.dart';
 import 'package:my_guide/features/ui/admin/screens/student_screen/cubit/student_states.dart';
 import 'package:my_guide/features/ui/admin/screens/student_screen/cubit/student_view_model.dart';
 import 'package:my_guide/features/ui/admin/screens/year_details_screen.dart';
@@ -23,45 +25,38 @@ class StudentScreen extends StatefulWidget {
 
 class _StudentScreenState extends State<StudentScreen> {
   StudentViewModel viewModel = getIt<StudentViewModel>();
+  DepartmentViewModel deptViewModel = getIt<DepartmentViewModel>();
 
   final List<String> basicYears = ['First Year', 'Second Year', 'Third Year'];
-  final List<String> departments = [
-    'Computer Science',
-    'Information Technology',
-    'Network',
-    'Information Systems',
-  ];
 
   @override
   void initState() {
     super.initState();
     viewModel.getStudent();
+    deptViewModel.getDepartment();
   }
 
-  bool isLoading = false;
-  bool isVisible = false;
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => viewModel,
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (context) => viewModel),
+        BlocProvider(create: (context) => deptViewModel),
+      ],
       child: BlocListener<StudentViewModel, StudentStates>(
         listener: (context, state) {
           if (state is AddStudentSuccessState) {
-            if (Navigator.canPop(context)) {
-              Navigator.pop(context);
-            }
+            if (Navigator.canPop(context)) Navigator.pop(context);
             viewModel.getStudent();
             SnackBarUtils.showSuccessSnackBar(
               context,
               state.addUserResponse.message ?? 'Added successfully',
             );
           }
-
           if (state is DeleteStudentLoadingState) {
             Navigator.pop(context);
             DialogUtils.showLoading(context: context, message: 'Deleting...');
           }
-
           if (state is DeleteStudentSuccessState) {
             DialogUtils.hideLoading(context: context);
             viewModel.getStudent();
@@ -70,13 +65,13 @@ class _StudentScreenState extends State<StudentScreen> {
               state.studentResponse.data ?? "Deleted successfully",
             );
           }
-
           if (state is AddStudentErrorState ||
               state is DeleteStudentErrorState) {
-            String errorMsg = "";
-            if (state is AddStudentErrorState) errorMsg = state.message;
-            if (state is DeleteStudentErrorState) errorMsg = state.message;
-
+            String errorMsg = state is AddStudentErrorState
+                ? state.message
+                : (state as DeleteStudentErrorState).message;
+            if (state is DeleteStudentErrorState)
+              DialogUtils.hideLoading(context: context);
             DialogUtils.showErrorDialog(context, errorMsg);
           }
         },
@@ -90,76 +85,84 @@ class _StudentScreenState extends State<StudentScreen> {
             elevation: 0.5,
           ),
           body: BlocBuilder<StudentViewModel, StudentStates>(
-            builder: (context, state) {
-              if (state is GetStudentLoadingState) {
+            builder: (context, studentState) {
+              if (studentState is GetStudentLoadingState) {
                 return const Center(
                   child: CircularProgressIndicator(
                     color: AppColors.darkGrayColor,
                   ),
                 );
-              } else if (state is GetStudentErrorState) {
+              }
+              if (studentState is GetStudentErrorState) {
                 return Padding(
                   padding: EdgeInsets.only(top: 100.h),
                   child: ErrorsWidget(
-                    message: state.message,
-                    onPressed: () {
-                      viewModel.getStudent();
-                    },
+                    message: studentState.message,
+                    onPressed: () => viewModel.getStudent(),
                   ),
                 );
               }
 
               final studentsData = viewModel.getStudentResponse?.data ?? [];
 
-              return Padding(
-                padding: const EdgeInsets.all(15),
-                child: GridView.builder(
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 15,
-                    mainAxisSpacing: 15,
-                    childAspectRatio: 1.1,
-                  ),
-                  itemCount: basicYears.length + departments.length,
-                  itemBuilder: (context, index) {
-                    String displayName;
-                    String filterYear;
-                    String filterDept = '';
-                    bool isDept = index >= basicYears.length;
+              return BlocBuilder<DepartmentViewModel, DepartmentStates>(
+                builder: (context, deptState) {
+                  final departments = deptViewModel.departmentNames;
 
-                    if (!isDept) {
-                      displayName = basicYears[index];
-                      filterYear = basicYears[index];
-                    } else {
-                      displayName = departments[index - basicYears.length];
-                      filterYear = 'Fourth Year';
-                      filterDept = departments[index - basicYears.length];
-                    }
+                  return Padding(
+                    padding: const EdgeInsets.all(15),
+                    child: GridView.builder(
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            crossAxisSpacing: 15,
+                            mainAxisSpacing: 15,
+                            childAspectRatio: 1.1,
+                          ),
+                      itemCount: basicYears.length + departments.length,
+                      itemBuilder: (context, index) {
+                        String displayName;
+                        String filterYear;
+                        String filterDept = '';
+                        bool isDept = index >= basicYears.length;
 
-                    int count = 0;
-                    for (var year in studentsData) {
-                      if (year.yearName == filterYear) {
                         if (!isDept) {
-                          count += year.viewStudentDtos?.length ?? 0;
+                          displayName = basicYears[index];
+                          filterYear = basicYears[index];
                         } else {
-                          count +=
-                              year.viewStudentDtos
-                                  ?.where((s) => s.departmentName == filterDept)
-                                  .length ??
-                              0;
+                          displayName = departments[index - basicYears.length];
+                          filterYear = 'Fourth Year';
+                          filterDept = departments[index - basicYears.length];
                         }
-                      }
-                    }
 
-                    return _buildCategoryCard(
-                      displayName,
-                      count,
-                      filterYear,
-                      filterDept,
-                      studentsData,
-                    );
-                  },
-                ),
+                        int count = 0;
+                        for (var year in studentsData) {
+                          if (year.yearName == filterYear) {
+                            if (!isDept) {
+                              count += year.viewStudentDtos?.length ?? 0;
+                            } else {
+                              count +=
+                                  year.viewStudentDtos
+                                      ?.where(
+                                        (s) => s.departmentName == filterDept,
+                                      )
+                                      .length ??
+                                  0;
+                            }
+                          }
+                        }
+
+                        return _buildCategoryCard(
+                          displayName,
+                          count,
+                          filterYear,
+                          filterDept,
+                          studentsData,
+                        );
+                      },
+                    ),
+                  );
+                },
               );
             },
           ),
@@ -191,6 +194,7 @@ class _StudentScreenState extends State<StudentScreen> {
               deptName: dept,
               allStudents: currentList,
               viewModel: viewModel,
+              departmentViewModel: deptViewModel,
             ),
           ),
         );
@@ -241,7 +245,6 @@ class _StudentScreenState extends State<StudentScreen> {
                 children: [
                   TextFormField(
                     controller: viewModel.userNameController,
-                    keyboardType: const TextInputType.numberWithOptions(),
                     autovalidateMode: AutovalidateMode.onUserInteraction,
                     decoration: const InputDecoration(labelText: "User Name"),
                     validator: (value) =>
@@ -251,7 +254,6 @@ class _StudentScreenState extends State<StudentScreen> {
                   PasswordTextFormField(
                     controller: viewModel.passwordController,
                   ),
-
                   const SizedBox(height: 10),
                   TextFormField(
                     controller: viewModel.fullNameController,
@@ -263,13 +265,12 @@ class _StudentScreenState extends State<StudentScreen> {
                   const SizedBox(height: 10),
                   TextFormField(
                     controller: viewModel.idController,
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-
                     decoration: const InputDecoration(
                       labelText: "ID",
                       counterText: "",
                     ),
                     keyboardType: TextInputType.number,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
                     maxLength: 14,
                     validator: (value) =>
                         AppValidators.validateNationalId(id: value),
@@ -277,45 +278,57 @@ class _StudentScreenState extends State<StudentScreen> {
                   const SizedBox(height: 15),
                   DropdownButtonFormField<String>(
                     value: viewModel.selectedYear,
+
                     decoration: const InputDecoration(
                       labelText: "Select Year",
+
                       border: OutlineInputBorder(),
                     ),
+
                     items: viewModel.yearsList
                         .map(
                           (year) =>
                               DropdownMenuItem(value: year, child: Text(year)),
                         )
                         .toList(),
+
                     onChanged: (val) {
                       setDialogState(() {
                         viewModel.selectedYear = val;
+
                         if (viewModel.selectedYear != 'Fourth Year') {
                           viewModel.selectedDept = null;
                         }
                       });
                     },
+
                     validator: (val) => val == null ? "Required" : null,
                   ),
                   if (viewModel.selectedYear == 'Fourth Year') ...[
                     const SizedBox(height: 15),
                     DropdownButtonFormField<String>(
                       value: viewModel.selectedDept,
+
                       decoration: const InputDecoration(
                         labelText: "Select Department",
+
                         border: OutlineInputBorder(),
                       ),
-                      items: departments
+
+                      items: deptViewModel.departmentNames
                           .map(
                             (dept) => DropdownMenuItem(
                               value: dept,
+
                               child: Text(dept),
                             ),
                           )
                           .toList(),
+
                       onChanged: (val) {
                         setDialogState(() => viewModel.selectedDept = val);
                       },
+
                       validator: (val) =>
                           (viewModel.selectedYear == 'Fourth Year' &&
                               val == null)
@@ -334,9 +347,8 @@ class _StudentScreenState extends State<StudentScreen> {
             ),
             BlocBuilder<StudentViewModel, StudentStates>(
               bloc: viewModel,
-
               builder: (context, state) {
-                isLoading = state is AddStudentLoadingState;
+                bool isLoading = state is AddStudentLoadingState;
                 return ElevatedButton(
                   onPressed: isLoading
                       ? null
@@ -344,7 +356,6 @@ class _StudentScreenState extends State<StudentScreen> {
                           String? token = await SharedPreferencesUtils.getData(
                             key: 'token',
                           );
-
                           viewModel.addStudent(token: token ?? "");
                         },
                   child: isLoading
