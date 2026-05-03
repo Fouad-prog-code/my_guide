@@ -29,6 +29,8 @@ import '../api/data_sources/remote/add_subject_remote_data_source_impl.dart'
     as _i112;
 import '../api/data_sources/remote/dashboard_remote_data_source_impl.dart'
     as _i397;
+import '../api/data_sources/remote/delete_dept_remote_data_source_impl.dart'
+    as _i565;
 import '../api/data_sources/remote/delete_doctor_remote_data_source_impl.dart'
     as _i479;
 import '../api/data_sources/remote/delete_manager_remote_data_source_impl.dart'
@@ -43,6 +45,8 @@ import '../api/data_sources/remote/doctor_remote_data_source_impl.dart'
     as _i440;
 import '../api/data_sources/remote/forget_password_remote_data_source_impl.dart'
     as _i273;
+import '../api/data_sources/remote/generate_tables_remote_data_source_impl.dart'
+    as _i921;
 import '../api/data_sources/remote/get_department_remote_data_source_impl.dart'
     as _i474;
 import '../api/data_sources/remote/get_doctor_remote_data_source_impl.dart'
@@ -55,6 +59,8 @@ import '../api/data_sources/remote/get_student_remote_data_source_impl.dart'
     as _i475;
 import '../api/data_sources/remote/get_subject_remote_data_source_impl.dart'
     as _i423;
+import '../api/data_sources/remote/get_year_table_remote_data_source_impl.dart'
+    as _i613;
 import '../api/data_sources/remote/login_remote_data_source_impl.dart' as _i524;
 import '../api/data_sources/remote/room_remote_data_source_impl.dart' as _i1057;
 import '../api/data_sources/remote/student_remote_data_source_impl.dart'
@@ -84,6 +90,8 @@ import '../data/data_sources/remote/add_student_remote_data_source.dart'
 import '../data/data_sources/remote/add_subject_remote_data_source.dart'
     as _i747;
 import '../data/data_sources/remote/dashboard_remote_data_source.dart' as _i763;
+import '../data/data_sources/remote/delete_dept_remote_data_source.dart'
+    as _i795;
 import '../data/data_sources/remote/delete_doctor_remote_data_source.dart'
     as _i477;
 import '../data/data_sources/remote/delete_manager_remote_data_source.dart'
@@ -97,6 +105,8 @@ import '../data/data_sources/remote/delete_subject_remote_data_source.dart'
 import '../data/data_sources/remote/doctor_remote_data_source.dart' as _i943;
 import '../data/data_sources/remote/forget_password_remote_data_source.dart'
     as _i144;
+import '../data/data_sources/remote/generate_tables_remote_data_source.dart'
+    as _i1047;
 import '../data/data_sources/remote/get_department_remote_data_source.dart'
     as _i983;
 import '../data/data_sources/remote/get_doctor_remote_data_source.dart'
@@ -108,6 +118,8 @@ import '../data/data_sources/remote/get_student_remote_data_source.dart'
     as _i1038;
 import '../data/data_sources/remote/get_subject_remote_data_source.dart'
     as _i272;
+import '../data/data_sources/remote/get_year_table_remote_data_source.dart'
+    as _i237;
 import '../data/data_sources/remote/login_remote_data_source.dart' as _i166;
 import '../data/data_sources/remote/room_remote_data_source.dart' as _i315;
 import '../data/data_sources/remote/student_remote_data_source.dart' as _i975;
@@ -130,6 +142,7 @@ import '../data/repositories/add_room_repository_impl.dart' as _i89;
 import '../data/repositories/add_student_repository_impl.dart' as _i1060;
 import '../data/repositories/add_subject_repository_impl.dart' as _i540;
 import '../data/repositories/dashboard_repository_impl.dart' as _i585;
+import '../data/repositories/delete_dept_repository_impl.dart' as _i621;
 import '../data/repositories/delete_doctor_repository_impl.dart' as _i829;
 import '../data/repositories/delete_manager_repository_impl.dart' as _i280;
 import '../data/repositories/delete_room_repository_impl.dart' as _i743;
@@ -137,12 +150,14 @@ import '../data/repositories/delete_student_repository_impl.dart' as _i98;
 import '../data/repositories/delete_subject_repository_impl.dart' as _i47;
 import '../data/repositories/doctor_repository_impl.dart' as _i560;
 import '../data/repositories/forget_password_repository_impl.dart' as _i924;
+import '../data/repositories/generate_tables_repository_impl.dart' as _i286;
 import '../data/repositories/get_department_repository_impl.dart' as _i993;
 import '../data/repositories/get_doctor_repository_impl.dart' as _i376;
 import '../data/repositories/get_manager_repository_impl.dart' as _i281;
 import '../data/repositories/get_room_repository_impl.dart' as _i379;
 import '../data/repositories/get_student_repository_impl.dart' as _i183;
 import '../data/repositories/get_subject_repository_impl.dart' as _i1027;
+import '../data/repositories/get_year_table_repository_impl.dart' as _i596;
 import '../data/repositories/login_repository_impl.dart' as _i741;
 import '../data/repositories/room_repository_impl.dart' as _i809;
 import '../data/repositories/student_repository_impl.dart' as _i382;
@@ -159,6 +174,7 @@ import '../domain/repositories/add_room_repository.dart' as _i446;
 import '../domain/repositories/add_student_repository.dart' as _i546;
 import '../domain/repositories/add_subject_repository.dart' as _i435;
 import '../domain/repositories/dashboard_repository.dart' as _i525;
+import '../domain/repositories/delete_department_repository.dart' as _i63;
 import '../domain/repositories/delete_doctor_repository.dart' as _i387;
 import '../domain/repositories/delete_manager_repository.dart' as _i443;
 import '../domain/repositories/delete_room_repository.dart' as _i520;
@@ -166,12 +182,14 @@ import '../domain/repositories/delete_student_repository.dart' as _i736;
 import '../domain/repositories/delete_subject_repository.dart' as _i378;
 import '../domain/repositories/doctor_repository.dart' as _i787;
 import '../domain/repositories/forget_password_repository.dart' as _i1053;
+import '../domain/repositories/generate_tables_repository.dart' as _i912;
 import '../domain/repositories/get_department_repository.dart' as _i567;
 import '../domain/repositories/get_doctor_repository.dart' as _i177;
 import '../domain/repositories/get_manager_repository.dart' as _i259;
 import '../domain/repositories/get_room_repository.dart' as _i363;
 import '../domain/repositories/get_student_repository.dart' as _i413;
 import '../domain/repositories/get_subject_repository.dart' as _i110;
+import '../domain/repositories/get_year_table_repository.dart' as _i72;
 import '../domain/repositories/login_repository.dart' as _i907;
 import '../domain/repositories/room_/room_repository.dart' as _i313;
 import '../domain/repositories/student_/student_repository.dart' as _i646;
@@ -188,6 +206,7 @@ import '../domain/use_case/add_room_use_case.dart' as _i352;
 import '../domain/use_case/add_student_use_case.dart' as _i805;
 import '../domain/use_case/add_subject_use_case.dart' as _i947;
 import '../domain/use_case/dashboard_use_case.dart' as _i790;
+import '../domain/use_case/delete_dept_use_case.dart' as _i341;
 import '../domain/use_case/delete_doctor_use_case.dart' as _i172;
 import '../domain/use_case/delete_manager_use_case.dart' as _i575;
 import '../domain/use_case/delete_room_use_case.dart' as _i814;
@@ -195,12 +214,14 @@ import '../domain/use_case/delete_student_use_case.dart' as _i473;
 import '../domain/use_case/delete_subject_use_case.dart' as _i728;
 import '../domain/use_case/doctor_use_case.dart' as _i240;
 import '../domain/use_case/forget_password_use_case.dart' as _i349;
+import '../domain/use_case/generate_tables_use_case.dart' as _i305;
 import '../domain/use_case/get_department_use_case.dart' as _i99;
 import '../domain/use_case/get_doctor_use_case.dart' as _i175;
 import '../domain/use_case/get_manager_use_case.dart' as _i876;
 import '../domain/use_case/get_room_use_case.dart' as _i578;
 import '../domain/use_case/get_student_use_case.dart' as _i882;
 import '../domain/use_case/get_subject_use_case.dart' as _i100;
+import '../domain/use_case/get_year_table_use_case.dart' as _i913;
 import '../domain/use_case/login_use_case.dart' as _i772;
 import '../domain/use_case/rooms_use_case.dart' as _i46;
 import '../domain/use_case/student_schedule_use_case.dart' as _i993;
@@ -216,6 +237,8 @@ import '../features/ui/admin/screens/department_screen/cubit/department_view_mod
     as _i45;
 import '../features/ui/admin/screens/doctor_screen/cubit/doctor_view_model.dart'
     as _i758;
+import '../features/ui/admin/screens/generate_tables/cubit/generate_tables_view_model.dart'
+    as _i911;
 import '../features/ui/admin/screens/manager_screen/cubit/manager_view_model.dart'
     as _i688;
 import '../features/ui/admin/screens/room_screen/cubit/room_view_model.dart'
@@ -224,6 +247,8 @@ import '../features/ui/admin/screens/student_screen/cubit/student_view_model.dar
     as _i372;
 import '../features/ui/admin/screens/subject_screen/cubit/subject_view_model.dart'
     as _i734;
+import '../features/ui/admin/screens/tables_screen/cubit/tables_view_model.dart'
+    as _i101;
 import '../features/ui/auth/forget_password/cubit/reset_password_view_model.dart'
     as _i161;
 import '../features/ui/auth/login/cubit/login_view_model.dart' as _i1040;
@@ -298,6 +323,11 @@ extension GetItInjectableX on _i174.GetIt {
         apiServices: gh<_i124.ApiServices>(),
       ),
     );
+    gh.factory<_i1047.GenerateTablesRemoteDataSource>(
+      () => _i921.GenerateTablesRemoteDataSourceImpl(
+        apiServices: gh<_i124.ApiServices>(),
+      ),
+    );
     gh.factory<_i1002.UpdateCourseRemoteDataSource>(
       () => _i593.UpdateCourseRemoteDataSourceImpl(
         apiServices: gh<_i124.ApiServices>(),
@@ -320,6 +350,11 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i943.DoctorRemoteDataSource>(
       () => _i440.DoctorRemoteDataSourceImpl(
+        apiServices: gh<_i124.ApiServices>(),
+      ),
+    );
+    gh.factory<_i237.GetYearTableRemoteDataSource>(
+      () => _i613.GetYearTableRemoteDataSourceImpl(
         apiServices: gh<_i124.ApiServices>(),
       ),
     );
@@ -419,6 +454,11 @@ extension GetItInjectableX on _i174.GetIt {
         repository: gh<_i375.UpdateManagerRepository>(),
       ),
     );
+    gh.factory<_i795.DeleteDeptRemoteDataSource>(
+      () => _i565.DeleteDeptRemoteDataSourceImpl(
+        apiServices: gh<_i124.ApiServices>(),
+      ),
+    );
     gh.factory<_i166.LoginRemoteDataSource>(
       () =>
           _i524.LoginRemoteDataSourceImpl(apiServices: gh<_i124.ApiServices>()),
@@ -452,6 +492,11 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i846.AddManagerRepository>(
       () => _i938.AddManagerRepositoryImpl(
         addManagerRemoteDataSource: gh<_i625.AddManagerRemoteDataSource>(),
+      ),
+    );
+    gh.factory<_i63.DeleteDepartmentRepository>(
+      () => _i621.DeleteDeptRepositoryImpl(
+        deleteDeptRemoteDataSource: gh<_i795.DeleteDeptRemoteDataSource>(),
       ),
     );
     gh.factory<_i602.UpdateRoomRepository>(
@@ -577,6 +622,17 @@ extension GetItInjectableX on _i174.GetIt {
         updateDepartmentRepository: gh<_i122.UpdateDepartmentRepository>(),
       ),
     );
+    gh.factory<_i912.GenerateTablesRepository>(
+      () => _i286.GenerateTablesRepositoryImpl(
+        generateTablesRemoteDataSource:
+            gh<_i1047.GenerateTablesRemoteDataSource>(),
+      ),
+    );
+    gh.factory<_i72.GetYearTableRepository>(
+      () => _i596.GetYearTableRepositoryImpl(
+        getYearTableRemoteDataSource: gh<_i237.GetYearTableRemoteDataSource>(),
+      ),
+    );
     gh.factory<_i313.RoomRepository>(
       () => _i809.RoomRepositoryImpl(
         roomRemoteDataSource: gh<_i315.RoomRemoteDataSource>(),
@@ -649,6 +705,11 @@ extension GetItInjectableX on _i174.GetIt {
         getStudentRemoteDataSource: gh<_i1038.GetStudentRemoteDataSource>(),
       ),
     );
+    gh.factory<_i341.DeleteDeptUseCase>(
+      () => _i341.DeleteDeptUseCase(
+        deleteDepartmentRepository: gh<_i63.DeleteDepartmentRepository>(),
+      ),
+    );
     gh.factory<_i578.GetRoomUseCase>(
       () => _i578.GetRoomUseCase(
         getRoomRepository: gh<_i363.GetRoomRepository>(),
@@ -688,16 +749,19 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i46.RoomUseCase>(
       () => _i46.RoomUseCase(roomRepository: gh<_i313.RoomRepository>()),
     );
-    gh.factory<_i45.DepartmentViewModel>(
-      () => _i45.DepartmentViewModel(
-        addDepartmentUseCase: gh<_i927.AddDepartmentUseCase>(),
-        getDepartmentUseCase: gh<_i99.GetDepartmentUseCase>(),
-        updateDepartmentUseCase: gh<_i77.UpdateDepartmentUseCase>(),
+    gh.factory<_i305.GenerateTablesUseCase>(
+      () => _i305.GenerateTablesUseCase(
+        generateTablesRepository: gh<_i912.GenerateTablesRepository>(),
       ),
     );
     gh.factory<_i352.AddRoomUseCase>(
       () => _i352.AddRoomUseCase(
         addRoomRepository: gh<_i446.AddRoomRepository>(),
+      ),
+    );
+    gh.factory<_i913.GetYearTableUseCase>(
+      () => _i913.GetYearTableUseCase(
+        getYearTableRepository: gh<_i72.GetYearTableRepository>(),
       ),
     );
     gh.factory<_i240.DoctorUseCase>(
@@ -714,6 +778,14 @@ extension GetItInjectableX on _i174.GetIt {
         getRoomUseCase: gh<_i578.GetRoomUseCase>(),
         updateRoomUseCase: gh<_i811.UpdateRoomUseCase>(),
         deleteRoomUseCase: gh<_i814.DeleteRoomUseCase>(),
+      ),
+    );
+    gh.factory<_i45.DepartmentViewModel>(
+      () => _i45.DepartmentViewModel(
+        addDepartmentUseCase: gh<_i927.AddDepartmentUseCase>(),
+        getDepartmentUseCase: gh<_i99.GetDepartmentUseCase>(),
+        updateDepartmentUseCase: gh<_i77.UpdateDepartmentUseCase>(),
+        deleteDeptUseCase: gh<_i341.DeleteDeptUseCase>(),
       ),
     );
     gh.factory<_i734.SubjectViewModel>(
@@ -745,6 +817,16 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i1036.DoctorScheduleViewModel>(
       () => _i1036.DoctorScheduleViewModel(
         doctorUseCase: gh<_i240.DoctorUseCase>(),
+      ),
+    );
+    gh.factory<_i101.TablesViewModel>(
+      () => _i101.TablesViewModel(
+        yearTableUseCase: gh<_i913.GetYearTableUseCase>(),
+      ),
+    );
+    gh.factory<_i911.GenerateTablesViewModel>(
+      () => _i911.GenerateTablesViewModel(
+        generateTablesUseCase: gh<_i305.GenerateTablesUseCase>(),
       ),
     );
     gh.factory<_i680.RoomViewModel>(

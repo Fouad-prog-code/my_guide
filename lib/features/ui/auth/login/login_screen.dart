@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:my_guide/config/di.dart';
 import 'package:my_guide/core/cache/shared_preferences.dart';
-import 'package:my_guide/core/utils/app_assets.dart';
 import 'package:my_guide/core/utils/app_colors.dart';
 import 'package:my_guide/core/utils/app_routes.dart';
 import 'package:my_guide/core/utils/app_styles.dart';
@@ -47,8 +46,26 @@ class _LoginScreenState extends State<LoginScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   SizedBox(height: 40.h),
-                  Image.asset(AppAssets.userImage, height: 120.h),
-                  SizedBox(height: 8.h),
+                  Container(
+                    padding: EdgeInsets.all(3.r),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: Colors.white.withOpacity(0.5),
+                        width: 2.w,
+                      ),
+                    ),
+                    child: CircleAvatar(
+                      backgroundColor: Colors.white,
+                      radius: 45.r,
+                      child: Icon(
+                        Icons.person,
+                        size: 50.r,
+                        color: AppColors.primaryColor,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 12.h),
                   Text('Sign in', style: AppStyles.regural32White),
                 ],
               ),
@@ -79,21 +96,31 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     SizedBox(height: 0.h),
 
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: TextButton(
-                        onPressed: () {
-                          Navigator.pushNamed(
-                            context,
-                            AppRoutes.forgetPasswordRoute,
-                          );
-                        },
-                        isSemanticButton: false,
-                        child: Text(
-                          'forget password?',
-                          style: AppStyles.bold20primary,
-                        ),
-                      ),
+                    BlocBuilder<LoginViewModel, LoginStates>(
+                      bloc: viewModel,
+                      builder: (context, state) {
+                        bool isCurrentlyLoading = state is LoginLoadingState;
+                        return Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: TextButton(
+                            onPressed: isCurrentlyLoading
+                                ? null
+                                : () {
+                                    Navigator.pushNamed(
+                                      context,
+                                      AppRoutes.forgetPasswordRoute,
+                                    );
+                                  },
+                            isSemanticButton: false,
+                            child: Text(
+                              'forget password?',
+                              style: isCurrentlyLoading
+                                  ? AppStyles.bold20DarkGray
+                                  : AppStyles.bold20primary,
+                            ),
+                          ),
+                        );
+                      },
                     ),
                     SizedBox(height: 30.h),
                     BlocConsumer<LoginViewModel, LoginStates>(
@@ -108,9 +135,10 @@ class _LoginScreenState extends State<LoginScreen> {
                           );
                         } else if (state is LoginSuccessState) {
                           String? token = state.response.data!.token;
+                          String? userName = state.response.data!.userName;
+                          String? fullName = state.response.data!.fullName;
 
                           String? role = getRoleFromToken(token ?? '');
-
                           String? userId = getUserIdFromToken(token ?? '');
 
                           SharedPreferencesUtils.setData(
@@ -118,39 +146,39 @@ class _LoginScreenState extends State<LoginScreen> {
                             value: token ?? '',
                           );
 
+                          SharedPreferencesUtils.setData(
+                            key: 'userId',
+                            value: userId ?? '',
+                          );
+                          SharedPreferencesUtils.setData(
+                            key: 'userName',
+                            value: userName ?? '',
+                          );
+                          SharedPreferencesUtils.setData(
+                            key: 'fullName',
+                            value: fullName ?? '',
+                          );
+
                           if (role == 'Doctor') {
                             Navigator.pushReplacementNamed(
                               context,
                               AppRoutes.doctorRoute,
-                              arguments: {
-                                'data': state.response.data,
-                                'userId': userId,
-                              },
                             );
                             return;
                           } else if (role == 'Student') {
                             Navigator.pushReplacementNamed(
                               context,
                               AppRoutes.studentRoute,
-                              arguments: {
-                                'data': state.response.data,
-                                'userId': userId,
-                              },
                             );
                           } else if (role == 'Manager') {
                             Navigator.pushReplacementNamed(
                               context,
                               AppRoutes.managerRoute,
-                              arguments: {
-                                'data': state.response.data,
-                                'userId': userId,
-                              },
                             );
                           } else if (role == 'Admin') {
                             Navigator.pushReplacementNamed(
                               context,
                               AppRoutes.adminlayoutRoute,
-                              arguments: state.response.data,
                             );
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(

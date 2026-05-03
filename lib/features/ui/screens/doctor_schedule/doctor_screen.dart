@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:my_guide/config/di.dart';
+import 'package:my_guide/core/cache/shared_preferences.dart';
 import 'package:my_guide/core/utils/app_colors.dart';
 import 'package:my_guide/core/utils/app_styles.dart';
-import 'package:my_guide/domain/entities/response/login/data_response.dart';
 import 'package:my_guide/features/ui/admin/widgets/error_widget.dart';
 import 'package:my_guide/features/ui/screens/doctor_schedule/cubit/doctor_schedule_states.dart';
 import 'package:my_guide/features/ui/screens/doctor_schedule/cubit/doctor_schedule_view_model.dart';
@@ -21,32 +21,38 @@ class DoctorScreen extends StatefulWidget {
 class _DoctorScreenState extends State<DoctorScreen> {
   DoctorScheduleViewModel viewModel = getIt<DoctorScheduleViewModel>();
 
+  String fullName = 'User Name';
+  String userName = '@username';
+  String doctorId = '0';
+  String token = '';
+
   @override
   void initState() {
     super.initState();
-    Future.microtask(() {
-      final args =
-          ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>? ??
-          {};
+    _loadUserData();
+  }
 
-      final String doctorId = args["userId"] ?? '';
-      final Data data = args["data"] ?? '';
+  Future<void> _loadUserData() async {
+    final fName = await SharedPreferencesUtils.getData(key: 'fullName');
+    final uName = await SharedPreferencesUtils.getData(key: 'userName');
+    final docId = await SharedPreferencesUtils.getData(key: 'userId');
+    final tok = await SharedPreferencesUtils.getData(key: 'token');
+    if (mounted) {
+      setState(() {
+        fullName = fName ?? 'User Name';
+        userName = uName ?? '@username';
+        doctorId = docId ?? '0';
+        token = tok ?? "";
+      });
 
-      viewModel.getDoctorScedule(
-        doctorId: int.parse(doctorId),
-        token: data.token ?? '',
-      );
-    });
+      if (doctorId != '0' && token.isNotEmpty) {
+        viewModel.getDoctorScedule(doctorId: int.parse(doctorId), token: token);
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    Map<String, dynamic> args =
-        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>? ??
-        {};
-
-    Data data = args['data'] ?? {};
-    final String doctorId = args["userId"] ?? '';
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 125.h,
@@ -71,7 +77,7 @@ class _DoctorScreenState extends State<DoctorScreen> {
                       ),
                     ),
                     TextSpan(
-                      text: data.fullName,
+                      text: fullName,
                       style: AppStyles.regural24White.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
@@ -88,7 +94,7 @@ class _DoctorScreenState extends State<DoctorScreen> {
           ),
         ),
       ),
-      drawer: DrawerWidget(data: data),
+      drawer: DrawerWidget(fullName: fullName, userName: userName),
       body: BlocBuilder<DoctorScheduleViewModel, DoctorScheduleStates>(
         bloc: viewModel,
         builder: (context, state) {
@@ -98,7 +104,7 @@ class _DoctorScreenState extends State<DoctorScreen> {
               onPressed: () {
                 viewModel.getDoctorScedule(
                   doctorId: int.parse(doctorId),
-                  token: data.token ?? "",
+                  token: token,
                 );
               },
             );

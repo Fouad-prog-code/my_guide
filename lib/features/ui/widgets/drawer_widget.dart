@@ -6,8 +6,13 @@ import 'package:my_guide/core/utils/app_routes.dart';
 import 'package:my_guide/core/utils/app_styles.dart';
 
 class DrawerWidget extends StatelessWidget {
-  const DrawerWidget({super.key, required this.data});
-  final dynamic data;
+  const DrawerWidget({
+    super.key,
+    required this.fullName,
+    required this.userName,
+  });
+  final String fullName;
+  final String userName;
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +52,7 @@ class DrawerWidget extends StatelessWidget {
                 ),
                 SizedBox(height: 15.h),
                 Text(
-                  data.fullName ?? 'User Name',
+                  fullName,
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 22.sp,
@@ -56,7 +61,7 @@ class DrawerWidget extends StatelessWidget {
                 ),
                 SizedBox(height: 8.h),
                 Text(
-                  data.userName ?? '@username',
+                  userName,
                   style: TextStyle(color: Colors.white70, fontSize: 14.sp),
                 ),
               ],
@@ -97,6 +102,9 @@ class DrawerWidget extends StatelessWidget {
             child: ElevatedButton(
               onPressed: () {
                 SharedPreferencesUtils.removeData(key: 'token');
+                SharedPreferencesUtils.removeData(key: 'fullName');
+                SharedPreferencesUtils.removeData(key: 'userName');
+                SharedPreferencesUtils.removeData(key: 'userId');
 
                 Navigator.pushNamedAndRemoveUntil(
                   context,

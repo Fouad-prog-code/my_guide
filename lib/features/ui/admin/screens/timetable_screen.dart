@@ -39,7 +39,72 @@ class _TimetableGridScreenState extends State<TimetableGridScreen> {
       "Thursday",
     ];
 
-    List<String> hours = ["9-11", "11-1", "1-3", "3-5"];
+    int timeToMinutes(String? time) {
+      if (time == null || time.isEmpty) return 0;
+      try {
+        final parts = time.split(":");
+        int h = int.parse(parts[0]);
+        int m = parts.length > 1 ? int.parse(parts[1]) : 0;
+        return h * 60 + m;
+      } catch (e) {
+        return 0;
+      }
+    }
+
+    String minutesToTime(int totalMins) {
+      int h = totalMins ~/ 60;
+      int m = totalMins % 60;
+      String hStr = h > 12
+          ? (h - 12).toString()
+          : (h == 0 ? "12" : h.toString());
+      String mStr = m.toString().padLeft(2, '0');
+      return "$hStr:$mStr";
+    }
+
+    int minMins = 8 * 60;
+    int maxMins = 15 * 60;
+    int stepMins = 60;
+
+    if (widget.data.isNotEmpty) {
+      final startTimes = widget.data
+          .map((e) => timeToMinutes(e["startTime"]))
+          .where((m) => m > 0)
+          .toList();
+      final endTimes = widget.data
+          .map((e) => timeToMinutes(e["endTime"]))
+          .where((m) => m > 0)
+          .toList();
+
+      if (startTimes.isNotEmpty) {
+        minMins = startTimes.reduce((a, b) => a < b ? a : b);
+      }
+      if (endTimes.isNotEmpty) {
+        maxMins = endTimes.reduce((a, b) => a > b ? a : b);
+      }
+
+      List<int> durations = [];
+      for (var e in widget.data) {
+        int s = timeToMinutes(e["startTime"]);
+        int end = timeToMinutes(e["endTime"]);
+        if (end > s) {
+          durations.add(end - s);
+        }
+      }
+      if (durations.isNotEmpty) {
+        stepMins = durations.reduce((a, b) => a < b ? a : b);
+      }
+    }
+
+    if (maxMins <= minMins) {
+      maxMins = minMins + stepMins;
+    }
+
+    List<int> slotStarts = [];
+    List<String> hours = [];
+    for (int i = minMins; i < maxMins; i += stepMins) {
+      slotStarts.add(i);
+      hours.add("${minutesToTime(i)} - ${minutesToTime(i + stepMins)}");
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -49,8 +114,6 @@ class _TimetableGridScreenState extends State<TimetableGridScreen> {
           IconButton(
             icon: const Icon(Icons.picture_as_pdf),
             onPressed: () async {
-              // print("PDF button clicked 🔥");
-
               final pdf = TimetablePdf.generate(widget.data);
 
               if (kIsWeb) {
@@ -101,10 +164,15 @@ class _TimetableGridScreenState extends State<TimetableGridScreen> {
                         child: Text(day),
                       ),
 
-                      ...hours.map((hour) {
-                        final item = widget.data
-                            .where((e) => e["day"] == day && e["hour"] == hour)
-                            .toList();
+                      ...slotStarts.map((slotStart) {
+                        final item = widget.data.where((e) {
+                          if (e["day"].toString().toLowerCase() !=
+                              day.toLowerCase())
+                            return false;
+                          int s = timeToMinutes(e["startTime"]);
+                          int end = timeToMinutes(e["endTime"]);
+                          return s <= slotStart && end > slotStart;
+                        }).toList();
 
                         final cell = item.isNotEmpty ? item.first : null;
 
@@ -124,21 +192,23 @@ class _TimetableGridScreenState extends State<TimetableGridScreen> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Text(
-                                      cell["subject"],
+                                      cell["subject"] ?? "",
                                       style: const TextStyle(
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
                                     const SizedBox(height: 4),
                                     Text(
-                                      "Dr ${getDoctor(cell["doctorId"])}",
+                                      cell["doctorName"] != null
+                                          ? "Dr ${cell["doctorName"]}"
+                                          : "Dr ${getDoctor(cell["doctorId"] ?? 0)}",
                                       style: const TextStyle(
-                                        fontSize: 11,
+                                        fontSize: 12,
                                         color: Colors.grey,
                                       ),
                                     ),
                                     Text(
-                                      cell["room"],
+                                      cell["room"] ?? "",
                                       style: const TextStyle(fontSize: 11),
                                     ),
                                   ],

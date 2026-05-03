@@ -54,6 +54,7 @@ dependencies:
   universal_html: ^2.3.0
   webview_flutter: ^4.13.1
   jwt_decoder: ^2.0.1
+  font_awesome_flutter: ^10.9.1
 
 dev_dependencies:
   flutter_test:

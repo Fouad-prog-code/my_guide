@@ -41,13 +41,12 @@ class _ManagerScreenState extends State<ManagerScreen> {
           if (state is AddManagerSuccessState ||
               state is UpdateManagerSuccessState ||
               state is DeleteManagerSuccessState) {
-            // 1. نقفل الـ Dialog المفتوح
             if (Navigator.canPop(context)) {
               Navigator.pop(context);
             }
-            // 2. نحدث القائمة
+
             viewModel.getManager();
-            // 3. نظهر رسالة النجاح
+
             String msg = "Operation Successful";
             if (state is AddManagerSuccessState) {
               msg = state.addManagerResponse.message ?? '';
@@ -126,13 +125,11 @@ class _ManagerScreenState extends State<ManagerScreen> {
                       }
 
                       if (state is GetManagerErrorState) {
-                        return Center(
-                          child: ErrorsWidget(
-                            message: state.message,
-                            onPressed: () {
-                              viewModel.getManager();
-                            },
-                          ),
+                        return ErrorsWidget(
+                          message: state.message,
+                          onPressed: () {
+                            viewModel.getManager();
+                          },
                         );
                       } else {
                         var managers =
@@ -223,7 +220,6 @@ class _ManagerScreenState extends State<ManagerScreen> {
     );
   }
 
-  // ================= ADD DOCTOR =================
   void showAddManagerDialog(BuildContext context) {
     showDialog(
       context: context,

@@ -8,6 +8,7 @@ import 'package:my_guide/domain/entities/request/add_department/add_department_r
 import 'package:my_guide/domain/entities/request/update_department/update_department_request.dart';
 import 'package:my_guide/domain/entities/response/get_department/get_department_response_dto.dart';
 import 'package:my_guide/domain/use_case/add_department_use_case.dart';
+import 'package:my_guide/domain/use_case/delete_dept_use_case.dart';
 import 'package:my_guide/domain/use_case/get_department_use_case.dart';
 import 'package:my_guide/domain/use_case/update_department_use_case.dart';
 import 'package:my_guide/features/ui/admin/screens/department_screen/cubit/department_states.dart';
@@ -17,11 +18,13 @@ class DepartmentViewModel extends Cubit<DepartmentStates> {
   final AddDepartmentUseCase addDepartmentUseCase;
   final GetDepartmentUseCase getDepartmentUseCase;
   final UpdateDepartmentUseCase updateDepartmentUseCase;
+  final DeleteDeptUseCase deleteDeptUseCase;
 
   DepartmentViewModel({
     required this.addDepartmentUseCase,
     required this.getDepartmentUseCase,
     required this.updateDepartmentUseCase,
+    required this.deleteDeptUseCase,
   }) : super(DepartmentInitialState());
 
   final TextEditingController deptNameController = TextEditingController();
@@ -107,6 +110,28 @@ class DepartmentViewModel extends Cubit<DepartmentStates> {
           : e.message;
       emit(
         UpdateDepartmentErrorState(
+          errorMessage: message ?? 'UnExpected error occurred',
+        ),
+      );
+    }
+  }
+
+  deleteDepartment({required int deptId}) async {
+    try {
+      emit(DeleteDepartmentLoadingState());
+
+      String? token = await SharedPreferencesUtils.getData(key: 'token');
+
+      var response = await deleteDeptUseCase.invoke(token ?? '', deptId);
+      emit(DeleteDepartmentSuccessState(deleteDepartmentResponse: response));
+    } on AppError catch (e) {
+      emit(DeleteDepartmentErrorState(errorMessage: e.errorMessage));
+    } on DioException catch (e) {
+      final message = (e.error is AppError)
+          ? (e.error as AppError).errorMessage
+          : e.message;
+      emit(
+        DeleteDepartmentErrorState(
           errorMessage: message ?? 'UnExpected error occurred',
         ),
       );

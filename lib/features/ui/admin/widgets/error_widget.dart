@@ -12,7 +12,7 @@ class ErrorsWidget extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: 12.w),
+          padding: EdgeInsets.symmetric(horizontal: 8.w),
           child: Center(child: Text(message, style: AppStyles.bold20DarkGray)),
         ),
         SizedBox(height: 8.h),

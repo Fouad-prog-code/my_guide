@@ -26,6 +26,9 @@ class ApiEndpoints {
 
   static const String deleteManagerApi = 'api/Admin/DeleteManager/{ManagerId}';
 
+  static const String deleteDepartmentApi =
+      'api/Department/DeleteDepartmet/{DepartmentId}';
+
   static const String updateDoctorApi = 'api/Doctor/updateDoctor';
 
   static const String updateStudentApi = 'api/Student/update';
@@ -49,4 +52,8 @@ class ApiEndpoints {
   static const String dashboardApi = 'api/Admin/DashboardOverview';
 
   static const String addDepartmentApi = 'api/Admin/AddDepartment';
+
+  static const String generateTablesApi = 'api/Admin/Generate';
+
+  static const String yearTableApi = 'api/Admin/SpecificYears';
 }

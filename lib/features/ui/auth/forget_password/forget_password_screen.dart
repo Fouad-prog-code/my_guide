@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:my_guide/config/di.dart';
 
-import 'package:my_guide/core/utils/app_assets.dart';
 import 'package:my_guide/core/utils/app_colors.dart';
 
 import 'package:my_guide/core/utils/app_styles.dart';
@@ -40,109 +39,131 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
         ),
       ),
       body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Container(
-              height: 200.h,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: AppColors.primaryColor,
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(60.r),
-                  bottomRight: Radius.circular(60.r),
-                ),
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Image.asset(AppAssets.userImage, height: 100.h),
-                  SizedBox(height: 12.h),
-                  Text(
-                    'Reset Password',
-                    style: AppStyles.regural32White.copyWith(fontSize: 28.sp),
+        child: Padding(
+          padding: EdgeInsets.only(bottom: 20.h),
+          child: Column(
+            children: [
+              Container(
+                height: 200.h,
+
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: AppColors.primaryColor,
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(60.r),
+                    bottomRight: Radius.circular(60.r),
                   ),
-                ],
-              ),
-            ),
-
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 20.h),
-              child: Form(
-                key: viewModel.formKey,
+                ),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    CustomTextFormField(
-                      hintText: 'Enter username',
-                      labelText: 'Username',
-                      icon: Icons.person,
-                      hintStyle: AppStyles.bold22DarkGray,
-                      controller: viewModel.userController,
-                      textType: TextInputType.text,
-                      validator: (value) =>
-                          AppValidators.validateUserName(userName: value),
+                    Container(
+                      padding: EdgeInsets.all(3.r),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: Colors.white.withOpacity(0.5),
+                          width: 2.w,
+                        ),
+                      ),
+                      child: CircleAvatar(
+                        backgroundColor: Colors.white,
+                        radius: 45.r,
+                        child: Icon(
+                          Icons.person,
+                          size: 50.r,
+                          color: AppColors.primaryColor,
+                        ),
+                      ),
                     ),
-                    SizedBox(height: 20.h),
-
-                    CustomTextFormField(
-                      hintText: 'Enter National ID',
-                      labelText: 'National ID',
-                      icon: Icons.badge,
-                      hintStyle: AppStyles.bold22DarkGray,
-                      controller: viewModel.idController,
-                      textType: TextInputType.number,
-                      maxLength: 14,
-                      validator: (value) {
-                        return AppValidators.validateNationalId(id: value);
-                      },
-                    ),
-                    SizedBox(height: 20.h),
-
-                    CustomPasswordTextField(
-                      hintText: 'New Password',
-                      labelText: 'New Password',
-                      controller: viewModel.newPasswordController,
-                      validator: (value) =>
-                          AppValidators.validateNewPassword(password: value),
-                    ),
-
-                    SizedBox(height: 40.h),
-
-                    BlocConsumer<ResetPasswordViewModel, ResetPasswordStates>(
-                      bloc: viewModel,
-                      listener: (context, state) {
-                        if (state is ResetPasswordErrorState) {
-                          SnackBarUtils.showErrorSnackBar(
-                            context,
-                            state.message,
-                          );
-                        } else if (state is ResetPasswordSuccessState) {
-                          SnackBarUtils.showSuccessSnackBar(
-                            context,
-                            state.forgetPasswordResponse.data ?? 'success',
-                          );
-                          Navigator.pop(context);
-                        }
-                      },
-                      builder: (context, state) {
-                        isLoading = state is ResetPasswordLoadingState;
-                        return CustomElevatedButton(
-                          style: AppStyles.blod24White,
-                          text: 'Update Password',
-                          isLoading: isLoading,
-                          onPressed: isLoading
-                              ? null
-                              : () {
-                                  viewModel.resetPassword();
-                                },
-                        );
-                      },
+                    SizedBox(height: 12.h),
+                    Text(
+                      'Reset Password',
+                      style: AppStyles.regural32White.copyWith(fontSize: 28.sp),
                     ),
                   ],
                 ),
               ),
-            ),
-          ],
+
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 20.h),
+                child: Form(
+                  key: viewModel.formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      CustomTextFormField(
+                        hintText: 'Enter username',
+                        labelText: 'Username',
+                        icon: Icons.person,
+                        hintStyle: AppStyles.bold22DarkGray,
+                        controller: viewModel.userController,
+                        textType: TextInputType.text,
+                        validator: (value) =>
+                            AppValidators.validateUserName(userName: value),
+                      ),
+                      SizedBox(height: 20.h),
+
+                      CustomTextFormField(
+                        hintText: 'Enter National ID',
+                        labelText: 'National ID',
+                        icon: Icons.badge,
+                        hintStyle: AppStyles.bold22DarkGray,
+                        controller: viewModel.idController,
+                        textType: TextInputType.number,
+                        maxLength: 14,
+                        validator: (value) {
+                          return AppValidators.validateNationalId(id: value);
+                        },
+                      ),
+                      SizedBox(height: 12.h),
+
+                      CustomPasswordTextField(
+                        hintText: 'New Password',
+                        labelText: 'New Password',
+                        controller: viewModel.newPasswordController,
+                        validator: (value) =>
+                            AppValidators.validateNewPassword(password: value),
+                      ),
+
+                      SizedBox(height: 40.h),
+
+                      BlocConsumer<ResetPasswordViewModel, ResetPasswordStates>(
+                        bloc: viewModel,
+                        listener: (context, state) {
+                          if (state is ResetPasswordErrorState) {
+                            SnackBarUtils.showErrorSnackBar(
+                              context,
+                              state.message,
+                            );
+                          } else if (state is ResetPasswordSuccessState) {
+                            SnackBarUtils.showSuccessSnackBar(
+                              context,
+                              state.forgetPasswordResponse.data ?? 'success',
+                            );
+                            Navigator.pop(context);
+                          }
+                        },
+                        builder: (context, state) {
+                          isLoading = state is ResetPasswordLoadingState;
+                          return CustomElevatedButton(
+                            style: AppStyles.blod24White,
+                            text: 'Update Password',
+                            isLoading: isLoading,
+                            onPressed: isLoading
+                                ? null
+                                : () {
+                                    viewModel.resetPassword();
+                                  },
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

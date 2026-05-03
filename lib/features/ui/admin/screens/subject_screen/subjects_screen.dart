@@ -134,7 +134,7 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
                   builder: (context, state) {
                     if (state is GetSubjectErrorState) {
                       return Padding(
-                        padding: EdgeInsets.only(top: 250.h),
+                        padding: EdgeInsets.only(top: 230.h),
                         child: ErrorsWidget(
                           message: state.getSubjectmessage,
                           onPressed: () {

@@ -42,3 +42,17 @@ class UpdateDepartmentSuccessState extends DepartmentStates {
 
   UpdateDepartmentSuccessState({required this.updateDepartmentResponse});
 }
+
+class DeleteDepartmentLoadingState extends DepartmentStates {}
+
+class DeleteDepartmentErrorState extends DepartmentStates {
+  String errorMessage;
+
+  DeleteDepartmentErrorState({required this.errorMessage});
+}
+
+class DeleteDepartmentSuccessState extends DepartmentStates {
+  UpdateOrDeleteObjectResponse deleteDepartmentResponse;
+
+  DeleteDepartmentSuccessState({required this.deleteDepartmentResponse});
+}

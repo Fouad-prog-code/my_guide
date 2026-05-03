@@ -6,6 +6,7 @@ import 'package:my_guide/api/models/request/add_room/add_room_request_dto.dart';
 import 'package:my_guide/api/models/request/add_student/add_student_request_dto.dart';
 import 'package:my_guide/api/models/request/add_subject/add_subject_request_dto.dart';
 import 'package:my_guide/api/models/request/forget_password/forget_password_request_dto.dart';
+import 'package:my_guide/api/models/request/generate_tables/generate_tables_request_dto.dart';
 import 'package:my_guide/api/models/request/login/login_request_dto.dart';
 import 'package:my_guide/api/models/common/add_user/add_user_response_dto.dart';
 import 'package:my_guide/api/models/request/updata_room/update_room_request_dto.dart';
@@ -22,6 +23,7 @@ import 'package:my_guide/api/models/response/delete_room/delete_room_response_dt
 import 'package:my_guide/api/models/response/delete_subject/delete_subject_response_dto.dart';
 import 'package:my_guide/api/models/response/doctor/doctor_response_dto.dart';
 import 'package:my_guide/api/models/response/forget_password/forget_password_response_dto.dart';
+import 'package:my_guide/api/models/response/generate_tables/generate_tables_responset_dto.dart';
 import 'package:my_guide/api/models/response/get_dashboard/dashboard_response_dto.dart';
 import 'package:my_guide/api/models/response/get_department/get_department_response_dto.dart';
 import 'package:my_guide/api/models/response/get_doctor/get_doctor_response_dto.dart';
@@ -34,6 +36,7 @@ import 'package:my_guide/api/models/response/room_response_dto.dart';
 import 'package:my_guide/api/models/response/student_schedule_response_dto.dart';
 import 'package:my_guide/api/models/response/updata_room/update_room_response_dto.dart';
 import 'package:my_guide/api/models/common/update_or_delete_object/update_or_delete_object_response_dto.dart';
+import 'package:my_guide/api/models/response/year_table/year_table_response_dto.dart';
 
 import 'package:retrofit/retrofit.dart';
 
@@ -156,6 +159,12 @@ abstract class ApiServices {
     @Header("Authorization") String token,
   );
 
+  @DELETE(ApiEndpoints.deleteDepartmentApi)
+  Future<UpdateOrDeleteObjectResponseDto> deleteDepartment(
+    @Path("DepartmentId") int deptId,
+    @Header("Authorization") String token,
+  );
+
   @DELETE(ApiEndpoints.deleteManagerApi)
   Future<UpdateOrDeleteObjectResponseDto> deleteManager(
     @Path("ManagerId") int managerId,
@@ -195,6 +204,17 @@ abstract class ApiServices {
 
   @GET(ApiEndpoints.getDepartmentApi)
   Future<GetDepartmentResponseDto> getDepartment(
+    @Header("Authorization") String token,
+  );
+
+  @POST(ApiEndpoints.generateTablesApi)
+  Future<GenerateTablesResponseDto> generateTables(
+    @Body() GenerateTablesRequestDto generateTablesRequestDto,
+    @Header('Authorization') String token,
+  );
+
+  @GET(ApiEndpoints.yearTableApi)
+  Future<YearTableResponseDto> getYearTable(
     @Header("Authorization") String token,
   );
 }

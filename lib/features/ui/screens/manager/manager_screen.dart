@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:my_guide/config/di.dart';
+import 'package:my_guide/core/cache/shared_preferences.dart';
 
 import 'package:my_guide/domain/entities/response/lectures.dart';
 import 'package:my_guide/domain/entities/response/login/data_response.dart';
@@ -34,12 +35,33 @@ class _RoomInfoState extends State<ManagerScreen> {
     'Thursday',
   ];
 
+  String fullName = 'User Name';
+  String userName = '@username';
+  String doctorId = '0';
+  String token = '';
+
   @override
   void initState() {
     super.initState();
+    _loadUserData();
     Future.microtask(() {
       roomViewModel.getRooms();
     });
+  }
+
+  Future<void> _loadUserData() async {
+    final fName = await SharedPreferencesUtils.getData(key: 'fullName');
+    final uName = await SharedPreferencesUtils.getData(key: 'userName');
+    final docId = await SharedPreferencesUtils.getData(key: 'userId');
+    final tok = await SharedPreferencesUtils.getData(key: 'token');
+    if (mounted) {
+      setState(() {
+        fullName = fName ?? 'User Name';
+        userName = uName ?? '@username';
+        doctorId = docId ?? '0';
+        token = tok ?? "";
+      });
+    }
   }
 
   List<_DayGroup> _groupByDay(List<dynamic> data) {
@@ -77,10 +99,6 @@ class _RoomInfoState extends State<ManagerScreen> {
 
   @override
   Widget build(BuildContext context) {
-    Map<String, dynamic> map =
-        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-
-    Data data = map['data'];
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 125.h,
@@ -96,10 +114,23 @@ class _RoomInfoState extends State<ManagerScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  data.fullName ?? '',
-                  style: AppStyles.regural24White.copyWith(
-                    fontWeight: FontWeight.bold,
+                Text.rich(
+                  maxLines: 2,
+                  TextSpan(
+                    children: [
+                      TextSpan(
+                        text: 'Welcome Dr. ',
+                        style: AppStyles.regural24White.copyWith(
+                          fontWeight: FontWeight.normal,
+                        ),
+                      ),
+                      TextSpan(
+                        text: fullName,
+                        style: AppStyles.regural24White.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 SizedBox(height: 10),
@@ -114,7 +145,7 @@ class _RoomInfoState extends State<ManagerScreen> {
           ),
         ),
       ),
-      drawer: DrawerWidget(data: data),
+      drawer: DrawerWidget(fullName: fullName, userName: userName),
       body: BlocBuilder<RoomViewModel, RoomStates>(
         bloc: roomViewModel,
         builder: (context, state) {

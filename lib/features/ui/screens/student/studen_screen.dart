@@ -5,8 +5,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:my_guide/config/di.dart';
+import 'package:my_guide/core/cache/shared_preferences.dart';
 import 'package:my_guide/domain/entities/response/lectures.dart';
-import 'package:my_guide/domain/entities/response/login/data_response.dart';
+
 import 'package:my_guide/features/ui/admin/widgets/error_widget.dart';
 import 'package:my_guide/features/ui/screens/student/cubit/student_state_model.dart';
 import 'package:my_guide/features/ui/screens/student/cubit/student_view_model.dart';
@@ -26,23 +27,38 @@ class StudentScreen extends StatefulWidget {
 }
 
 class _StudentScreenState extends State<StudentScreen> {
+  String fullName = 'User Name';
+  String userName = '@username';
+  String doctorId = '0';
+  String token = '';
+
   @override
   void initState() {
     super.initState();
+    _loadUserData();
     Future.microtask(() {
       studentViewModel.getStudentSchedule();
     });
   }
 
+  Future<void> _loadUserData() async {
+    final fName = await SharedPreferencesUtils.getData(key: 'fullName');
+    final uName = await SharedPreferencesUtils.getData(key: 'userName');
+    final docId = await SharedPreferencesUtils.getData(key: 'userId');
+    final tok = await SharedPreferencesUtils.getData(key: 'token');
+    if (mounted) {
+      setState(() {
+        fullName = fName ?? 'User Name';
+        userName = uName ?? '@username';
+        doctorId = docId ?? '0';
+        token = tok ?? "";
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    Map<String, dynamic> map =
-        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-
-    Data data = map['data'];
-    String? userId = map['userId'];
-
-    String? acYear = getAcademicYearFromToken(data.token ?? '');
+    String? acYear = getAcademicYearFromToken(token);
 
     return Scaffold(
       appBar: AppBar(
@@ -73,7 +89,7 @@ class _StudentScreenState extends State<StudentScreen> {
         ),
       ),
 
-      drawer: DrawerWidget(data: data),
+      drawer: DrawerWidget(fullName: fullName, userName: userName),
       body: BlocBuilder<StudentViewModel, StudentStates>(
         bloc: studentViewModel,
         builder: (context, state) {
@@ -163,7 +179,6 @@ class _StudentScreenState extends State<StudentScreen> {
 
       final Map<String, dynamic> data = json.decode(decoded);
 
-      // المفتاح اللي موجود في الـ Token بتاعك هو AcademicYearId
       return data["AcademicYearId"]?.toString();
     } catch (e) {
       return null;

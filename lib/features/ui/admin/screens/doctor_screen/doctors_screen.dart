@@ -150,14 +150,11 @@ class _DoctorsScreenState extends State<DoctorsScreen> {
                       }
 
                       if (state is GetDoctorErrorState) {
-                        return Padding(
-                          padding: EdgeInsets.only(top: 200.h),
-                          child: ErrorsWidget(
-                            message: state.message,
-                            onPressed: () {
-                              viewModel.getDoctor();
-                            },
-                          ),
+                        return ErrorsWidget(
+                          message: state.message,
+                          onPressed: () {
+                            viewModel.getDoctor();
+                          },
                         );
                       } else {
                         var doctors = viewModel.getDoctorResponse?.data ?? [];

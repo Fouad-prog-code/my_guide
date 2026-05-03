@@ -17,6 +17,30 @@ class AppValidators {
     }
   }
 
+  static String? validateTimeFormat(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'this field is required';
+    }
+
+    final timeRegex = RegExp(r'^([01]?[0-9]|2[0-3]):[0-5][0-9]$');
+
+    if (!timeRegex.hasMatch(value)) {
+      return "Invalid format (must be HH:mm)";
+    }
+    return null;
+  }
+
+  static String? validateOnlyNumbers(String? value) {
+    if (value == null || value.trim().isEmpty) return 'this field is required';
+
+    final numericRegex = RegExp(r'^[0-9]+$');
+
+    if (!numericRegex.hasMatch(value)) {
+      return 'enter digits only';
+    }
+    return null;
+  }
+
   static String? validatePassword({required String? password}) {
     if (password == null || password.trim().isEmpty) {
       return 'enter password';

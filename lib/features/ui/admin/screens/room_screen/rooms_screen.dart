@@ -72,8 +72,10 @@ class _RoomsScreenState extends State<RoomsScreen> {
             String errorMsg = "";
             if (state is AddRoomErrorState) errorMsg = state.message;
             if (state is UpdateRoomErrorState) errorMsg = state.message;
-            if (state is DeleteRoomErrorState) errorMsg = state.message;
-            //Navigator.pop(context);
+            if (state is DeleteRoomErrorState) {
+              errorMsg = state.message;
+              Navigator.pop(context);
+            }
             DialogUtils.showErrorDialog(context, errorMsg);
           }
 
@@ -122,12 +124,9 @@ class _RoomsScreenState extends State<RoomsScreen> {
                         );
                       }
                       if (state is GetRoomErrorState) {
-                        return Padding(
-                          padding: EdgeInsets.only(top: 70.h),
-                          child: ErrorsWidget(
-                            message: state.message,
-                            onPressed: () => viewModel.getRoom(),
-                          ),
+                        return ErrorsWidget(
+                          message: state.message,
+                          onPressed: () => viewModel.getRoom(),
                         );
                       }
 

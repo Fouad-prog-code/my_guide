@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:my_guide/config/di.dart';
 import 'package:my_guide/core/utils/app_colors.dart';
@@ -37,9 +38,8 @@ class _DepartmentScreenState extends State<DepartmentScreen> {
       child: BlocListener<DepartmentViewModel, DepartmentStates>(
         listener: (context, state) {
           if (state is AddDepartmentSuccessState ||
-              state is UpdateDepartmentSuccessState
-          //     ||state is DeleteRoomSuccessState
-          ) {
+              state is UpdateDepartmentSuccessState ||
+              state is DeleteDepartmentSuccessState) {
             if (Navigator.canPop(context)) {
               Navigator.pop(context);
             }
@@ -47,18 +47,18 @@ class _DepartmentScreenState extends State<DepartmentScreen> {
             viewModel.getDepartment();
 
             String msg = "Operation Successful";
-            // if (state is DeleteRoomSuccessState) {
-            //   msg = state.deleteRoomResponse.data ?? "Deleted";
-            //   DialogUtils.showMessage(
-            //     context: context,
-            //     msg: msg,
-            //     title: state.deleteRoomResponse.message,
-            //     nagtActionName: 'Ok',
-            //     nagtAction: () {
-            //       Navigator.pop(context);
-            //     },
-            //   );
-            // }
+            if (state is DeleteDepartmentSuccessState) {
+              msg = state.deleteDepartmentResponse.data ?? "Deleted";
+              DialogUtils.showMessage(
+                context: context,
+                msg: msg,
+                title: state.deleteDepartmentResponse.message,
+                nagtActionName: 'Ok',
+                nagtAction: () {
+                  Navigator.pop(context);
+                },
+              );
+            }
             if (state is UpdateDepartmentSuccessState) {
               msg = state.updateDepartmentResponse.data ?? "Updated";
               SnackBarUtils.showSuccessSnackBar(context, msg);
@@ -72,23 +72,23 @@ class _DepartmentScreenState extends State<DepartmentScreen> {
           }
 
           if (state is AddDepartmentErrorState ||
-              state is UpdateDepartmentErrorState
-          //||
-          //     state is DeleteRoomErrorState
-          ) {
+              state is UpdateDepartmentErrorState ||
+              state is DeleteDepartmentErrorState) {
             String errorMsg = "";
             if (state is AddDepartmentErrorState) errorMsg = state.errorMessage;
             if (state is UpdateDepartmentErrorState)
               errorMsg = state.errorMessage;
-            //if (state is DeleteRoomErrorState) errorMsg = state.message;
-            // Navigator.pop(context);
+            if (state is DeleteDepartmentErrorState) {
+              errorMsg = state.errorMessage;
+              Navigator.pop(context);
+            }
             DialogUtils.showErrorDialog(context, errorMsg);
           }
 
-          // if (state is DeleteRoomLoadingState) {
-          //   Navigator.pop(context);
-          //   DialogUtils.showLoading(context: context, message: 'Deleting...');
-          // }
+          if (state is DeleteDepartmentLoadingState) {
+            Navigator.pop(context);
+            DialogUtils.showLoading(context: context, message: 'Deleting...');
+          }
         },
         child: Scaffold(
           backgroundColor: const Color(0xFFF5F7F9),
@@ -134,7 +134,7 @@ class _DepartmentScreenState extends State<DepartmentScreen> {
                           padding: EdgeInsets.only(top: 70.h),
                           child: ErrorsWidget(
                             message: state.errorMessage,
-                            onPressed: viewModel.getDepartment(),
+                            onPressed: () => viewModel.getDepartment(),
                           ),
                         );
                       }
@@ -153,8 +153,8 @@ class _DepartmentScreenState extends State<DepartmentScreen> {
                           return Card(
                             margin: const EdgeInsets.only(bottom: 12),
                             child: ListTile(
-                              leading: const CircleAvatar(
-                                child: Icon(Icons.meeting_room),
+                              leading: CircleAvatar(
+                                child: Icon(FontAwesomeIcons.buildingColumns),
                               ),
                               title: Text(
                                 department.departmentName ?? '',
@@ -190,9 +190,11 @@ class _DepartmentScreenState extends State<DepartmentScreen> {
                                             'Do you want to delete this department?',
                                         nagtActionName: 'Delete',
                                         postActionName: 'Cancel',
-                                        // nagtAction: () => viewModel.deleteRoom(
-                                        //   id: room.roomId ?? 0,
-                                        // ),
+                                        nagtAction: () =>
+                                            viewModel.deleteDepartment(
+                                              deptId:
+                                                  department.departmentId ?? 0,
+                                            ),
                                       );
                                     },
                                   ),

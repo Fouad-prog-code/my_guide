@@ -95,7 +95,7 @@ class _StudentScreenState extends State<StudentScreen> {
               }
               if (studentState is GetStudentErrorState) {
                 return Padding(
-                  padding: EdgeInsets.only(top: 100.h),
+                  padding: EdgeInsets.only(left: 16.w),
                   child: ErrorsWidget(
                     message: studentState.message,
                     onPressed: () => viewModel.getStudent(),
