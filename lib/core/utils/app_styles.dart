@@ -93,6 +93,12 @@ class AppStyles {
     fontWeight: FontWeight.bold, // regural
   );
 
+  static TextStyle blod22White = GoogleFonts.lisuBosa(
+    color: AppColors.whiteColor,
+    fontSize: 22,
+    fontWeight: FontWeight.bold, // regural
+  );
+
   static TextStyle blod24White = GoogleFonts.lisuBosa(
     color: AppColors.whiteColor,
     fontSize: 24,

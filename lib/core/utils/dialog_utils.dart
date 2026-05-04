@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:my_guide/core/utils/app_colors.dart';
+
 import 'package:my_guide/core/utils/app_styles.dart';
 
 class DialogUtils {
@@ -11,7 +11,9 @@ class DialogUtils {
         return AlertDialog(
           content: Row(
             children: [
-              CircularProgressIndicator(color: AppColors.redColor),
+              CircularProgressIndicator(
+                color: const Color.fromARGB(255, 65, 85, 94),
+              ),
               Padding(
                 padding: const EdgeInsets.all(12.0),
                 child: Text(message, style: AppStyles.regular20primary),
@@ -30,7 +32,7 @@ class DialogUtils {
   static void showErrorDialog(BuildContext context, String message) {
     showDialog(
       context: context,
-      barrierDismissible: false, // يمنع إغلاق الدايلوج عند الضغط خارجه
+      barrierDismissible: false,
       builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         title: Row(

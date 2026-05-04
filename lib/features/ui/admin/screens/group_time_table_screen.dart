@@ -3,8 +3,13 @@ import 'package:my_guide/features/ui/admin/screens/timetable_screen.dart';
 
 class GroupTimetableScreen extends StatelessWidget {
   final Map<String, List<Map<String, dynamic>>> data;
+  final name;
 
-  const GroupTimetableScreen({super.key, required this.data});
+  const GroupTimetableScreen({
+    super.key,
+    required this.data,
+    required this.name,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -13,16 +18,9 @@ class GroupTimetableScreen extends StatelessWidget {
     return DefaultTabController(
       length: keys.length,
       child: Scaffold(
-        // appBar: AppBar(
-        //   title: const Text("Timetables"),
-        //   bottom: TabBar(
-        //     isScrollable: true,
-        //     tabs: keys.map((e) => Tab(text: e)).toList(),
-        //   ),
-        // ),
         body: TabBarView(
           children: keys.map((group) {
-            return TimetableGridScreen(data: data[group]!);
+            return TimetableGridScreen(data: data[group]!, name: name);
           }).toList(),
         ),
       ),

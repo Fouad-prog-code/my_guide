@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:my_guide/core/utils/app_colors.dart';
+import 'package:my_guide/core/utils/app_styles.dart';
 import 'package:my_guide/features/ui/admin/widgets/timetable_pdf.dart';
 import 'package:printing/printing.dart';
 import 'package:flutter/foundation.dart';
@@ -9,26 +11,18 @@ import 'package:universal_html/html.dart' as html;
 
 class TimetableGridScreen extends StatefulWidget {
   final List<Map<String, dynamic>> data;
-
-  const TimetableGridScreen({super.key, required this.data});
+  final name;
+  const TimetableGridScreen({
+    super.key,
+    required this.data,
+    required this.name,
+  });
 
   @override
   State<TimetableGridScreen> createState() => _TimetableGridScreenState();
 }
 
 class _TimetableGridScreenState extends State<TimetableGridScreen> {
-  String getDoctor(int id) {
-    const map = {
-      1: "Ahmed",
-      2: "Ali",
-      3: "Sara",
-      4: "Omar",
-      5: "rania",
-      6: "hamdy",
-    };
-    return map[id] ?? "Unknown";
-  }
-
   @override
   Widget build(BuildContext context) {
     List<String> days = [
@@ -109,7 +103,9 @@ class _TimetableGridScreenState extends State<TimetableGridScreen> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: const Text("Timetable"),
+        backgroundColor: Colors.blueGrey[900],
+        title: Text(widget.name, style: AppStyles.blod22White),
+        iconTheme: IconThemeData(color: AppColors.whiteColor),
         actions: [
           IconButton(
             icon: const Icon(Icons.picture_as_pdf),
@@ -193,15 +189,15 @@ class _TimetableGridScreenState extends State<TimetableGridScreen> {
                                   children: [
                                     Text(
                                       cell["subject"] ?? "",
+                                      textAlign: TextAlign.center,
                                       style: const TextStyle(
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
                                     const SizedBox(height: 4),
                                     Text(
-                                      cell["doctorName"] != null
-                                          ? "Dr ${cell["doctorName"]}"
-                                          : "Dr ${getDoctor(cell["doctorId"] ?? 0)}",
+                                      "Dr ${cell["doctorName"]}",
+
                                       style: const TextStyle(
                                         fontSize: 12,
                                         color: Colors.grey,

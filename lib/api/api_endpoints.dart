@@ -56,4 +56,7 @@ class ApiEndpoints {
   static const String generateTablesApi = 'api/Admin/Generate';
 
   static const String yearTableApi = 'api/Admin/SpecificYears';
+
+  static const String departmentTableApi =
+      'api/Admin/GetScheduleByYearAndDeptAsync';
 }

@@ -21,6 +21,7 @@ import 'package:my_guide/api/models/response/add_subject/add_subject_response_dt
 import 'package:my_guide/api/models/response/delete_doctor/delete_doctor_response_dto.dart';
 import 'package:my_guide/api/models/response/delete_room/delete_room_response_dto.dart';
 import 'package:my_guide/api/models/response/delete_subject/delete_subject_response_dto.dart';
+import 'package:my_guide/api/models/response/department_table/department_table_response_dto.dart';
 import 'package:my_guide/api/models/response/doctor/doctor_response_dto.dart';
 import 'package:my_guide/api/models/response/forget_password/forget_password_response_dto.dart';
 import 'package:my_guide/api/models/response/generate_tables/generate_tables_responset_dto.dart';
@@ -215,6 +216,11 @@ abstract class ApiServices {
 
   @GET(ApiEndpoints.yearTableApi)
   Future<YearTableResponseDto> getYearTable(
+    @Header("Authorization") String token,
+  );
+
+  @GET(ApiEndpoints.departmentTableApi)
+  Future<DepartmentTableResponseDto> getDepartmentTable(
     @Header("Authorization") String token,
   );
 }

@@ -219,7 +219,7 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
             DialogUtils.showMessage(
               context: context,
               title: 'Confirm Delete',
-              msg: 'Do you want to delete this Course?',
+              msg: 'Do you want to delete this Subject?',
               nagtActionName: 'Delete',
               postActionName: 'Cancel',
               nagtAction: () =>
