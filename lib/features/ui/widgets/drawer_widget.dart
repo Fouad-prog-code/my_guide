@@ -21,7 +21,12 @@ class DrawerWidget extends StatelessWidget {
       child: Column(
         children: [
           Container(
-            padding: EdgeInsets.only(top: 80.h, bottom: 40.h),
+            padding: EdgeInsets.only(
+              top: 80.h,
+              bottom: 40.h,
+              left: 12.w,
+              right: 12.w,
+            ),
             width: double.infinity,
             decoration: BoxDecoration(
               color: AppColors.primaryColor,

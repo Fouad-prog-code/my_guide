@@ -264,6 +264,15 @@ class _GenerateTimeTabelsScreenState extends State<GenerateTimeTabelsScreen>
                                   state.generateTablesResponse.message ??
                                       'Success',
                                 );
+
+                                generateViewModel.lectureDurationController
+                                    .clear();
+                                generateViewModel.endTimeController.clear();
+                                generateViewModel.startTimeController.clear();
+                                generateViewModel.lecturesPerDoctorController
+                                    .clear();
+                                generateViewModel.lecturesPerYearController
+                                    .clear();
                               }
                             },
                             builder: (context, state) {

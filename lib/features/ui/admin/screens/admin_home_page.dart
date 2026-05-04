@@ -105,103 +105,108 @@ class _AdminLayoutState extends State<AdminLayout> {
     return Drawer(
       child: Container(
         color: Colors.blueGrey[900],
-        child: Column(
-          children: [
-            Container(
-              padding: EdgeInsets.only(top: 80.h, bottom: 28.h),
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: Colors.blueGrey,
-                borderRadius: BorderRadius.only(
-                  bottomRight: Radius.circular(50.r),
-                ),
-              ),
-              child: Column(
-                children: [
-                  Container(
-                    padding: EdgeInsets.all(3.r),
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: Colors.white.withOpacity(0.5),
-                        width: 2.w,
-                      ),
-                    ),
-                    child: CircleAvatar(
-                      backgroundColor: Colors.white,
-                      radius: 40.r,
-                      child: Icon(
-                        Icons.person,
-                        size: 40.r,
-                        color: Colors.blueGrey,
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 15.h),
-                  Text(
-                    fullName,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 22.sp,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  SizedBox(height: 8.h),
-                  Text(
-                    userName,
-                    style: TextStyle(color: Colors.white70, fontSize: 14.sp),
-                  ),
-                ],
-              ),
-            ),
-            ...List.generate(
-              menuItems.length,
-              (i) => ListTile(
-                leading: Icon(menuItems[i]['icon'], color: Colors.white),
-                title: Text(
-                  menuItems[i]['title'],
-                  style: const TextStyle(color: Colors.white),
-                ),
-                onTap: () {
-                  setState(() => index = i);
-                  Navigator.pop(context);
-                },
-              ),
-            ),
-            SizedBox(height: 32.h),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 26.w),
-              child: ElevatedButton(
-                onPressed: () {
-                  SharedPreferencesUtils.removeData(key: 'token');
-                  SharedPreferencesUtils.removeData(key: 'fullName');
-                  SharedPreferencesUtils.removeData(key: 'userName');
-                  SharedPreferencesUtils.removeData(key: 'userId');
-                  Navigator.pushNamedAndRemoveUntil(
-                    context,
-                    AppRoutes.loginRoute,
-                    (_) => false,
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.redColor,
-
-                  padding: EdgeInsets.symmetric(vertical: 8.h),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadiusGeometry.circular(18.r),
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              Container(
+                padding: EdgeInsets.only(top: 80.h, bottom: 28.h),
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: Colors.blueGrey,
+                  borderRadius: BorderRadius.only(
+                    bottomRight: Radius.circular(50.r),
                   ),
                 ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                child: Column(
                   children: [
-                    Icon(Icons.logout, size: 24, color: AppColors.whiteColor),
-                    SizedBox(width: 8.w),
-                    Text("Logout", style: AppStyles.blod24White),
+                    Container(
+                      padding: EdgeInsets.all(3.r),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: Colors.white.withOpacity(0.5),
+                          width: 2.w,
+                        ),
+                      ),
+                      child: CircleAvatar(
+                        backgroundColor: Colors.white,
+                        radius: 40.r,
+                        child: Icon(
+                          Icons.person,
+                          size: 40.r,
+                          color: Colors.blueGrey,
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 15.h),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 8.w),
+                      child: Text(
+                        fullName,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 22.sp,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 8.h),
+                    Text(
+                      userName,
+                      style: TextStyle(color: Colors.white70, fontSize: 14.sp),
+                    ),
                   ],
                 ),
               ),
-            ),
-          ],
+              ...List.generate(
+                menuItems.length,
+                (i) => ListTile(
+                  leading: Icon(menuItems[i]['icon'], color: Colors.white),
+                  title: Text(
+                    menuItems[i]['title'],
+                    style: const TextStyle(color: Colors.white),
+                  ),
+                  onTap: () {
+                    setState(() => index = i);
+                    Navigator.pop(context);
+                  },
+                ),
+              ),
+              SizedBox(height: 8.h),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 26.w, vertical: 10.h),
+                child: ElevatedButton(
+                  onPressed: () {
+                    SharedPreferencesUtils.removeData(key: 'token');
+                    SharedPreferencesUtils.removeData(key: 'fullName');
+                    SharedPreferencesUtils.removeData(key: 'userName');
+                    SharedPreferencesUtils.removeData(key: 'userId');
+                    Navigator.pushNamedAndRemoveUntil(
+                      context,
+                      AppRoutes.loginRoute,
+                      (_) => false,
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.redColor,
+
+                    padding: EdgeInsets.symmetric(vertical: 8.h),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadiusGeometry.circular(18.r),
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.logout, size: 24, color: AppColors.whiteColor),
+                      SizedBox(width: 8.w),
+                      Text("Logout", style: AppStyles.blod24White),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

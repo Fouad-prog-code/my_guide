@@ -81,7 +81,7 @@ class _StudentScreenState extends State<StudentScreen> {
               ),
               SizedBox(height: 12.h),
               Text(
-                acYear ?? '',
+                yearName(int.parse(acYear ?? '')),
                 style: AppStyles.regural16White.copyWith(color: Colors.white70),
               ),
             ],
@@ -182,6 +182,18 @@ class _StudentScreenState extends State<StudentScreen> {
       return data["AcademicYearId"]?.toString();
     } catch (e) {
       return null;
+    }
+  }
+
+  String yearName(int acdYear) {
+    if (acdYear == 1) {
+      return 'First Year';
+    } else if (acdYear == 2) {
+      return 'Second Year';
+    } else if (acdYear == 3) {
+      return 'Third';
+    } else {
+      return 'Fourth Year';
     }
   }
 }
